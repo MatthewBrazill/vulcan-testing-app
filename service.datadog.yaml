@@ -1,0 +1,10 @@
+---
+schema-version: v2
+dd-service: vulcan-go
+team: Matthew
+repos:
+  - name: Source Code
+    provider: Github
+    url: https://github.com/MatthewBrazill/vulcan-testing-app
+tags:
+  - "app:vulcan"
