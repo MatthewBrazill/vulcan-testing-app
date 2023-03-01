@@ -1,0 +1,63 @@
+/* Nav Bar */
+nav {
+    border-bottom: 3px solid #722F37;
+    padding-left: 280px;
+    padding-top: 20px;
+    height: 70px;
+}
+
+#nav-title {
+    text-align: center;
+}
+
+
+
+/* Footer */
+footer {
+    background-color: #ff5555;
+    height: 120px;
+    margin-top: auto;
+    margin-bottom: 0px;
+    padding-top: 24px;
+    text-align: center;
+}
+
+#toc-pp {
+    margin-bottom: 50px;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+#content {
+    margin: 66px 16px 30px 16px;
+    height: auto;
+}
+
+
+
+/* Default Link Settings */
+a {
+    font-weight: normal;
+    text-decoration: none;
+    color: #222222;
+}
+
+a:hover {
+    color: #555555;
+}
+
+
+
+/* Default Image Formatting */
+img {
+    all: initial;
+}
+
+.image {
+    width: 64px !important;
+}

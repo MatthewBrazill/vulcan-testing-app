@@ -1,0 +1,6 @@
+.gitignore
+Dockerfile
+test.sh
+build.sh
+vulcan
+logs

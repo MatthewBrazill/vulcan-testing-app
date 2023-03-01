@@ -1,0 +1,39 @@
+{{ define "home" }}
+<!DOCTYPE html>
+<html>
+
+<head>
+    {{ template "head" }}
+    <link rel="stylesheet" href="/css/home.css">
+    <script src="/js/hone.js"></script>
+</head>
+
+<body>
+    <nav>
+        {{ template "nav" }}
+    </nav>
+
+    <div id="content">
+        <div id="home-box">
+            <p>Select what action you would like to do today!</p>
+
+            <table>
+                <tr>
+                    <td><a href="/storage"><button id="god-button" class="ui fluid button">God Management</button></a></td>
+                    <td><a href="/quiz"><button id="quiz-button" class="ui fluid button">God Quiz</button></a></td>
+                </tr>
+                <tr>
+                    <td><button class="ui fluid button">Something</button></td>
+                    <td><button class="ui fluid button">Else</button></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <footer>
+        {{ template "footer" }}
+    </footer>
+</body>
+
+</html>
+{{ end }}

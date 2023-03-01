@@ -1,0 +1,15 @@
+/* Home Page */
+#home-box {
+    width: 800px;
+    display: block;
+    margin: auto;
+}
+
+table {
+    table-layout: fixed;
+    width: 800px;
+}
+
+button {
+    height: 65px;
+}

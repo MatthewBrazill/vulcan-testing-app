@@ -1,0 +1,21 @@
+/* Storage Page */
+#storage-box {
+    width: 800px;
+    display: block;
+    margin: auto;
+    margin-top: 20px;
+}
+
+#storage-button {
+    display: block;
+    margin: auto;
+    margin-top: 20px;
+}
+
+.title {
+    font-size: 16pt !important;
+}
+
+.charCard {
+    height: 64px !important;
+}

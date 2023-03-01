@@ -1,0 +1,6 @@
+/* Error Page */
+#error-box {
+    width: 300px;
+    display: block;
+    margin: auto;
+}
