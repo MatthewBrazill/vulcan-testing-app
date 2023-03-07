@@ -1,13 +1,23 @@
 /* Nav Bar */
 nav {
     border-bottom: 3px solid #722F37;
-    padding-left: 280px;
     padding-top: 20px;
     height: 70px;
 }
 
+#nav-table {
+    width: 1000px;
+    margin: auto;
+    table-layout: fixed;
+}
+
+#nav-home {
+    width: 250px;
+}
+
 #nav-title {
     text-align: center;
+    padding-right: 250px;
 }
 
 
