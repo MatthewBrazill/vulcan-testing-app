@@ -1,10 +1,26 @@
 ---
 schema-version: v2
 dd-service: vulcan-go
-team: Matthew
+team: Matthew Brazill
 repos:
   - name: Source Code
     provider: Github
     url: https://github.com/MatthewBrazill/vulcan-testing-app
+contacts:
+  - type: email
+    contact: matthew.brazill@datadoghq.com
+tags:
+  - "app:vulcan"
+---
+schema-version: v2
+dd-service: mongo
+team: Matthew Brazill
+docs:
+  - name: MongoDB Docs
+    provider: mongoDB
+    url: https://www.mongodb.com/docs/
+contacts:
+  - type: email
+    contact: matthew.brazill@datadoghq.com
 tags:
   - "app:vulcan"
