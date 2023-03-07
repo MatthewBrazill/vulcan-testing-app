@@ -3,19 +3,19 @@
 <html>
 
 <head>
-    {{ template "head" }}
+    {{ template "head" . }}
     <link rel="stylesheet" href="/css/home.css">
-    <script src="/js/hone.js"></script>
+    <script src="/js/home.js"></script>
 </head>
 
 <body>
     <nav>
-        {{ template "nav" }}
+        {{ template "nav" . }}
     </nav>
 
     <div id="content">
         <div id="home-box">
-            <p>Select what action you would like to do today!</p>
+            <h4>Select what action you would like to do today!</h4>
 
             <table>
                 <tr>
@@ -31,7 +31,7 @@
     </div>
 
     <footer>
-        {{ template "footer" }}
+        {{ template "footer" . }}
     </footer>
 </body>
 

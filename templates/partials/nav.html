@@ -1,4 +1,8 @@
 {{ define "nav" }}
-<h1>RP-All</h1>
-<h1 id="nav-title">{{ .Title }}</h1>
+<table id="nav-table">
+    <tr>
+        <td id="nav-home"><a href="/home"><h1>Vulcan Mythology</h1></a></td>
+        <td id="nav-title"><h1>{{ .Title }}</h1></td>
+    </tr>
+</table>
 {{ end }}
