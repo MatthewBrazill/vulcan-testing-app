@@ -2,7 +2,6 @@ package main
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -11,31 +10,27 @@ import (
 )
 
 func LoginPage(ctx *gin.Context) {
-	gintrace.HTML(ctx, http.StatusOK, "login", gin.H{})
+	gintrace.HTML(ctx, http.StatusOK, "login", gin.H{
+		"Title": "Login Page",
+	})
 }
 
 func LoginAPI(ctx *gin.Context) {
 	login := make(map[string]string)
 	ctx.ShouldBind(&login)
 
-	time.Sleep(1000000000)
-
 	//TODO remove plaintext password storge, but for now: functionality > security
 
 	var result bson.M
 	err := db.Collection("users").FindOne(ctx.Request.Context(), bson.M{"username": login["username"]}).Decode(&result)
 	if err != nil {
-		if err.Error() == "mongo: no documents in result" {
-			ctx.JSON(http.StatusForbidden, gin.H{
-				"message": "Your login details are incorrect.",
-			})
-		} else {
-			Log(ctx).Error(err)
+		result = nil
+		if err.Error() != "mongo: no documents in result" {
+			Log(ctx).WithError(err).Error(ctx.Error(err).Error())
 			ctx.JSON(http.StatusInternalServerError, gin.H{
 				"message": "There was an issue with the Server, please try again later.",
 			})
 		}
-		return
 	}
 
 	if result != nil {
@@ -52,6 +47,7 @@ func LoginAPI(ctx *gin.Context) {
 		}
 	}
 
+	Log(ctx).WithField("username", login["username"]).Info("Failed login attempt.")
 	ctx.JSON(http.StatusForbidden, gin.H{
 		"message": "Your login details are incorrect.",
 	})

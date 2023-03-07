@@ -20,7 +20,7 @@ func Authorize(ctx *gin.Context) string {
 		if err.Error() == "mongo: no documents in result" {
 			return "no_auth"
 		} else {
-			Log(ctx).Error(err)
+			Log(ctx).WithError(err).Error(ctx.Error(err).Error())
 			return "error"
 		}
 	}
@@ -37,6 +37,16 @@ func Log(ctx *gin.Context) *logrus.Entry {
 			"env":      env,
 			"trace_id": fmt.Sprint(span.Context().TraceID()),
 			"span_id":  fmt.Sprint(span.Context().SpanID()),
+		},
+	})
+}
+
+func LogInitEvent() *logrus.Entry {
+	return logrus.WithFields(logrus.Fields{
+		"dd": logrus.Fields{
+			"service":  service,
+			"version":  version,
+			"env":      env,
 		},
 	})
 }

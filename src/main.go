@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -17,9 +18,10 @@ import (
 	gintrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/gin-gonic/gin"
 	mongotrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/go.mongodb.org/mongo-driver/mongo"
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
+	"gopkg.in/DataDog/dd-trace-go.v1/profiler"
 )
 
-// Envars
+// Global variables
 var log *logrus.Entry
 var db *mongo.Database
 var mongoURL string
@@ -31,7 +33,7 @@ var env string
 func main() {
 	// Change settings based on environment
 	service = "vulcan-go"
-	version = "0.1"
+	version = "0.2"
 	env = os.Getenv("DD_ENV")
 	if env == "prod" { // Production
 		mongoURL = "mongodb://172.17.0.2:27017/?connect=direct"
@@ -46,7 +48,7 @@ func main() {
 		mongoURL = "mongodb://localhost:27017/?connect=direct"
 		sessionKey = "ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*"
 	} else {
-		fmt.Printf("Environment is not recognized: %s", env)
+		LogInitEvent().Error("Environment is not recognized.")
 		os.Exit(1)
 	}
 
@@ -54,7 +56,7 @@ func main() {
 	os.Mkdir("logs", 0755)
 	file, err := os.OpenFile("logs/log.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
-		fmt.Printf("Failed to open log file: %s", err)
+		LogInitEvent().WithError(err).Error("Failed to access log file.")
 		os.Exit(1)
 	}
 
@@ -67,8 +69,24 @@ func main() {
 		tracer.WithEnv(env),
 		tracer.WithService(service),
 		tracer.WithServiceVersion(version),
+		tracer.WithGlobalTag("git.commit.sha", os.Getenv("VULCAN_COMMIT_SHA")),
+		tracer.WithGlobalTag("git.repository_url", "github.com/MatthewBrazill/vulcan-testing-app"),
+		tracer.WithLogStartup(false),
 	)
 	defer tracer.Stop()
+
+	// Start the Profiler
+	profiler.Start(
+		profiler.WithEnv(env),
+		profiler.WithService(service),
+		profiler.WithVersion(version),
+		profiler.WithLogStartup(false),
+		profiler.WithProfileTypes(
+			profiler.CPUProfile,
+			profiler.HeapProfile,
+		),
+	)
+	defer profiler.Stop()
 
 	// Gin settings
 	gin.SetMode(gin.ReleaseMode)
@@ -83,6 +101,7 @@ func main() {
 			log := make(map[string]interface{})
 			span, _ := tracer.SpanFromContext(params.Request.Context())
 
+			log["message"] = fmt.Sprintf("Client accessed resource: %s", params.Path)
 			log["time"] = params.TimeStamp.Format(time.RFC3339)
 			log["client_ip"] = params.ClientIP
 			log["path"] = params.Path
@@ -98,7 +117,7 @@ func main() {
 
 			s, err := json.Marshal(log)
 			if err != nil {
-				fmt.Printf("Failed to set Gin log format: %s", err)
+				LogInitEvent().WithError(err).Error("Failed to start gin logging.")
 				os.Exit(1)
 			}
 			return string(s) + "\n"
@@ -113,7 +132,7 @@ func main() {
 	)
 	defer client.Disconnect(context.Background())
 	if err != nil {
-		fmt.Print("Failed to connect to database: ", err)
+		LogInitEvent().WithError(err).Error("Failed to connect to database.")
 		os.Exit(1)
 	}
 	db = client.Database("vulcan")
@@ -149,23 +168,36 @@ func main() {
 	// Home
 	app.GET("/home", HomePage)
 
+	// Storage Page
+	app.GET("/storage", StoragePage)
+	app.POST("/storage/search", StorageSearchAPI)
+
 	// Gods
 	app.POST("/gods/create", GodCreateAPI)
 	app.GET("/gods/get", GodGetAPI)
 	app.POST("/gods/update", GodUpdateAPI)
 	app.POST("/gods/delete", GodDeleteAPI)
 
+	// Error endpoint
+	app.GET("/error", func(ctx *gin.Context) {
+		Log(ctx).WithError(errors.New("deliberate error: error testing enpoint")).Error("Error from the error testing enpoint.")
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"HttpCode": "500",
+			"Message": "This is a error testing endpoint. It will always return a 500 error.",
+		})
+	})
+
 	// 404 Page
 	app.NoRoute(func(ctx *gin.Context) {
 		gintrace.HTML(ctx, http.StatusNotFound, "error", gin.H{
 			"HttpCode": "404",
-			"Message": "There was an issue with the Server, please try again later.",
+			"Message":  "There was an issue with the Server, please try again later.",
 		})
 	})
 
 	err = app.RunTLS(":443", "./cert/cert.pem", "./cert/key.pem")
 	if err != nil {
-		fmt.Print("Failed to run server: ", err.Error())
+		LogInitEvent().WithError(err).Error("Failed to start server.")
 		os.Exit(1)
 	}
 }
