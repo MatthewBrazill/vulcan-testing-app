@@ -13,6 +13,7 @@ vulcan
 *.out
 
 # Starting scripts for ease of use
+mongo.sh
 build.sh
 test.sh
 
