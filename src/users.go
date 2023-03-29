@@ -18,6 +18,12 @@ func LoginPage(ctx *gin.Context) {
 func LoginAPI(ctx *gin.Context) {
 	login := make(map[string]string)
 	ctx.ShouldBind(&login)
+	if !Validate(ctx, login, [][2]string{{"username", "[a-zA-Z]{1,32}"}, {"password", ".{1,64}"}}) {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "There was an issue with your request.",
+		})
+		return
+	}
 
 	//TODO remove plaintext password storge, but for now: functionality > security
 
@@ -47,7 +53,7 @@ func LoginAPI(ctx *gin.Context) {
 		}
 	}
 
-	Log(ctx).WithField("username", login["username"]).Info("Failed login attempt.")
+	Log(ctx).WithField("username", login["username"]).Warn("Failed login attempt due to incorrect password.")
 	ctx.JSON(http.StatusForbidden, gin.H{
 		"message": "Your login details are incorrect.",
 	})

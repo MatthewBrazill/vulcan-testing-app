@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"regexp"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -13,7 +14,7 @@ import (
 func Authorize(ctx *gin.Context) string {
 	sess := sessions.Default(ctx)
 	userId := sess.Get("userId")
-	
+
 	var result bson.M
 	err := db.Collection("users").FindOne(ctx.Request.Context(), bson.M{"userId": userId}).Decode(&result)
 	if err != nil {
@@ -26,6 +27,21 @@ func Authorize(ctx *gin.Context) string {
 	}
 
 	return fmt.Sprint(result["permissions"])
+}
+
+func Validate(ctx *gin.Context, obj map[string]string, params [][2]string) bool {
+	for i := 0; i < len(params); i++ {
+		regex, err := regexp.Compile(params[i][1])
+		if err != nil {
+			Log(ctx).WithError(err).Error(ctx.Error(err).Error())
+			return false
+		}
+
+		if !regex.MatchString(obj[params[i][0]]) {
+			return false
+		}
+	}
+	return true
 }
 
 func Log(ctx *gin.Context) *logrus.Entry {
@@ -44,9 +60,9 @@ func Log(ctx *gin.Context) *logrus.Entry {
 func LogInitEvent() *logrus.Entry {
 	return logrus.WithFields(logrus.Fields{
 		"dd": logrus.Fields{
-			"service":  service,
-			"version":  version,
-			"env":      env,
+			"service": service,
+			"version": version,
+			"env":     env,
 		},
 	})
 }
