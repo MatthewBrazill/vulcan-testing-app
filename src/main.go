@@ -2,12 +2,10 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/mongo/mongodriver"
@@ -22,7 +20,6 @@ import (
 )
 
 // Global variables
-var log *logrus.Entry
 var db *mongo.Database
 var mongoURL string
 var sessionKey string
@@ -96,33 +93,6 @@ func main() {
 	app := gin.New()
 	app.Use(gintrace.Middleware(service))
 	app.Use(gin.Recovery())
-	app.Use(gin.LoggerWithFormatter(
-		func(params gin.LogFormatterParams) string {
-			log := make(map[string]interface{})
-			span, _ := tracer.SpanFromContext(params.Request.Context())
-
-			log["message"] = fmt.Sprintf("Client accessed resource: %s", params.Path)
-			log["time"] = params.TimeStamp.Format(time.RFC3339)
-			log["client_ip"] = params.ClientIP
-			log["path"] = params.Path
-			log["method"] = params.Method
-			log["status"] = params.StatusCode
-			log["dd"] = map[string]string{
-				"service":  service,
-				"version":  version,
-				"env":      env,
-				"trace_id": fmt.Sprint(span.Context().TraceID()),
-				"span_id":  fmt.Sprint(span.Context().SpanID()),
-			}
-
-			s, err := json.Marshal(log)
-			if err != nil {
-				LogInitEvent().WithError(err).Error("Failed to start gin logging.")
-				os.Exit(1)
-			}
-			return string(s) + "\n"
-		},
-	))
 	app.SetTrustedProxies(nil)
 
 	// Connect to the database
@@ -138,7 +108,7 @@ func main() {
 	db = client.Database("vulcan")
 
 	// Set up sessions
-	store := mongodriver.NewStore(db.Collection("sessions"), 0, true, []byte(sessionKey))
+	store := mongodriver.NewStore(db.Collection("sessions"), 86400000000000, true, []byte(sessionKey))
 	store.Options(sessions.Options{
 		Path:     "/",
 		MaxAge:   86400,
@@ -146,6 +116,32 @@ func main() {
 		HttpOnly: true,
 	})
 	app.Use(sessions.Sessions("vulcan", store))
+
+	// Route logging
+	app.Use(func(ctx *gin.Context) {
+		ctx.Next()
+		span, _ := tracer.SpanFromContext(ctx.Request.Context())
+		sess := sessions.Default(ctx)
+		log := logrus.WithFields(logrus.Fields{
+			"client_ip": ctx.ClientIP(),
+			"path":      ctx.Request.URL.Path,
+			"method":    ctx.Request.Method,
+			"status":    ctx.Writer.Status(),
+			"dd": logrus.Fields{
+				"service":  service,
+				"version":  version,
+				"env":      env,
+				"trace_id": fmt.Sprint(span.Context().TraceID()),
+				"span_id":  fmt.Sprint(span.Context().SpanID()),
+			},
+		})
+
+		if sess.Get("userId") != "" {
+			log = log.WithField("user_id", sess.Get("userId"))
+		}
+
+		log.Info(fmt.Sprintf("IP %s accessed: %s", ctx.ClientIP(), ctx.Request.URL.Path))
+	})
 
 	// Register views
 	app.LoadHTMLGlob("./templates/**/*")
@@ -174,7 +170,7 @@ func main() {
 
 	// Gods
 	app.POST("/gods/create", GodCreateAPI)
-	app.GET("/gods/get", GodGetAPI)
+	app.POST("/gods/get", GodGetAPI)
 	app.POST("/gods/update", GodUpdateAPI)
 	app.POST("/gods/delete", GodDeleteAPI)
 
@@ -183,7 +179,7 @@ func main() {
 		Log(ctx).WithError(errors.New("deliberate error: error testing enpoint")).Error("Error from the error testing enpoint.")
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"HttpCode": "500",
-			"Message": "This is a error testing endpoint. It will always return a 500 error.",
+			"Message":  "This is a error testing endpoint. It will always return a 500 error.",
 		})
 	})
 
