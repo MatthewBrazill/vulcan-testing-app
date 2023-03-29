@@ -1,0 +1,42 @@
+{{ define "storage" }}
+<!DOCTYPE html>
+<html>
+
+<head>
+    {{ template "head" . }}
+    <link rel="stylesheet" href="/css/storage.css">
+    <script src="/js/storage.js"></script>
+</head>
+
+<body>
+    <nav>
+        {{ template "nav" . }}
+    </nav>
+
+    <div id="content">
+        <div id="storage-box">
+            <div class="ui fluid action input">
+                <input id="god-search-bar" placeholder="Search..." type="text">
+                <button id="god-search-button" class="ui button"><i class="ui search icon"></i>Search</button>
+                <button id="god-add-button" class="ui disabled positive vertical animated button"></i>
+                    <div class="visible content">Add God</div>
+                    <div class="hidden content"><i class="plus icon"></i></div>
+                </button>
+            </div>
+
+            <div id="god-list" class="ui loading segemnt">
+                <div id="god-list-error" class="ui hidden error message">
+                    <div id="god-list-error-head" class="header">Failed to retrieve list of gods!</div>
+                    <p id="god-list-error-message">There was an issue getting to the server.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        {{ template "footer" . }}
+    </footer>
+</body>
+
+</html>
+{{ end }}

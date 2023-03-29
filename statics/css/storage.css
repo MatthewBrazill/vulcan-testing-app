@@ -6,16 +6,24 @@
     margin-top: 20px;
 }
 
-#storage-button {
-    display: block;
-    margin: auto;
+
+
+#god-list {
     margin-top: 20px;
 }
 
-.title {
-    font-size: 16pt !important;
+.god-item {
+    padding: 10px 20px;
+    margin-bottom: 10px;
+    border: 1px solid #000000;
+    border-radius: 5px;
 }
 
-.charCard {
-    height: 64px !important;
+.god-header {
+    font-weight: bold;
+    margin: 0px;
+}
+
+.god-meta {
+    color: #222222;
 }
