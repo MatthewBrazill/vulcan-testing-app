@@ -20,6 +20,9 @@ test.sh
 # Log files/folder
 logs
 
+# Databases
+database
+
 # Secret files
 values.yaml
 
