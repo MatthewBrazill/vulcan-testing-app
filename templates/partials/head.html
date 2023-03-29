@@ -8,6 +8,27 @@
 <title>Vulcan - {{ .Title }}</title>
 <link rel="icon" type="image/x-icon" href="/img/icon.png">
 
+<script src="https://www.datadoghq-browser-agent.com/datadog-rum-v4.js"></script>
+<script>
+    window.DD_RUM && window.DD_RUM.init({
+      clientToken: 'pubca069499426c38f0c05d569e1b76d301',
+      applicationId: '9f4eadd0-3a89-4fce-ab51-0ce6952dbab3',
+      site: 'datadoghq.com',
+      service: 'vulcan-app',
+      env: 'docker',
+      version: '0.2',
+      sessionSampleRate: 100,
+      sessionReplaySampleRate: 100,
+      trackUserInteractions: true,
+      trackResources: true,
+      trackLongTasks: true,
+      defaultPrivacyLevel: 'mask-user-input',
+    });
+
+    window.DD_RUM &&
+    window.DD_RUM.startSessionReplayRecording();
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.1/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.0/dist/semantic.min.js"></script>
 <script src="/js/global.js"></script>
