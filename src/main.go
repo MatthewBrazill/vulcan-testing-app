@@ -66,6 +66,7 @@ func main() {
 		tracer.WithEnv(env),
 		tracer.WithService(service),
 		tracer.WithServiceVersion(version),
+		tracer.WithRuntimeMetrics(),
 		tracer.WithGlobalTag("git.commit.sha", os.Getenv("VULCAN_COMMIT_SHA")),
 		tracer.WithGlobalTag("git.repository_url", "github.com/MatthewBrazill/vulcan-testing-app"),
 		tracer.WithLogStartup(false),
