@@ -37,10 +37,6 @@ $(document).ready(() => {
             error: searchError
         })
     })
-
-    $("#god-add-button").click(() => {
-
-    })
 })
 
 
@@ -53,10 +49,12 @@ function searchSuccess(res) {
 
         for (var god of res.result) {
             godItem = `
-            <div id="${god.godId}" class="god-item">
-                <h2 class="god-header">${god.name}</h2>
-                <p class="god-meta">Domain: ${god.domain}, Pantheon: ${god.pantheon}</p>
-            </div>`
+            <a href="/edit?godId=${god.godId}">
+                <div id="${god.godId}" class="god-item">
+                    <h2 class="god-header">${god.name}</h2>
+                    <p class="god-meta">Domain: ${god.domain}, Pantheon: ${god.pantheon}</p>
+                </div>
+            </a>`
             $("#god-list").append(godItem)
         }
     } else {
