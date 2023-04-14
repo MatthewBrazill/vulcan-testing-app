@@ -1,0 +1,47 @@
+{{ define "add_god" }}
+<!DOCTYPE html>
+<html>
+
+<head>
+    {{ template "head" . }}
+    <link rel="stylesheet" href="/css/add_god.css">
+    <script src="/js/add_god.js"></script>
+</head>
+
+<body>
+    <nav>
+        {{ template "nav" . }}
+    </nav>
+
+    <div id="content">
+        <div id="add-god-box">
+            <form id="add-god-form" class="ui form">
+                <div class="field">
+                    <input id="add-god-pantheon" class="ui input" type="text" placeholder="God Pantheon">
+                </div>
+
+                <div class="field">
+                    <input id="add-god-name" class="ui input" type="text" placeholder="God Name">
+                </div>
+
+                <div class="field">
+                    <input id="add-god-domain" class="ui input" type="text" placeholder="God Domain">
+                </div>
+
+                <div class="ui error message">
+                    <div id="add-god-error-head" class="header">Failed to add god!</div>
+                    <p id="add-god-error-message">There was an error.</p>
+                </div>
+
+                <button id="add-god-submit" class="ui fluid positive button">Add God</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        {{ template "footer" . }}
+    </footer>
+</body>
+
+</html>
+{{ end }}
