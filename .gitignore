@@ -1,21 +1,5 @@
-# Binaries for programs and plugins
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
+# Binaries
 vulcan
-
-# Test binary, built with `go test -c`
-*.test
-
-# Output of the go coverage tool, specifically when used with LiteIDE
-*.out
-
-# Starting scripts for ease of use
-mongo.sh
-build.sh
-test.sh
 
 # Log files/folder
 logs
@@ -23,7 +7,5 @@ logs
 # Databases
 database
 
-# Secret files
-values.yaml
-
+# Other
 .DS_Store
