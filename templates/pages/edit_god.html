@@ -1,0 +1,51 @@
+{{ define "edit_god" }}
+<!DOCTYPE html>
+<html>
+
+<head>
+    {{ template "head" . }}
+    <link rel="stylesheet" href="/css/edit_god.css">
+    <script src="/js/edit_god.js"></script>
+</head>
+
+<body>
+    <nav>
+        {{ template "nav" . }}
+    </nav>
+
+    <div id="content">
+        <div id="edit-god-box">
+            <form id="edit-god-form" class="ui form">
+                <div class="field">
+                    <label>Pantheon</label>
+                    <input id="edit-god-pantheon" class="ui input" type="text" placeholder="God Pantheon">
+                </div>
+
+                <div class="field">
+                    <label>Name</label>
+                    <input id="edit-god-name" class="ui input" type="text" placeholder="God Name">
+                </div>
+
+                <div class="field">
+                    <label>Domain</label>
+                    <input id="edit-god-domain" class="ui input" type="text" placeholder="God Domain">
+                </div>
+
+                <div class="ui error message">
+                    <div id="edit-god-error-head" class="header">Failed to update/delete god!</div>
+                    <p id="edit-god-error-message">There was an error.</p>
+                </div>
+
+                <button id="edit-god-buttom" class="ui fluid positive button">Update God</button>
+                <button id="delete-god-button" class="ui fluid negative button">Delete God</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        {{ template "footer" . }}
+    </footer>
+</body>
+
+</html>
+{{ end }}
