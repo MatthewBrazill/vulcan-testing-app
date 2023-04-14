@@ -30,7 +30,7 @@ var env string
 func main() {
 	// Change settings based on environment
 	service = "vulcan-go"
-	version = "0.2"
+	version = "1.0"
 	env = os.Getenv("DD_ENV")
 	if env == "prod" { // Production
 		mongoURL = "mongodb://172.17.0.2:27017/?connect=direct"
@@ -68,7 +68,7 @@ func main() {
 		tracer.WithServiceVersion(version),
 		tracer.WithRuntimeMetrics(),
 		tracer.WithGlobalTag("git.commit.sha", os.Getenv("VULCAN_COMMIT_SHA")),
-		tracer.WithGlobalTag("git.repository_url", "github.com/MatthewBrazill/vulcan-testing-app"),
+		tracer.WithGlobalTag("git.repository_url", "https://github.com/MatthewBrazill/vulcan-testing-app"),
 		tracer.WithLogStartup(false),
 	)
 	defer tracer.Stop()
@@ -154,7 +154,7 @@ func main() {
 
 	// Home page explainging what the webpage is for and how to use it
 	app.GET("/", func(ctx *gin.Context) {
-		ctx.Redirect(http.StatusMovedPermanently, "/home")
+		ctx.Redirect(http.StatusMovedPermanently, "/storage")
 	})
 
 	// Login, Signup, etc
@@ -162,12 +162,15 @@ func main() {
 	app.POST("/login", LoginAPI)
 	app.GET("/logout", LogoutAPI)
 
-	// Home
-	app.GET("/home", HomePage)
-
 	// Storage Page
 	app.GET("/storage", StoragePage)
 	app.POST("/storage/search", StorageSearchAPI)
+
+	// Add Page
+	app.GET("/add", AddGodPage)
+
+	// Edit Page
+	app.GET("/edit", EditGodPage)
 
 	// Gods
 	app.POST("/gods/create", GodCreateAPI)
@@ -187,6 +190,7 @@ func main() {
 	// 404 Page
 	app.NoRoute(func(ctx *gin.Context) {
 		gintrace.HTML(ctx, http.StatusNotFound, "error", gin.H{
+			"Title": "Not Found",
 			"HttpCode": "404",
 			"Message":  "There was an issue with the Server, please try again later.",
 		})

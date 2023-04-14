@@ -8,7 +8,7 @@ $(document).ready(() => {
                 username: $("#login-username").val(),
                 password: $("#login-password").val()
             },
-            success: (res) => window.location = "/home",
+            success: () => window.location = "/storage",
             error: (res) => {
                 $("#login-form").attr('class', 'ui error form')
                 $("#login-error-message").text(res.message)
