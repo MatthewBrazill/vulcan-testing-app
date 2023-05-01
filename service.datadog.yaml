@@ -24,3 +24,16 @@ contacts:
     contact: matthew.brazill@datadoghq.com
 tags:
   - "app:vulcan"
+---
+schema-version: v2.1
+dd-service: goods-lift
+application: Goods Lift
+description: Demo application for testing Kubernetes things within DRE (test3)
+team: dre
+links:
+  - name: Source
+    type: repo
+    url: https://github.com/redbubble/goods-lift
+  - name: Deployment
+    type: repo
+    url: https://github.com/redbubble/goods-lift-deploy
