@@ -1,5 +1,6 @@
-# Binaries
+# Binaries and packages
 vulcan
+node_modules
 
 # Log files/folder
 logs

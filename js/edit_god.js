@@ -34,7 +34,7 @@ $(document).ready(() => {
         })
     })
 
-    $("delete-god-button").click(() => {
+    $("#delete-god-button").click(() => {
         $.ajax({
             url: "/gods/delete",
             method: "POST",

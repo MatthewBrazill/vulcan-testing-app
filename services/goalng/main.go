@@ -51,7 +51,7 @@ func main() {
 
 	// Create log file if not exist
 	os.Mkdir("logs", 0755)
-	file, err := os.OpenFile("logs/log.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	file, err := os.OpenFile("logs/golang.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		LogInitEvent().WithError(err).Error("Failed to access log file.")
 		os.Exit(1)
@@ -109,7 +109,7 @@ func main() {
 	db = client.Database("vulcan")
 
 	// Set up sessions
-	store := mongodriver.NewStore(db.Collection("sessions"), 86400000000000, true, []byte(sessionKey))
+	store := mongodriver.NewStore(db.Collection("go-sessions"), 86400000000000, true, []byte(sessionKey))
 	store.Options(sessions.Options{
 		Path:     "/",
 		MaxAge:   86400,
@@ -144,32 +144,32 @@ func main() {
 		log.Info(fmt.Sprintf("IP %s accessed: %s", ctx.ClientIP(), ctx.Request.URL.Path))
 	})
 
-	// Register views
-	app.LoadHTMLGlob("./templates/**/*")
+	// Register templates
+	app.LoadHTMLGlob("./services/frontend/**/*")
 
 	// Add public folder
 	app.Static("/css", "./statics/css")
 	app.Static("/img", "./statics/img")
 	app.Static("/js", "./js")
 
-	// Home page explainging what the webpage is for and how to use it
+	// Root redirect to storage page
 	app.GET("/", func(ctx *gin.Context) {
 		ctx.Redirect(http.StatusMovedPermanently, "/storage")
 	})
 
-	// Login, Signup, etc
+	// Login, signup, etc
 	app.GET("/login", LoginPage)
 	app.POST("/login", LoginAPI)
 	app.GET("/logout", LogoutAPI)
 
-	// Storage Page
+	// Storage page
 	app.GET("/storage", StoragePage)
 	app.POST("/storage/search", StorageSearchAPI)
 
-	// Add Page
+	// Add page
 	app.GET("/add", AddGodPage)
 
-	// Edit Page
+	// Edit page
 	app.GET("/edit", EditGodPage)
 
 	// Gods
@@ -182,12 +182,11 @@ func main() {
 	app.GET("/error", func(ctx *gin.Context) {
 		Log(ctx).WithError(errors.New("deliberate error: error testing enpoint")).Error("Error from the error testing enpoint.")
 		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"HttpCode": "500",
-			"Message":  "This is a error testing endpoint. It will always return a 500 error.",
+			"message":  "This is a error testing endpoint. It will always return a 500 error.",
 		})
 	})
 
-	// 404 Page
+	// 404 page
 	app.NoRoute(func(ctx *gin.Context) {
 		gintrace.HTML(ctx, http.StatusNotFound, "error", gin.H{
 			"Title": "Not Found",

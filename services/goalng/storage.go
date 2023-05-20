@@ -22,7 +22,7 @@ func EditGodPage(ctx *gin.Context) {
 
 	default:
 		gintrace.HTML(ctx, http.StatusFound, "error", gin.H{
-			"Title": "Error",
+			"Title":    "Error",
 			"HttpCode": "500",
 			"Message":  "There was an issue with the Server, please try again later.",
 		})
@@ -42,7 +42,7 @@ func AddGodPage(ctx *gin.Context) {
 
 	default:
 		gintrace.HTML(ctx, http.StatusFound, "error", gin.H{
-			"Title": "Error",
+			"Title":    "Error",
 			"HttpCode": "500",
 			"Message":  "There was an issue with the Server, please try again later.",
 		})
@@ -62,7 +62,7 @@ func StoragePage(ctx *gin.Context) {
 
 	default:
 		gintrace.HTML(ctx, http.StatusFound, "error", gin.H{
-			"Title": "Error",
+			"Title":    "Error",
 			"HttpCode": "500",
 			"Message":  "There was an issue with the Server, please try again later.",
 		})
@@ -81,7 +81,7 @@ func StorageSearchAPI(ctx *gin.Context) {
 	}
 
 	var result []bson.M
-	cursor, err := db.Collection("gods").Find(ctx, bson.M{"name": bson.M{"$regex": primitive.Regex{Pattern: filter["filter"]}}})
+	cursor, err := db.Collection("gods").Find(ctx, bson.M{"name": bson.M{"$regex": primitive.Regex{Pattern: filter["filter"], Options: "i"}}})
 	if err != nil {
 		if err.Error() != "mongo: no documents in result" {
 			Log(ctx).WithError(err).Error(ctx.Error(err).Error())

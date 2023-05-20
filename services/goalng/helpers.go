@@ -38,6 +38,11 @@ func Validate(ctx *gin.Context, obj map[string]string, params [][2]string) bool 
 		}
 
 		if !regex.MatchString(obj[params[i][0]]) {
+			Log(ctx).WithFields(logrus.Fields{
+				"key":     params[i][0],
+				"pattern": params[i][1],
+				"value":   obj[params[i][0]],
+			}).Debug(fmt.Sprintf("Validation failed for '%s'", obj[params[i][0]]))
 			return false
 		}
 	}

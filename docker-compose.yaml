@@ -19,18 +19,36 @@ services:
       - VULCAN_SESSION_KEY=2PbmuNW_uRkaf6Kux!ByK!yT!UmMZZ9B
     working_dir: /usr/vulcan
     volumes:
-      - ./cert:/usr/vulcan/cert
-      - ./js:/usr/vulcan/js
-      - ./src-golang:/usr/vulcan/src-golang
-      - ./statics:/usr/vulcan/statics
-      - ./templates:/usr/vulcan/templates
-      - ./go.mod:/usr/vulcan/go.mod
-      - ./go.sum:/usr/vulcan/go.sum
-      - /tmp/vulcan-logs:/usr/vulcan/logs:rw
-    command: bash -c "go mod download && go mod verify && go build -o /usr/local/bin/vulcan ./src-golang/... && vulcan"
+      - ./:/usr/vulcan/
+      - /tmp/vulcan-logs:/usr/vulcan/logs
+    command: bash -c "go mod download && go mod verify && go build -o /usr/local/bin/vulcan ./services/golang/... && vulcan"
     labels:
-      - com.datadoghq.ad.logs='[{"type":"file","source":"vulcan-app","service":"vulcan-go","path":"/vulcan-logs/*.log"}]'
-      - com.datadoghq.ad.tags='["env:docker","service:vulcan-go"]'
+      com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-go","path":"/vulcan-logs/golang.log"}]'
+      com.datadoghq.ad.tags: '["env:docker","service:vulcan-go"]'
+  vulcan-node:
+    image: node:18
+    container_name: vulcan-js
+    ports:
+      - 4430:443
+    networks:
+      - vulcan_app
+      - tracing_bridge
+    environment:
+      - DD_ENV=docker
+      - DD_SERIVCE=vulcan-js
+      - DD_AGENT_HOST=datadog-agent
+      - DD_TRACE_AGENT_PORT=8126
+      - DD_TRACE_CLIENT_IP_ENABLED=true
+      - VULCAN_COMMIT_SHA=$(git rev-parse HEAD)
+      - VULCAN_SESSION_KEY=2PbmuNW_uRkaf6Kux!ByK!yT!UmMZZ9B
+    working_dir: /usr/vulcan
+    volumes:
+      - ./:/usr/vulcan/
+      - /tmp/vulcan-logs:/usr/vulcan/logs
+    command: bash -c "npm install . && node ./services/node/app.js"
+    labels:
+      com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-js","path":"/vulcan-logs/node.log"}]'
+      com.datadoghq.ad.tags: '["env:docker","service:vulcan-js"]'
   database:
     image: mongo:latest
     container_name: vulcan-database
@@ -42,10 +60,10 @@ services:
     volumes:
       - ./database:/data/db
     labels:
-      - com.datadoghq.ad.check_names='["mongo"]'
-      - com.datadoghq.ad.init_configs='[{}]'
-      - com.datadoghq.ad.instances='[{"hosts":["%%host%%:%%port%%"],"username":"datadog","password":"5aae8c35f7e16245","database":"vulcan"}]'
-      - com.datadoghq.ad.logs='[{"source":"vulcan-database","service":"mongo"}]'
+      com.datadoghq.ad.check_names: '["mongo"]'
+      com.datadoghq.ad.init_configs: '[{}]'
+      com.datadoghq.ad.instances: '[{"hosts":["%%host%%:%%port%%"],"username":"datadog","password":"5aae8c35f7e16245","database":"vulcan"}]'
+      com.datadoghq.ad.logs: '[{"source":"vulcan-database","service":"mongo"}]'
 networks:
   vulcan_app:
     name: vulcan_app
