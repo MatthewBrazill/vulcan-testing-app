@@ -144,8 +144,8 @@ func main() {
 		log.Info(fmt.Sprintf("IP %s accessed: %s", ctx.ClientIP(), ctx.Request.URL.Path))
 	})
 
-	// Register templates
-	app.LoadHTMLGlob("./services/frontend/**/*")
+	// 
+	app.HTMLRender = ginraymond.Default()
 
 	// Add public folder
 	app.Static("/css", "./statics/css")

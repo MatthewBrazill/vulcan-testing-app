@@ -1,16 +1,15 @@
-{{ define "login" }}
 <!DOCTYPE html>
 <html>
 
 <head>
-    {{ template "head" . }}
+    {{> head}}
     <link rel="stylesheet" href="/css/login.css">
     <script src="/js/login.js"></script>
 </head>
 
 <body>
     <nav>
-        {{ template "nav" . }}
+        {{> nav}}
     </nav>
 
     <div id="content">
@@ -35,9 +34,8 @@
     </div>
 
     <footer>
-        {{ template "footer" . }}
+        {{> footer}}
     </footer>
 </body>
 
 </html>
-{{ end }}

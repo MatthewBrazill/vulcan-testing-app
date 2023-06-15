@@ -1,29 +1,27 @@
-{{ define "error" }}
 <!DOCTYPE html>
 <html>
 
 <head>
-    {{ template "head" . }}
+    {{> head}}
     <link rel="stylesheet" href="/css/error.css">
     <script src="/js/error.js"></script>
 </head>
 
 <body>
     <nav>
-        {{ template "nav" . }}
+        {{> nav}}
     </nav>
 
     <div id="content">
         <div id="error-box">
             <h2>Opps! Looks like we lost your page...</h2>
-            <h5>{{ .HttpCode }} Code Returned. {{ .Message }}</h5>
+            <h5>{{httpCode}} Code Returned. {{message}}</h5>
         </div>
     </div>
 
     <footer>
-        {{ template "footer" . }}
+        {{> footer}}
     </footer>
 </body>
 
 </html>
-{{ end }}

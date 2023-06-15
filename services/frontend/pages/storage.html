@@ -1,16 +1,15 @@
-{{ define "storage" }}
 <!DOCTYPE html>
 <html>
 
 <head>
-    {{ template "head" . }}
+    {{> head}}
     <link rel="stylesheet" href="/css/storage.css">
     <script src="/js/storage.js"></script>
 </head>
 
 <body>
     <nav>
-        {{ template "nav" . }}
+        {{> nav}}
     </nav>
 
     <div id="content">
@@ -34,12 +33,8 @@
     </div>
 
     <footer>
-        {{ template "footer" . }}
+        {{> footer}}
     </footer>
 </body>
 
 </html>
-{{ end }}
-
-
-
