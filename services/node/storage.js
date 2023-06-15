@@ -1,8 +1,7 @@
 'use strict'
 
 // Imports
-const logger = require('./logger.js')
-
+import logger from './logger.js'
 
 const storage = {
     async editGodPage(req, res) {
@@ -44,4 +43,4 @@ const storage = {
     }
 }
 
-module.exports = storage
+export default storage

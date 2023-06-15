@@ -25,7 +25,7 @@ services:
     labels:
       com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-go","path":"/vulcan-logs/golang.log"}]'
       com.datadoghq.ad.tags: '["env:docker","service:vulcan-go"]'
-  vulcan-node:
+  vulcan-js:
     image: node:18
     container_name: vulcan-js
     ports:
@@ -58,12 +58,24 @@ services:
       - vulcan_app
       - tracing_bridge
     volumes:
-      - ./database:/data/db
+      - ./database/data:/data/db
     labels:
       com.datadoghq.ad.check_names: '["mongo"]'
       com.datadoghq.ad.init_configs: '[{}]'
       com.datadoghq.ad.instances: '[{"hosts":["%%host%%:%%port%%"],"username":"datadog","password":"5aae8c35f7e16245","database":"vulcan"}]'
       com.datadoghq.ad.logs: '[{"source":"vulcan-database","service":"mongo"}]'
+  session-store:
+    image: postgres:latest
+    container_name: vulcan-session-store
+    ports:
+      - 5432:5432
+    networks:
+      - vulcan_app
+      - tracing_bridge
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    volumes:
+      - ./database/sessions:/sessions/db
 networks:
   vulcan_app:
     name: vulcan_app

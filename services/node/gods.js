@@ -1,8 +1,7 @@
 'use strict'
 
 // Imports
-const logger = require('./logger.js')
-
+import logger from './logger.js'
 
 const gods = {
     async godCreateAPI(req, res) {
@@ -22,4 +21,4 @@ const gods = {
     },
 }
 
-module.exports = gods
+export default gods

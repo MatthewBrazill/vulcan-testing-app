@@ -1,8 +1,8 @@
 'use strict'
 
 // Imports
-const logger = require('./logger.js')
-
+import logger from './logger.js'
+import db from './mongodb.js'
 
 const helpers = {
     async authorize(req) {
@@ -14,4 +14,4 @@ const helpers = {
     }
 }
 
-module.exports = helpers
+export default helpers

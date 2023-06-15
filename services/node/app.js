@@ -1,17 +1,18 @@
 "use strict"
 
 // Import the extensions
-const tracer = require("dd-trace")
-const express = require("express")
-const session = require("express-session")
-const cookie = require("cookie-parser")
-const mongo = require("connect-mongo")
-const https = require("https")
-const fs = require("fs")
-const logger = require("./logger.js")
-const gods = require("./gods.js")
-const storage = require("./storage.js")
-const users = require("./users.js")
+import tracer from "dd-trace"
+import express from "express"
+import session from "express-session"
+import cookie from "cookie-parser"
+import mongoStore from "connect-mongo"
+import https from "https"
+import fs from "fs"
+import hbs from "express-handlebars"
+import logger from "./logger.js"
+import gods from "./gods.js"
+import storage from "./storage.js"
+import users from "./users.js"
 
 async function start() {
     // Create the app
@@ -22,7 +23,7 @@ async function start() {
         secret: process.env.VULCAN_SESSION_KEY,
         saveUninitialized: false,
         resave: false,
-        store: mongo.create({
+        store: mongoStore.create({
             mongoUrl: "mongodb://vulcan-database:27017",
             dbName: "vulcan",
             collectionName: "node-sessions",
@@ -33,26 +34,32 @@ async function start() {
 
     // Set up middleware logging
     app.use(function requestLogging(req, res, next) {
+        next()
         logger.info({
-            client_ip: req.client_ip,
+            client_ip: req.ip.split(":").pop(),
             path: req.path,
             method: req.method,
-            status: req.statusCode,
+            status: res.statusCode,
             user_id: req.session.userId,
-            message: `IP ${req.client_ip} accessed: ${req.path}`
+            message: `IP ${req.ip.split(":").pop()} accessed: ${req.path}`
         })
-        next()
     })
 
     // Register templates
+    app.engine("html", hbs.engine({
+        extname: ".html",
+        layoutsDir: "./services/frontend/pages",
+        partialsDir: "./services/frontend/partials",
+        defaultLayout: false
+    }))
     app.set("view engine", "html")
-    app.set("views", "../frontend/pages")
+    app.set("views", "./services/frontend/pages")
 
     // Remaining WebApp settings
     app.set(express.json())
     app.use(express.urlencoded({ extended: true }))
-    app.use(express.static("../../statics"))
-    app.use(express.static("../../js"))
+    app.use("/js", express.static("./js"))
+    app.use(express.static("./statics"))
     app.use(cookie())
 
     // Define routes
@@ -95,15 +102,15 @@ async function start() {
     // 404 page
     app.use((req, res) => {
         res.status(404).render("error", {
-            Title: "Not Found",
-            HttpCode: "404",
-            Message: "There was an issue with the Server, please try again later."
+            title: "Not Found",
+            httpCode: "404",
+            message: "There was an issue with the Server, please try again later."
         })
     })
 
     https.createServer({
-        key: fs.readFileSync("../../cert/key.pem"),
-        cert: fs.readFileSync("../../cert/cert.pem")
+        key: fs.readFileSync("./cert/key.pem"),
+        cert: fs.readFileSync("./cert/cert.pem")
     }, app).listen(443, () => {
         console.log("Server started")
     })
@@ -113,6 +120,8 @@ async function start() {
 tracer.init({
     logInjection: true,
     runtimeMetrics: true,
+    profiling: true,
+    serviceMapping: "mongodb:mongo,vulcan-js-mongodb:mongo"
 })
 
 // Create Server

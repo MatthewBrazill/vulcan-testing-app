@@ -1,12 +1,13 @@
 "use strict"
 
-const winston = require("winston");
+// Imports
+import winston from "winston"
 
 // Create the Logger
 const logger = winston.createLogger({
     transports: [
         new winston.transports.File({
-            filename: "../../logs/node.log",
+            filename: "./logs/node.log",
             level: "debug",
             format: winston.format.combine(
                 winston.format.timestamp(),
@@ -16,4 +17,4 @@ const logger = winston.createLogger({
     ],
 })
 
-module.exports = logger
+export default logger
