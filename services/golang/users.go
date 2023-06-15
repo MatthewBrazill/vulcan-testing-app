@@ -10,8 +10,8 @@ import (
 )
 
 func LoginPage(ctx *gin.Context) {
-	gintrace.HTML(ctx, http.StatusOK, "login", gin.H{
-		"Title": "Login Page",
+	gintrace.HTML(ctx, http.StatusOK, "login.html", gin.H{
+		"title": "Login Page",
 	})
 }
 

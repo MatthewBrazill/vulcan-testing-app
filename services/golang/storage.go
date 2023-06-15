@@ -13,18 +13,18 @@ func EditGodPage(ctx *gin.Context) {
 	perms := Authorize(ctx)
 	switch perms {
 	case "user", "admin":
-		gintrace.HTML(ctx, http.StatusOK, "edit_god", gin.H{
-			"Title": "Edit God",
+		gintrace.HTML(ctx, http.StatusOK, "edit_god.html", gin.H{
+			"title": "Edit God",
 		})
 
 	case "no_auth":
 		ctx.Redirect(http.StatusFound, "/login")
 
 	default:
-		gintrace.HTML(ctx, http.StatusFound, "error", gin.H{
-			"Title":    "Error",
-			"HttpCode": "500",
-			"Message":  "There was an issue with the Server, please try again later.",
+		gintrace.HTML(ctx, http.StatusFound, "error.html", gin.H{
+			"title":    "Error",
+			"httpCode": "500",
+			"message":  "There was an issue with the Server, please try again later.",
 		})
 	}
 }
@@ -33,18 +33,18 @@ func AddGodPage(ctx *gin.Context) {
 	perms := Authorize(ctx)
 	switch perms {
 	case "user", "admin":
-		gintrace.HTML(ctx, http.StatusOK, "add_god", gin.H{
-			"Title": "Add God",
+		gintrace.HTML(ctx, http.StatusOK, "add_god.html", gin.H{
+			"title": "Add God",
 		})
 
 	case "no_auth":
 		ctx.Redirect(http.StatusFound, "/login")
 
 	default:
-		gintrace.HTML(ctx, http.StatusFound, "error", gin.H{
-			"Title":    "Error",
-			"HttpCode": "500",
-			"Message":  "There was an issue with the Server, please try again later.",
+		gintrace.HTML(ctx, http.StatusFound, "error.html", gin.H{
+			"title":    "Error",
+			"httpCode": "500",
+			"message":  "There was an issue with the Server, please try again later.",
 		})
 	}
 }
@@ -53,18 +53,18 @@ func StoragePage(ctx *gin.Context) {
 	perms := Authorize(ctx)
 	switch perms {
 	case "user", "admin":
-		gintrace.HTML(ctx, http.StatusOK, "storage", gin.H{
-			"Title": "God Storage",
+		gintrace.HTML(ctx, http.StatusOK, "storage.html", gin.H{
+			"title": "God Storage",
 		})
 
 	case "no_auth":
 		ctx.Redirect(http.StatusFound, "/login")
 
 	default:
-		gintrace.HTML(ctx, http.StatusFound, "error", gin.H{
-			"Title":    "Error",
-			"HttpCode": "500",
-			"Message":  "There was an issue with the Server, please try again later.",
+		gintrace.HTML(ctx, http.StatusFound, "error.html", gin.H{
+			"title":    "Error",
+			"httpCode": "500",
+			"message":  "There was an issue with the Server, please try again later.",
 		})
 	}
 }

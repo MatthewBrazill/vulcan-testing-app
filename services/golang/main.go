@@ -6,11 +6,14 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 
+	"github.com/aymerick/raymond"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/mongo/mongodriver"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"gitlab.com/go-box/ginraymond"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	gintrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/gin-gonic/gin"
@@ -30,7 +33,7 @@ var env string
 func main() {
 	// Change settings based on environment
 	service = "vulcan-go"
-	version = "1.0"
+	version = "1.1.0"
 	env = os.Getenv("DD_ENV")
 	if env == "prod" { // Production
 		mongoURL = "mongodb://172.17.0.2:27017/?connect=direct"
@@ -144,8 +147,27 @@ func main() {
 		log.Info(fmt.Sprintf("IP %s accessed: %s", ctx.ClientIP(), ctx.Request.URL.Path))
 	})
 
-	// 
-	app.HTMLRender = ginraymond.Default()
+	// Register pages and set raymond renderer
+	app.HTMLRender = ginraymond.New(&ginraymond.RenderOptions{
+		TemplateDir: "./services/frontend/pages",
+	})
+	partialsDir, err := os.ReadDir("./services/frontend/partials")
+	if err != nil {
+		LogInitEvent().WithError(err).Error("Failed to load template partials directory.")
+		os.Exit(1)
+	}
+	for _, partial := range partialsDir {
+		file, err := os.ReadFile(fmt.Sprintf("./services/frontend/partials/%s", partial.Name()))
+		if err != nil {
+			LogInitEvent().WithError(err).WithFields(logrus.Fields{
+				"partialName": partial.Name(),
+				"partialDir":  "./services/frontend/partials",
+				"partialPath": fmt.Sprintf("./services/frontend/partials/%s", partial.Name()),
+			}).Error(fmt.Sprintf("Failed to load template partial '%s'.", partial.Name()))
+		} else {
+			raymond.RegisterPartial(strings.Split(partial.Name(), ".")[0], string(file))
+		}
+	}
 
 	// Add public folder
 	app.Static("/css", "./statics/css")
@@ -182,14 +204,14 @@ func main() {
 	app.GET("/error", func(ctx *gin.Context) {
 		Log(ctx).WithError(errors.New("deliberate error: error testing enpoint")).Error("Error from the error testing enpoint.")
 		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"message":  "This is a error testing endpoint. It will always return a 500 error.",
+			"message": "This is a error testing endpoint. It will always return a 500 error.",
 		})
 	})
 
 	// 404 page
 	app.NoRoute(func(ctx *gin.Context) {
-		gintrace.HTML(ctx, http.StatusNotFound, "error", gin.H{
-			"Title": "Not Found",
+		gintrace.HTML(ctx, http.StatusNotFound, "error.html", gin.H{
+			"Title":    "Not Found",
 			"HttpCode": "404",
 			"Message":  "There was an issue with the Server, please try again later.",
 		})
