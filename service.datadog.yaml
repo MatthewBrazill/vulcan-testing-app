@@ -4,7 +4,7 @@ dd-service: vulcan-go
 team: Matthew Brazill
 repos:
   - name: Source Code
-    provider: Github
+    provider: GitHub
     url: https://github.com/MatthewBrazill/vulcan-testing-app
 contacts:
   - type: email
@@ -13,12 +13,51 @@ tags:
   - "app:vulcan"
 ---
 schema-version: v2
-dd-service: mongo
+dd-service: vulcan-js
+team: Matthew Brazill
+repos:
+  - name: Source Code
+    provider: GitHub
+    url: https://github.com/MatthewBrazill/vulcan-testing-app
+contacts:
+  - type: email
+    contact: matthew.brazill@datadoghq.com
+tags:
+  - "app:vulcan"
+---
+schema-version: v2
+dd-service: god-database
 team: Matthew Brazill
 docs:
   - name: MongoDB Docs
-    provider: mongoDB
+    provider: mongodb
     url: https://www.mongodb.com/docs/
+contacts:
+  - type: email
+    contact: matthew.brazill@datadoghq.com
+tags:
+  - "app:vulcan"
+---
+schema-version: v2
+dd-service: user-database
+team: Matthew Brazill
+docs:
+  - name: PostgresSQL Docs
+    provider: postgres
+    url: https://www.postgresql.org/docs/
+contacts:
+  - type: email
+    contact: matthew.brazill@datadoghq.com
+tags:
+  - "app:vulcan"
+---
+schema-version: v2
+dd-service: session-store
+team: Matthew Brazill
+docs:
+  - name: Redis Docs
+    provider: redis
+    url: https://redis.io/docs/about/
 contacts:
   - type: email
     contact: matthew.brazill@datadoghq.com
