@@ -49,9 +49,9 @@ services:
     labels:
       com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-js","path":"/vulcan-logs/node.log"}]'
       com.datadoghq.ad.tags: '["env:docker","service:vulcan-js"]'
-  database:
+  god-database:
     image: mongo:latest
-    container_name: vulcan-database
+    container_name: god-database
     ports:
       - 27017:27017
     networks:
@@ -66,7 +66,7 @@ services:
       com.datadoghq.ad.logs: '[{"source":"vulcan-database","service":"mongo"}]'
   session-store:
     image: postgres:latest
-    container_name: vulcan-session-store
+    container_name: session-store
     ports:
       - 5432:5432
     networks:
