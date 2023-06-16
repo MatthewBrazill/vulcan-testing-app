@@ -58,15 +58,15 @@ services:
       - vulcan_app
       - tracing_bridge
     volumes:
-      - ./database/data:/data/db
+      - ./database/gods:/data/db
     labels:
       com.datadoghq.ad.check_names: '["mongo"]'
       com.datadoghq.ad.init_configs: '[{}]'
       com.datadoghq.ad.instances: '[{"hosts":["%%host%%:%%port%%"],"username":"datadog","password":"5aae8c35f7e16245","database":"vulcan"}]'
-      com.datadoghq.ad.logs: '[{"source":"vulcan-database","service":"mongo"}]'
-  session-store:
+      com.datadoghq.ad.logs: '[{"source":"mongodb","service":"god-database"}]'
+  user-database:
     image: postgres:latest
-    container_name: session-store
+    container_name: user-database
     ports:
       - 5432:5432
     networks:
@@ -75,7 +75,27 @@ services:
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
-      - ./database/sessions:/sessions/db
+      - ./database/users:/var/lib/postgresql/data
+    labels:
+      com.datadoghq.ad.check_names: '["postgres"]'
+      com.datadoghq.ad.init_configs: '[{}]'
+      com.datadoghq.ad.instances: '[{"host":"%%host%%","port":5432,"username":"datadog","password":"5aae8c35f7e16245"}]'
+      com.datadoghq.ad.logs: '[{"source":"postgresql","service":"user-database"}]'
+  session-store:
+    image: redis/redis-stack-server:latest
+    container_name: session-store
+    ports:
+      - 6379:6379
+    networks:
+      - vulcan_app
+      - tracing_bridge
+    volumes:
+      - ./database/sessions:/data
+    labels:
+      com.datadoghq.ad.check_names: '["redisdb"]'
+      com.datadoghq.ad.init_configs: '[{}]'
+      com.datadoghq.ad.instances: '[{"host":"%%host%%","port":"6379","password":"5aae8c35f7e16245"}]'
+      com.datadoghq.ad.logs: '[{"source":"redis","service":"session-store"}]'
 networks:
   vulcan_app:
     name: vulcan_app

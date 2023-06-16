@@ -10,9 +10,10 @@ import (
 
 	"github.com/aymerick/raymond"
 	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/mongo/mongodriver"
+	"github.com/gin-contrib/sessions/redis"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"github.com/go-pg/pg/v10"
 	"gitlab.com/go-box/ginraymond"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -23,8 +24,11 @@ import (
 )
 
 // Global variables
-var db *mongo.Database
+var mongodb *mongo.Database
+var postgres *pg.DB
 var mongoURL string
+var postgresURL string
+var redisURL string
 var sessionKey string
 var service string
 var version string
@@ -35,17 +39,20 @@ func main() {
 	service = "vulcan-go"
 	version = "1.1.0"
 	env = os.Getenv("DD_ENV")
-	if env == "prod" { // Production
-		mongoURL = "mongodb://172.17.0.2:27017/?connect=direct"
-		sessionKey = os.Getenv("VULCAN_SESSION_KEY")
-	} else if env == "docker" { // Dockerised
-		mongoURL = "mongodb://vulcan-database:27017/?connect=direct"
+	if env == "docker" { // Dockerised
+		mongoURL = "mongodb://god-database:27017/?connect=direct"
+		postgresURL = "user-database:5432"
+		redisURL = "session-store:6379"
 		sessionKey = "ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*"
 	} else if env == "kube" { // Kubernetes
 		mongoURL = "mongodb://172.17.0.2:27017/?connect=direct"
+		postgresURL = "172.17.0.2:5432"
+		redisURL = "172.17.0.2:6379"
 		sessionKey = "ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*"
 	} else if env == "dev" { // Local
 		mongoURL = "mongodb://localhost:27017/?connect=direct"
+		postgresURL = "localhoste:5432"
+		redisURL = "localhost:6379"
 		sessionKey = "ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*"
 	} else {
 		LogInitEvent().Error("Environment is not recognized.")
@@ -99,20 +106,31 @@ func main() {
 	app.Use(gin.Recovery())
 	app.SetTrustedProxies(nil)
 
-	// Connect to the database
+	// Connect to god-database
 	client, err := mongo.Connect(
 		context.Background(),
 		options.Client().SetMonitor(mongotrace.NewMonitor()).ApplyURI(mongoURL),
 	)
 	defer client.Disconnect(context.Background())
 	if err != nil {
-		LogInitEvent().WithError(err).Error("Failed to connect to database.")
+		LogInitEvent().WithError(err).Error("Failed to connect to god-database.")
 		os.Exit(1)
 	}
-	db = client.Database("vulcan")
+	mongodb = client.Database("vulcan")
+
+	// Connect to user-database
+	postgres = pg.Connect(&pg.Options{
+		Addr: postgresURL,
+		Database: "vulcan-users",
+	})
+    defer postgres.Close()
 
 	// Set up sessions
-	store := mongodriver.NewStore(db.Collection("go-sessions"), 86400000000000, true, []byte(sessionKey))
+  	store, err := redis.NewStoreWithDB(10, "tcp", redisURL, "", "go-sessions", []byte(sessionKey))
+	if err != nil {
+		LogInitEvent().WithError(err).Error("Failed to connect to session-store.")
+		os.Exit(1)
+	}
 	store.Options(sessions.Options{
 		Path:     "/",
 		MaxAge:   86400,

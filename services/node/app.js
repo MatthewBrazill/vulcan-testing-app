@@ -5,7 +5,8 @@ import tracer from "dd-trace"
 import express from "express"
 import session from "express-session"
 import cookie from "cookie-parser"
-import mongoStore from "connect-mongo"
+import redisStore from "connect-redis"
+import redis from "redis"
 import https from "https"
 import fs from "fs"
 import hbs from "express-handlebars"
@@ -23,12 +24,12 @@ async function start() {
         secret: process.env.VULCAN_SESSION_KEY,
         saveUninitialized: false,
         resave: false,
-        store: mongoStore.create({
-            mongoUrl: "mongodb://vulcan-database:27017",
-            dbName: "vulcan",
-            collectionName: "node-sessions",
-            ttl: 86400,
-            autoRemove: "native"
+        store: new redisStore({
+            client: redis.createClient({
+                url: "redis://session-store:6379",
+                database: "js-sessions"
+            }).connect(),
+            ttl: 86400
         })
     }))
 
@@ -121,7 +122,7 @@ tracer.init({
     logInjection: true,
     runtimeMetrics: true,
     profiling: true,
-    serviceMapping: "mongodb:mongo,vulcan-js-mongodb:mongo"
+    serviceMapping: "mongodb:mongo,connect-mongo:mongo"
 })
 
 // Create Server

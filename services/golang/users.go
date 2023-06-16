@@ -28,7 +28,7 @@ func LoginAPI(ctx *gin.Context) {
 	//TODO remove plaintext password storge, but for now: functionality > security
 
 	var result bson.M
-	err := db.Collection("users").FindOne(ctx.Request.Context(), bson.M{"username": login["username"]}).Decode(&result)
+	err := mongodb.Collection("users").FindOne(ctx.Request.Context(), bson.M{"username": login["username"]}).Decode(&result)
 	if err != nil {
 		result = nil
 		if err.Error() != "mongo: no documents in result" {

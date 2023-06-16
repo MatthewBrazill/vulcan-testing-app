@@ -23,7 +23,7 @@ func GodCreateAPI(ctx *gin.Context) {
 		return
 	}
 
-	_, err := db.Collection("gods").InsertOne(context.Background(), bson.M{
+	_, err := mongodb.Collection("gods").InsertOne(context.Background(), bson.M{
 		"godId":    god["godId"],
 		"pantheon": god["pantheon"],
 		"name":     god["name"],
@@ -63,7 +63,7 @@ func GodGetAPI(ctx *gin.Context) {
 	}
 
 	var result bson.M
-	err := db.Collection("gods").FindOne(ctx.Request.Context(), bson.M{"godId": req["godId"]}).Decode(&result)
+	err := mongodb.Collection("gods").FindOne(ctx.Request.Context(), bson.M{"godId": req["godId"]}).Decode(&result)
 	if err != nil {
 		if err.Error() == "mongo: no documents in result" {
 			ctx.JSON(http.StatusNotFound, gin.H{
@@ -101,7 +101,7 @@ func GodUpdateAPI(ctx *gin.Context) {
 		}
 	}
 
-	result, err := db.Collection("gods").UpdateOne(ctx.Request.Context(), bson.M{"godId": req["godId"]}, bson.M{"$set": update})
+	result, err := mongodb.Collection("gods").UpdateOne(ctx.Request.Context(), bson.M{"godId": req["godId"]}, bson.M{"$set": update})
 	if err != nil {
 		Log(ctx).WithError(err).Error(ctx.Error(err).Error())
 		ctx.JSON(http.StatusInternalServerError, gin.H{
@@ -137,7 +137,7 @@ func GodDeleteAPI(ctx *gin.Context) {
 		return
 	}
 
-	result, err := db.Collection("gods").DeleteOne(ctx.Request.Context(), bson.M{"godId": req["godId"]})
+	result, err := mongodb.Collection("gods").DeleteOne(ctx.Request.Context(), bson.M{"godId": req["godId"]})
 	if err != nil {
 		Log(ctx).WithError(err).Error(ctx.Error(err).Error())
 		ctx.JSON(http.StatusInternalServerError, gin.H{

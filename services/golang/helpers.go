@@ -16,7 +16,7 @@ func Authorize(ctx *gin.Context) string {
 	userId := sess.Get("userId")
 
 	var result bson.M
-	err := db.Collection("users").FindOne(ctx.Request.Context(), bson.M{"userId": userId}).Decode(&result)
+	err := mongodb.Collection("users").FindOne(ctx.Request.Context(), bson.M{"userId": userId}).Decode(&result)
 	if err != nil {
 		if err.Error() == "mongo: no documents in result" {
 			return "no_auth"

@@ -25,7 +25,7 @@ const users = {
         req.session.destroy()
 
         // Get user form DB
-        var col = db.collection("users")
+        var col = mongo.Collection("users")
         var result = await col.findOne({ "username": req.body.username })
 
         // Validate user
