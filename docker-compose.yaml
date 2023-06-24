@@ -94,7 +94,7 @@ services:
     labels:
       com.datadoghq.ad.check_names: '["redisdb"]'
       com.datadoghq.ad.init_configs: '[{}]'
-      com.datadoghq.ad.instances: '[{"host":"%%host%%","port":"6379","password":"5aae8c35f7e16245"}]'
+      com.datadoghq.ad.instances: '[{"host":"%%host%%","port":"6379","password":""}]'
       com.datadoghq.ad.logs: '[{"source":"redis","service":"session-store"}]'
 networks:
   vulcan_app:
