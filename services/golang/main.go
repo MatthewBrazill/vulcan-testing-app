@@ -12,20 +12,25 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/redis"
 	"github.com/gin-gonic/gin"
+	redigo "github.com/gomodule/redigo/redis"
 	"github.com/sirupsen/logrus"
-	"github.com/go-pg/pg/v10"
+	"github.com/uptrace/bun"
+	"github.com/uptrace/bun/dialect/pgdialect"
+	"github.com/uptrace/bun/driver/pgdriver"
 	"gitlab.com/go-box/ginraymond"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	sqltrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/database/sql"
 	gintrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/gin-gonic/gin"
 	mongotrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/go.mongodb.org/mongo-driver/mongo"
+	redigotrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/gomodule/redigo"
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 	"gopkg.in/DataDog/dd-trace-go.v1/profiler"
 )
 
 // Global variables
 var mongodb *mongo.Database
-var postgres *pg.DB
+var pgdb *bun.DB
 var mongoURL string
 var postgresURL string
 var redisURL string
@@ -41,17 +46,17 @@ func main() {
 	env = os.Getenv("DD_ENV")
 	if env == "docker" { // Dockerised
 		mongoURL = "mongodb://god-database:27017/?connect=direct"
-		postgresURL = "user-database:5432"
+		postgresURL = "postgresql://vulcan:yKCstvg4-hrB9pmDPzu.gG.jxzhcCafT@user-database:5432/vulcan_users"
 		redisURL = "session-store:6379"
 		sessionKey = "ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*"
 	} else if env == "kube" { // Kubernetes
 		mongoURL = "mongodb://172.17.0.2:27017/?connect=direct"
-		postgresURL = "172.17.0.2:5432"
+		postgresURL = "postgresql://vulcan:yKCstvg4-hrB9pmDPzu.gG.jxzhcCafT@172.17.0.2:5432/vulcan_users"
 		redisURL = "172.17.0.2:6379"
 		sessionKey = "ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*"
 	} else if env == "dev" { // Local
 		mongoURL = "mongodb://localhost:27017/?connect=direct"
-		postgresURL = "localhoste:5432"
+		postgresURL = "postgresql://vulcan:yKCstvg4-hrB9pmDPzu.gG.jxzhcCafT@localhost:5432/vulcan_users"
 		redisURL = "localhost:6379"
 		sessionKey = "ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*"
 	} else {
@@ -79,7 +84,6 @@ func main() {
 		tracer.WithRuntimeMetrics(),
 		tracer.WithGlobalTag("git.commit.sha", os.Getenv("VULCAN_COMMIT_SHA")),
 		tracer.WithGlobalTag("git.repository_url", "https://github.com/MatthewBrazill/vulcan-testing-app"),
-		tracer.WithLogStartup(false),
 	)
 	defer tracer.Stop()
 
@@ -88,7 +92,6 @@ func main() {
 		profiler.WithEnv(env),
 		profiler.WithService(service),
 		profiler.WithVersion(version),
-		profiler.WithLogStartup(false),
 		profiler.WithProfileTypes(
 			profiler.CPUProfile,
 			profiler.HeapProfile,
@@ -109,7 +112,7 @@ func main() {
 	// Connect to god-database
 	client, err := mongo.Connect(
 		context.Background(),
-		options.Client().SetMonitor(mongotrace.NewMonitor()).ApplyURI(mongoURL),
+		options.Client().SetMonitor(mongotrace.NewMonitor(mongotrace.WithServiceName("god-database"))).ApplyURI(mongoURL),
 	)
 	defer client.Disconnect(context.Background())
 	if err != nil {
@@ -119,14 +122,19 @@ func main() {
 	mongodb = client.Database("vulcan")
 
 	// Connect to user-database
-	postgres = pg.Connect(&pg.Options{
-		Addr: postgresURL,
-		Database: "vulcan-users",
-	})
-    defer postgres.Close()
+	sqltrace.Register("bun", pgdriver.Driver{}, sqltrace.WithServiceName("user-database"))
+	sqldb := sqltrace.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(postgresURL), pgdriver.WithInsecure(true)))
+	pgdb = bun.NewDB(sqldb, pgdialect.New())
 
 	// Set up sessions
-  	store, err := redis.NewStoreWithDB(10, "tcp", redisURL, "", "go-sessions", []byte(sessionKey))
+	pool := &redigo.Pool{
+		MaxIdle:   10,
+		MaxActive: 12000, // max number of connections
+		Dial: func() (redigo.Conn, error) {
+			return redigotrace.Dial("tcp", redisURL, redigotrace.WithServiceName("session-store"))
+		},
+	}
+	store, err := redis.NewStoreWithPool(pool, []byte(sessionKey))
 	if err != nil {
 		LogInitEvent().WithError(err).Error("Failed to connect to session-store.")
 		os.Exit(1)
@@ -235,6 +243,7 @@ func main() {
 		})
 	})
 
+	LogInitEvent().Info("Server Started")
 	err = app.RunTLS(":443", "./cert/cert.pem", "./cert/key.pem")
 	if err != nil {
 		LogInitEvent().WithError(err).Error("Failed to start server.")

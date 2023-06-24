@@ -81,7 +81,7 @@ func StorageSearchAPI(ctx *gin.Context) {
 	}
 
 	var result []bson.M
-	cursor, err := mongodb.Collection("gods").Find(ctx, bson.M{"name": bson.M{"$regex": primitive.Regex{Pattern: filter["filter"], Options: "i"}}})
+	cursor, err := mongodb.Collection("gods").Find(ctx.Request.Context(), bson.M{"name": bson.M{"$regex": primitive.Regex{Pattern: filter["filter"], Options: "i"}}})
 	if err != nil {
 		if err.Error() != "mongo: no documents in result" {
 			Log(ctx).WithError(err).Error(ctx.Error(err).Error())
