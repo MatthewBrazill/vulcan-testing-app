@@ -1,4 +1,5 @@
 version: '3.9'
+name: vulcan-application
 services:
   vulcan-go:
     image: golang:latest
@@ -15,13 +16,12 @@ services:
       - DD_AGENT_HOST=datadog-agent
       - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_CLIENT_IP_ENABLED=true
-      - VULCAN_COMMIT_SHA=$(git rev-parse HEAD)
       - VULCAN_SESSION_KEY=2PbmuNW_uRkaf6Kux!ByK!yT!UmMZZ9B
     working_dir: /usr/vulcan
     volumes:
       - ./:/usr/vulcan/
       - /tmp/vulcan-logs:/usr/vulcan/logs
-    command: bash -c "go mod download && go mod verify && go build -o /usr/local/bin/vulcan ./services/golang/... && vulcan"
+    command: bash -c "export VULCAN_COMMIT_SHA=$(git rev-parse HEAD) && go mod download && go mod verify && go build -o /usr/local/bin/vulcan ./services/golang/... && vulcan"
     labels:
       com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-go","path":"/vulcan-logs/golang.log"}]'
       com.datadoghq.ad.tags: '["env:docker","service:vulcan-go"]'
@@ -39,13 +39,12 @@ services:
       - DD_AGENT_HOST=datadog-agent
       - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_CLIENT_IP_ENABLED=true
-      - VULCAN_COMMIT_SHA=$(git rev-parse HEAD)
       - VULCAN_SESSION_KEY=2PbmuNW_uRkaf6Kux!ByK!yT!UmMZZ9B
     working_dir: /usr/vulcan
     volumes:
       - ./:/usr/vulcan/
       - /tmp/vulcan-logs:/usr/vulcan/logs
-    command: bash -c "npm install . && node ./services/node/app.js"
+    command: bash -c "export VULCAN_COMMIT_SHA=$(git rev-parse HEAD) && npm install . && node ./services/node/app.js"
     labels:
       com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-js","path":"/vulcan-logs/node.log"}]'
       com.datadoghq.ad.tags: '["env:docker","service:vulcan-js"]'
@@ -64,6 +63,7 @@ services:
       com.datadoghq.ad.init_configs: '[{}]'
       com.datadoghq.ad.instances: '[{"hosts":["%%host%%:%%port%%"],"username":"datadog","password":"5aae8c35f7e16245","database":"vulcan"}]'
       com.datadoghq.ad.logs: '[{"source":"mongodb","service":"god-database"}]'
+      com.datadoghq.ad.tags: '["env:docker","service:god-database"]'
   user-database:
     image: postgres:latest
     container_name: user-database
@@ -81,6 +81,7 @@ services:
       com.datadoghq.ad.init_configs: '[{}]'
       com.datadoghq.ad.instances: '[{"host":"%%host%%","port":5432,"username":"datadog","password":"5aae8c35f7e16245"}]'
       com.datadoghq.ad.logs: '[{"source":"postgresql","service":"user-database"}]'
+      com.datadoghq.ad.tags: '["env:docker","service:user-database"]'
   session-store:
     image: redis/redis-stack-server:latest
     container_name: session-store
@@ -96,6 +97,7 @@ services:
       com.datadoghq.ad.init_configs: '[{}]'
       com.datadoghq.ad.instances: '[{"host":"%%host%%","port":"6379","password":""}]'
       com.datadoghq.ad.logs: '[{"source":"redis","service":"session-store"}]'
+      com.datadoghq.ad.tags: '["env:docker","service:session-store"]'
 networks:
   vulcan_app:
     name: vulcan_app
