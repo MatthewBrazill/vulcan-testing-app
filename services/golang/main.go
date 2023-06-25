@@ -47,17 +47,17 @@ func main() {
 	if env == "docker" { // Dockerised
 		mongoURL = "mongodb://god-database:27017/?connect=direct"
 		postgresURL = "postgresql://vulcan:yKCstvg4-hrB9pmDPzu.gG.jxzhcCafT@user-database:5432/vulcan_users"
-		redisURL = "session-store:6379"
+		redisURL = "redis://session-store:6379"
 		sessionKey = "ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*"
 	} else if env == "kube" { // Kubernetes
 		mongoURL = "mongodb://172.17.0.2:27017/?connect=direct"
 		postgresURL = "postgresql://vulcan:yKCstvg4-hrB9pmDPzu.gG.jxzhcCafT@172.17.0.2:5432/vulcan_users"
-		redisURL = "172.17.0.2:6379"
+		redisURL = "redis://172.17.0.2:6379"
 		sessionKey = "ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*"
 	} else if env == "dev" { // Local
 		mongoURL = "mongodb://localhost:27017/?connect=direct"
 		postgresURL = "postgresql://vulcan:yKCstvg4-hrB9pmDPzu.gG.jxzhcCafT@localhost:5432/vulcan_users"
-		redisURL = "localhost:6379"
+		redisURL = "redis://localhost:6379"
 		sessionKey = "ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*"
 	} else {
 		LogInitEvent().Error("Environment is not recognized.")
@@ -129,9 +129,9 @@ func main() {
 	// Set up sessions
 	pool := &redigo.Pool{
 		MaxIdle:   10,
-		MaxActive: 12000, // max number of connections
+		MaxActive: 12000,
 		Dial: func() (redigo.Conn, error) {
-			return redigotrace.Dial("tcp", redisURL, redigotrace.WithServiceName("session-store"))
+			return redigotrace.DialURL(redisURL, redigotrace.WithServiceName("session-store"))
 		},
 	}
 	store, err := redis.NewStoreWithPool(pool, []byte(sessionKey))
@@ -145,7 +145,7 @@ func main() {
 		Secure:   true,
 		HttpOnly: true,
 	})
-	app.Use(sessions.Sessions("vulcan", store))
+	app.Use(sessions.Sessions("vulcan-go", store))
 
 	// Route logging
 	app.Use(func(ctx *gin.Context) {

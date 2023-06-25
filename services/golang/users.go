@@ -1,14 +1,12 @@
 package main
 
 import (
-	//"fmt"
 	"net/http"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/uptrace/bun"
 
-	//"go.mongodb.org/mongo-driver/bson"
 	gintrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/gin-gonic/gin"
 )
 
@@ -20,6 +18,9 @@ type Users struct {
 }
 
 func LoginPage(ctx *gin.Context) {
+	sess := sessions.Default(ctx)
+	sess.Clear()
+	
 	gintrace.HTML(ctx, http.StatusOK, "login.html", gin.H{
 		"title": "Login Page",
 	})
