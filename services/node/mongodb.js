@@ -1,15 +1,15 @@
 "use strict"
 
 // Imports
-import mongodb from "mongodb"
+import mongo from "mongodb"
 import logger from "./logger.js"
 
-const client = new mongodb.MongoClient("mongodb://vulcan-database:27017")
-const mongo = await client.connect().then((client) => client.db("vulcan-node")).catch((err) => {
+const client = new mongo.MongoClient("mongodb://god-database:27017")
+const mongodb = await client.connect().then((client) => client.db("vulcan-node")).catch((err) => {
     logger.error({
-        message: "Failed to connect to database.",
+        message: "Failed to connect to god-database.",
         err: err
     })
 })
 
-export default mongo
+export default mongodb

@@ -3,10 +3,6 @@
 // Imports
 import postgresql from "postgres"
 
-const postgres = postgresql({
-    host: "user-database",
-    post: 5432,
-    database: "vulcan-users"
-})
+const pgdb = postgresql("postgresql://vulcan:yKCstvg4-hrB9pmDPzu.gG.jxzhcCafT@user-database:5432/vulcan_users")
 
-export default postgres
+export default pgdb

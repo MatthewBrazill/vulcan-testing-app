@@ -19,16 +19,23 @@ async function start() {
     // Create the app
     const app = express()
 
+    // Set up redis client
+    var redisClient = redis.createClient({ url: "redis://session-store:6379" })
+    redisClient.connect()
+
     // Set up sessions
     app.use(session({
         secret: process.env.VULCAN_SESSION_KEY,
         saveUninitialized: false,
         resave: false,
+        name: "vulcan-js",
+        cookie: {
+            maxAge: 86400,
+            secure: true,
+            httpOnly: true,
+        },
         store: new redisStore({
-            client: redis.createClient({
-                url: "redis://session-store:6379",
-                database: "js-sessions"
-            }).connect(),
+            client: redisClient,
             ttl: 86400
         })
     }))
@@ -122,7 +129,7 @@ tracer.init({
     logInjection: true,
     runtimeMetrics: true,
     profiling: true,
-    serviceMapping: "mongodb:mongo,connect-mongo:mongo"
+    serviceMapping: "mongodb:god-database,redis:session-storage,connect-redis:session-storage"
 })
 
 // Create Server
