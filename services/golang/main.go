@@ -7,10 +7,11 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/aymerick/raymond"
 	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/redis"
+	redisStore "github.com/gin-contrib/sessions/redis"
 	"github.com/gin-gonic/gin"
 	redigo "github.com/gomodule/redigo/redis"
 	"github.com/sirupsen/logrus"
@@ -47,17 +48,17 @@ func main() {
 	if env == "docker" { // Dockerised
 		mongoURL = "mongodb://god-database:27017/?connect=direct"
 		postgresURL = "postgresql://vulcan:yKCstvg4-hrB9pmDPzu.gG.jxzhcCafT@user-database:5432/vulcan_users"
-		redisURL = "redis://session-store:6379"
+		redisURL = "session-store:6379"
 		sessionKey = "ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*"
 	} else if env == "kube" { // Kubernetes
 		mongoURL = "mongodb://172.17.0.2:27017/?connect=direct"
 		postgresURL = "postgresql://vulcan:yKCstvg4-hrB9pmDPzu.gG.jxzhcCafT@172.17.0.2:5432/vulcan_users"
-		redisURL = "redis://172.17.0.2:6379"
+		redisURL = "172.17.0.2:6379"
 		sessionKey = "ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*"
 	} else if env == "dev" { // Local
 		mongoURL = "mongodb://localhost:27017/?connect=direct"
 		postgresURL = "postgresql://vulcan:yKCstvg4-hrB9pmDPzu.gG.jxzhcCafT@localhost:5432/vulcan_users"
-		redisURL = "redis://localhost:6379"
+		redisURL = "localhost:6379"
 		sessionKey = "ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*"
 	} else {
 		LogInitEvent().Error("Environment is not recognized.")
@@ -131,10 +132,10 @@ func main() {
 		MaxIdle:   10,
 		MaxActive: 12000,
 		Dial: func() (redigo.Conn, error) {
-			return redigotrace.DialURL(redisURL, redigotrace.WithServiceName("session-store"))
+			return redigotrace.DialContext(&gin.Context{}, "tcp", redisURL, redigotrace.WithServiceName("session-store"))
 		},
 	}
-	store, err := redis.NewStoreWithPool(pool, []byte(sessionKey))
+	store, err := redisStore.NewStoreWithPool(pool, []byte(sessionKey))
 	if err != nil {
 		LogInitEvent().WithError(err).Error("Failed to connect to session-store.")
 		os.Exit(1)
@@ -228,6 +229,7 @@ func main() {
 
 	// Error endpoint
 	app.GET("/error", func(ctx *gin.Context) {
+		time.Sleep(500000)
 		Log(ctx).WithError(errors.New("deliberate error: error testing enpoint")).Error("Error from the error testing enpoint.")
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": "This is a error testing endpoint. It will always return a 500 error.",
@@ -243,7 +245,7 @@ func main() {
 		})
 	})
 
-	LogInitEvent().Info("Server Started")
+	LogInitEvent().Info("Starting Server")
 	err = app.RunTLS(":443", "./cert/cert.pem", "./cert/key.pem")
 	if err != nil {
 		LogInitEvent().WithError(err).Error("Failed to start server.")
