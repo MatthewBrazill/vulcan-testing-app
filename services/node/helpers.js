@@ -1,26 +1,35 @@
 'use strict'
 
 // Imports
-import logger from './logger.js'
-import pgdb from './postgres.js'
+const logger = require("./logger.js")
+const pgdb = require("./postgres.js")
 
 const helpers = {
     async authorize(req) {
         var username = req.session.username
 
         if (username == null || username == "") {
-            return "no_auth"
+            var result = await pgdb.query("SELECT * FROM apikeys WHERE apikey = $1::text", [req.headers["api-key"]])
+        } else {
+            var result = await pgdb.query("SELECT * FROM users WHERE username = $1::text", [username])
         }
 
-        var result = await (pgdb`SELECT * FROM users WHERE username = ${username}`)
-        var user = result[0]
-
-        if (result.length > 0) return user.permissions
+        if (result.rowCount > 0) return result.rows[0].permissions
         else return "no_auth"
     },
 
     async validate(params, tests) {
         for (var test of tests) {
+            if (typeof params[test[0]] === "undefined") {
+                logger.debug({
+                    message: `Parameter unavailable for ${params[test[0]]}`,
+                    key: test[0],
+                    pattern: test[1],
+                    value: params[test[0]]
+                })
+                return false
+            }
+
             if (!params[test[0]].match(test[1])) {
                 logger.debug({
                     message: `Validation failed for ${params[test[0]]}`,
@@ -35,4 +44,4 @@ const helpers = {
     }
 }
 
-export default helpers
+module.exports = helpers

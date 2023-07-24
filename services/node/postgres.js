@@ -1,8 +1,9 @@
 "use strict"
 
 // Imports
-import postgresql from "postgres"
+const postgresql = require("pg")
 
-const pgdb = postgresql("postgresql://vulcan:yKCstvg4-hrB9pmDPzu.gG.jxzhcCafT@user-database:5432/vulcan_users")
+const pgdb = new postgresql.Client({ connectionString: "postgresql://vulcan:yKCstvg4-hrB9pmDPzu.gG.jxzhcCafT@user-database:5432/vulcan_users" })
+pgdb.connect()
 
-export default pgdb
+module.exports = pgdb

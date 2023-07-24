@@ -1,7 +1,9 @@
 "use strict"
 
-// Import the extensions
-import tracer from "dd-trace"
+// Initialize Datadog Traces
+//import "./tracer.js"
+
+/* Import the extensions
 import express from "express"
 import session from "express-session"
 import cookie from "cookie-parser"
@@ -14,6 +16,34 @@ import logger from "./logger.js"
 import gods from "./gods.js"
 import storage from "./storage.js"
 import users from "./users.js"
+//*/
+
+//* Require the extentions
+const tracer = require("dd-trace")
+tracer.init({
+    hostname: 'datadog-agent',
+    port: 8126,
+    logInjection: true,
+    runtimeMetrics: true,
+    profiling: true
+})
+tracer.use("redis", { service: "session-store" })
+tracer.use("pg", { service: "user-database" })
+tracer.use("mongodb-core", { service: "god-database" })
+
+const express = require("express")
+const session = require("express-session")
+const cookie = require("cookie-parser")
+const redisStore = require("connect-redis")
+const redis = require("redis")
+const https = require("https")
+const fs = require("fs")
+const hbs = require("express-handlebars")
+const logger = require("./logger.js")
+const gods = require("./gods.js")
+const storage = require("./storage.js")
+const users = require("./users.js")
+//*/
 
 async function start() {
     // Create the app
@@ -21,12 +51,12 @@ async function start() {
 
     // Set up redis client
     var redisClient = redis.createClient({ url: "redis://session-store:6379" })
-    redisClient.connect()
+    await redisClient.connect()
 
     // Set up sessions
     app.use(session({
         secret: process.env.VULCAN_SESSION_KEY,
-        saveUninitialized: false,
+        saveUninitialized: true,
         resave: false,
         name: "vulcan-js",
         cookie: {
@@ -34,7 +64,7 @@ async function start() {
             secure: true,
             httpOnly: true,
         },
-        store: new redisStore({
+        store: new redisStore.default({
             client: redisClient,
             ttl: 86400
         })
@@ -64,7 +94,7 @@ async function start() {
     app.set("views", "./services/frontend/pages")
 
     // Remaining WebApp settings
-    app.set(express.json())
+    app.use(express.json())
     app.use(express.urlencoded({ extended: true }))
     app.use("/js", express.static("./js"))
     app.use(express.static("./statics"))
@@ -102,9 +132,11 @@ async function start() {
             stack: err.stack,
             message: "Error from the error testing enpoint."
         })
-        res.status(500).json({
-            message: "This is a error testing endpoint. It will always return a 500 error.",
-        })
+        setTimeout(() => {
+            res.status(500).json({
+                message: "This is a error testing endpoint. It will always return a 500 error.",
+            })
+        }, 500)
     })
 
     // 404 page
@@ -124,15 +156,6 @@ async function start() {
     })
 }
 
-// Initialize Datadog Traces
-tracer.init({
-    logInjection: true,
-    runtimeMetrics: true,
-    profiling: true,
-    serviceMapping: "mongodb:god-database,redis:session-storage,connect-redis:session-storage"
-})
-
-// Create Server
 start().catch((err) => {
     logger.error({
         error: err.message,
