@@ -42,10 +42,10 @@ $(document).ready(() => {
 
 function searchSuccess(res) {
     // Update content
+    while ($("#god-list").children().length > 1) {
+        $("#god-list").children().last().remove()
+    }
     if (res.result.length > 0) {
-        while ($("#god-list").children().length > 1) {
-            $("#god-list").children().last().remove()
-        }
 
         for (var god of res.result) {
             godItem = `
