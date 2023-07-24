@@ -70,39 +70,53 @@ func StoragePage(ctx *gin.Context) {
 }
 
 func StorageSearchAPI(ctx *gin.Context) {
-	filter := make(map[string]string)
-	ctx.ShouldBind(&filter)
+	perms := Authorize(ctx)
+	switch perms {
+	case "user", "admin":
+		filter := make(map[string]string)
+		ctx.ShouldBind(&filter)
 
-	if !Validate(ctx, filter, [][2]string{{"filter", "[a-zA-Z]{0,32}"}}) {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"message": "There was an issue with your request.",
-		})
-		return
-	}
+		if !Validate(ctx, filter, [][2]string{{"filter", "[a-zA-Z]{0,32}"}}) {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"message": "There was an issue with your request.",
+			})
+			return
+		}
 
-	var result []bson.M
-	cursor, err := mongodb.Collection("gods").Find(ctx.Request.Context(), bson.M{"name": bson.M{"$regex": primitive.Regex{Pattern: filter["filter"], Options: "i"}}})
-	if err != nil {
-		if err.Error() != "mongo: no documents in result" {
-			Log(ctx).WithError(err).Error(ctx.Error(err).Error())
+		var result []bson.M
+		cursor, err := mongodb.Collection("gods").Find(ctx.Request.Context(), bson.M{"name": bson.M{"$regex": primitive.Regex{Pattern: filter["filter"], Options: "i"}}})
+		if err != nil {
+			if err.Error() != "mongo: no documents in result" {
+				Log(ctx).WithError(err).Error(ctx.Error(err).Error())
+				ctx.JSON(http.StatusInternalServerError, gin.H{
+					"message": "There was an issue with the Server, please try again later.",
+				})
+				return
+			}
+		}
+
+		err = cursor.All(ctx, &result)
+		if err != nil {
+			Log(ctx).WithField("result", result).WithError(err).Error(ctx.Error(err).Error())
 			ctx.JSON(http.StatusInternalServerError, gin.H{
 				"message": "There was an issue with the Server, please try again later.",
 			})
 			return
 		}
-	}
 
-	err = cursor.All(ctx, &result)
-	if err != nil {
-		Log(ctx).WithField("result", result).WithError(err).Error(ctx.Error(err).Error())
+		ctx.JSON(http.StatusOK, gin.H{
+			"message": "Successfully filtered gods.",
+			"result":  result,
+		})
+
+	case "no_auth":
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"message": "Your credentials are invalid.",
+		})
+
+	default:
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": "There was an issue with the Server, please try again later.",
 		})
-		return
 	}
-
-	ctx.JSON(http.StatusOK, gin.H{
-		"message": "Successfully filtered gods.",
-		"result":  result,
-	})
 }

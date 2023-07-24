@@ -14,25 +14,34 @@ import (
 func Authorize(ctx *gin.Context) string {
 	sess := sessions.Default(ctx)
 	username := sess.Get("username")
+	result := make(map[string]interface{})
 
 	if username == nil || username == "" {
-		return "no_auth"
-	}
+		apiKey := ctx.Request.Header["Api-Key"][0]
+		err := pgdb.NewSelect().Table("apikeys").Where("? = ?", bun.Ident("apikey"), apiKey).Scan(ctx.Request.Context(), &result)
+		if err != nil {
+			if err.Error() == "sql: no rows in result set" {
+				Log(ctx).WithField("key", apiKey).WithField("result", result).Warnf("No API key for value '%s'", apiKey)
+				return "no_auth"
+			}
 
-	user := &Users{}
-	err := pgdb.NewSelect().Model(user).Where("? = ?", bun.Ident("username"), username).Scan(ctx.Request.Context())
-	if err != nil {
-		fmt.Print(err.Error())
-		if err.Error() == "sql: no rows in result set" {
-			Log(ctx).Warnf("No user for username '%s'", username)
-			return "no_auth"
+			Log(ctx).WithError(err).Error(ctx.Error(err).Error())
+			return "error"
 		}
+	} else {
+		err := pgdb.NewSelect().Table("users").Where("? = ?", bun.Ident("username"), username).Scan(ctx.Request.Context(), &result)
+		if err != nil {
+			if err.Error() == "sql: no rows in result set" {
+				Log(ctx).WithField("username", username).WithField("result", result).Warnf("No user for username '%s'", username)
+				return "no_auth"
+			}
 
-		Log(ctx).WithError(err).Error(ctx.Error(err).Error())
-		return "error"
+			Log(ctx).WithError(err).Error(ctx.Error(err).Error())
+			return "error"
+		}
 	}
 
-	return user.Permissions
+	return fmt.Sprint(result["permissions"])
 }
 
 func Validate(ctx *gin.Context, obj map[string]string, params [][2]string) bool {
