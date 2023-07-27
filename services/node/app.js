@@ -25,7 +25,11 @@ tracer.init({
     port: 8126,
     logInjection: true,
     runtimeMetrics: true,
-    profiling: true
+    profiling: true,
+    tags: {
+		"git.commit.sha": process.env.VULCAN_COMMIT_SHA,
+		"git.repository_url": "https://github.com/MatthewBrazill/vulcan-testing-app"
+    }
 })
 tracer.use("redis", { service: "session-store" })
 tracer.use("pg", { service: "user-database" })
