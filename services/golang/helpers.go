@@ -1,8 +1,10 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
+	"runtime"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -16,43 +18,82 @@ func Authorize(ctx *gin.Context) string {
 	username := sess.Get("username")
 	result := make(map[string]interface{})
 
-	if username == nil || username == "" {
-		apiKey := ctx.Request.Header["Api-Key"][0]
-		err := pgdb.NewSelect().Table("apikeys").Where("? = ?", bun.Ident("apikey"), apiKey).Scan(ctx.Request.Context(), &result)
-		if err != nil {
-			if err.Error() == "sql: no rows in result set" {
-				Log(ctx).WithField("key", apiKey).WithField("result", result).Warnf("No API key for value '%s'", apiKey)
-				return "no_auth"
-			}
+	pc, _, _, ok := runtime.Caller(1)
+	details := runtime.FuncForPC(pc)
+	if !ok || details == nil {
+		err := errors.New("authorize: no parent function")
+		Log(ctx).WithError(err).Error(ctx.Error(err).Error())
+		return "error"
+	}
 
-			Log(ctx).WithError(err).Error(ctx.Error(err).Error())
-			return "error"
+	span, c := tracer.StartSpanFromContext(ctx.Request.Context(), "request.authorize", tracer.ResourceName(details.Name()))
+	defer span.Finish()
+
+	if username == nil || username == "" {
+		fmt.Print(ctx.GetHeader("Api-Key"))
+		if apiKey, exists := ctx.Request.Header["Api-Key"]; exists {
+			span.SetTag("auth_method", "api_key")
+			err := pgdb.NewSelect().Table("apikeys").Where("? = ?", bun.Ident("apikey"), apiKey[0]).Scan(c, &result)
+			if err != nil {
+				if err.Error() == "sql: no rows in result set" {
+					span.SetTag("auth", false)
+					Log(ctx).WithField("key", apiKey).WithField("result", result).Warnf("No API key for value '%s'", apiKey)
+					return "no_auth"
+				}
+
+				span.SetTag("auth", false)
+				Log(ctx).WithError(err).Error(ctx.Error(err).Error())
+				return "error"
+			}
+		} else {
+			span.SetTag("auth_method", "none")
+			span.SetTag("auth", false)
+			Log(ctx).Debug("No API key or user session attached.")
+			return "no_auth"
 		}
 	} else {
-		err := pgdb.NewSelect().Table("users").Where("? = ?", bun.Ident("username"), username).Scan(ctx.Request.Context(), &result)
+		span.SetTag("auth_method", "session")
+		err := pgdb.NewSelect().Table("users").Where("? = ?", bun.Ident("username"), username).Scan(c, &result)
 		if err != nil {
 			if err.Error() == "sql: no rows in result set" {
+				span.SetTag("auth", false)
 				Log(ctx).WithField("username", username).WithField("result", result).Warnf("No user for username '%s'", username)
 				return "no_auth"
 			}
 
+			span.SetTag("auth", false)
 			Log(ctx).WithError(err).Error(ctx.Error(err).Error())
 			return "error"
 		}
 	}
 
+	span.SetTag("auth", true)
 	return fmt.Sprint(result["permissions"])
 }
 
 func Validate(ctx *gin.Context, obj map[string]string, params [][2]string) bool {
+
+	pc, _, _, ok := runtime.Caller(1)
+	details := runtime.FuncForPC(pc)
+	if !ok || details == nil {
+		err := errors.New("authorize: no parent function")
+		Log(ctx).WithError(err).Error(ctx.Error(err).Error())
+		return false
+	}
+
+	span, _ := tracer.StartSpanFromContext(ctx.Request.Context(), "request.validate", tracer.ResourceName(details.Name()))
+	defer span.Finish()
+
 	for i := 0; i < len(params); i++ {
 		regex, err := regexp.Compile(params[i][1])
 		if err != nil {
+			span.SetTag("valid", false)
 			Log(ctx).WithError(err).Error(ctx.Error(err).Error())
 			return false
 		}
 
 		if !regex.MatchString(obj[params[i][0]]) {
+			span.SetTag("valid", false)
 			Log(ctx).WithFields(logrus.Fields{
 				"key":     params[i][0],
 				"pattern": params[i][1],
@@ -61,6 +102,8 @@ func Validate(ctx *gin.Context, obj map[string]string, params [][2]string) bool 
 			return false
 		}
 	}
+
+	span.SetTag("valid", true)
 	return true
 }
 
