@@ -96,6 +96,7 @@ func main() {
 		profiler.WithProfileTypes(
 			profiler.CPUProfile,
 			profiler.HeapProfile,
+			profiler.GoroutineProfile,
 		),
 	)
 	defer profiler.Stop()
