@@ -27,8 +27,8 @@ tracer.init({
     runtimeMetrics: true,
     profiling: true,
     tags: {
-		"git.commit.sha": process.env.VULCAN_COMMIT_SHA,
-		"git.repository_url": "https://github.com/MatthewBrazill/vulcan-testing-app"
+        "git.commit.sha": process.env.VULCAN_COMMIT_SHA,
+        "git.repository_url": "https://github.com/MatthewBrazill/vulcan-testing-app"
     }
 })
 tracer.use("redis", { service: "session-store" })
@@ -64,14 +64,11 @@ async function start() {
         resave: false,
         name: "vulcan-js",
         cookie: {
-            maxAge: 86400,
+            maxAge: 86400000,
             secure: true,
             httpOnly: true,
         },
-        store: new redisStore.default({
-            client: redisClient,
-            ttl: 86400
-        })
+        store: new redisStore.default({ client: redisClient })
     }))
 
     // Set up middleware logging
