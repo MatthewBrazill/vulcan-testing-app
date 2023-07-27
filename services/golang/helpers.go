@@ -1,10 +1,8 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"regexp"
-	"runtime"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -18,15 +16,7 @@ func Authorize(ctx *gin.Context) string {
 	username := sess.Get("username")
 	result := make(map[string]interface{})
 
-	pc, _, _, ok := runtime.Caller(1)
-	details := runtime.FuncForPC(pc)
-	if !ok || details == nil {
-		err := errors.New("authorize: no parent function")
-		Log(ctx).WithError(err).Error(ctx.Error(err).Error())
-		return "error"
-	}
-
-	span, c := tracer.StartSpanFromContext(ctx.Request.Context(), "request.authorize", tracer.ResourceName(details.Name()))
+	span, c := tracer.StartSpanFromContext(ctx.Request.Context(), "request.authorize", tracer.ResourceName("Authorize"))
 	defer span.Finish()
 
 	if username == nil || username == "" {
@@ -72,16 +62,7 @@ func Authorize(ctx *gin.Context) string {
 }
 
 func Validate(ctx *gin.Context, obj map[string]string, params [][2]string) bool {
-
-	pc, _, _, ok := runtime.Caller(1)
-	details := runtime.FuncForPC(pc)
-	if !ok || details == nil {
-		err := errors.New("authorize: no parent function")
-		Log(ctx).WithError(err).Error(ctx.Error(err).Error())
-		return false
-	}
-
-	span, _ := tracer.StartSpanFromContext(ctx.Request.Context(), "request.validate", tracer.ResourceName(details.Name()))
+	span, _ := tracer.StartSpanFromContext(ctx.Request.Context(), "request.validate", tracer.ResourceName("Validate"))
 	defer span.Finish()
 
 	for i := 0; i < len(params); i++ {
