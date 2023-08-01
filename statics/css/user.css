@@ -1,0 +1,8 @@
+/* Storage Page */
+#user-box {
+    width: 300px;
+    display: block;
+    margin: auto;
+    margin-top: 100px;
+    text-align: justify;
+}

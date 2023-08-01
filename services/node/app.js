@@ -125,6 +125,9 @@ async function start() {
     app.route("/gods/update").post(gods.godUpdateAPI)
     app.route("/gods/delete").post(gods.godDeleteAPI)
 
+    // Users
+    app.route("/user/:username").get(users.userPage)
+
     // Error endpoint
     app.route("/error").get((req, res) => {
         var err = new Error("deliberate error: error testing enpoint")

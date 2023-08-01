@@ -19,6 +19,39 @@ func LoginPage(ctx *gin.Context) {
 	})
 }
 
+func UserPage(ctx *gin.Context) {
+	perms := Authorize(ctx)
+	switch perms {
+	case "user", "admin":
+		result := make(map[string]interface{})
+		err := pgdb.NewSelect().Table("users").Where("? = ?", bun.Ident("username"), ctx.Param("username")).Scan(ctx.Request.Context(), &result)
+		if err != nil {
+			Log(ctx).WithError(err).Error(ctx.Error(err).Error())
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"message": "There was an issue with the Server, please try again later.",
+			})
+			return
+		}
+
+		delete(result, "password")
+
+		gintrace.HTML(ctx, http.StatusOK, "user.html", gin.H{
+			"title": "User",
+			"user":  result,
+		})
+
+	case "no_auth":
+		ctx.Redirect(http.StatusFound, "/login")
+
+	default:
+		gintrace.HTML(ctx, http.StatusFound, "error.html", gin.H{
+			"title":    "Error",
+			"httpCode": "500",
+			"message":  "There was an issue with the Server, please try again later.",
+		})
+	}
+}
+
 func LoginAPI(ctx *gin.Context) {
 	login := make(map[string]string)
 	ctx.ShouldBind(&login)

@@ -228,6 +228,9 @@ func main() {
 	app.POST("/gods/update", GodUpdateAPI)
 	app.POST("/gods/delete", GodDeleteAPI)
 
+	// Users
+	app.GET("/user/:username", UserPage)
+
 	// Error endpoint
 	app.GET("/error", func(ctx *gin.Context) {
 		time.Sleep(500000)
