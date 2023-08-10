@@ -1,0 +1,82 @@
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Properties;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.env.Environment;
+import org.springframework.util.ResourceUtils;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import com.samskivert.mustache.Mustache;
+
+@SpringBootConfiguration
+@EnableAutoConfiguration
+@ComponentScan("controllers")
+public class app implements WebMvcConfigurer {
+
+	//* Add Mustache reader that supports partials
+	@Bean
+	public Mustache.Compiler mustacheCompiler(Mustache.TemplateLoader templateLoader, Environment environment) {
+		templateLoader = new Mustache.TemplateLoader() {
+			public Reader getTemplate(String name) throws FileNotFoundException {
+				ArrayList<String> partials = new ArrayList<String>();
+				partials.add("footer");
+				partials.add("head");
+				partials.add("nav");
+
+				if (partials.contains(name)) {
+					return new FileReader(ResourceUtils.getFile("file:services/frontend/partials/" + name + ".html"));
+				} else {
+					return new FileReader(ResourceUtils.getFile("file:services/frontend/pages/" + name + ".html"));
+				}
+			}
+		};
+
+		return Mustache.compiler()
+				.defaultValue("error")
+				.withLoader(templateLoader);
+	}
+	// */
+
+	//* Set up statics
+	@Override
+	public void addResourceHandlers(final ResourceHandlerRegistry registry) {
+		registry.addResourceHandler("/js/**").addResourceLocations("file:js/");
+		registry.addResourceHandler("/css/**").addResourceLocations("file:statics/css/");
+		registry.addResourceHandler("/img/**").addResourceLocations("file:statics/img/");
+	}
+	// */
+
+	public static void main(String[] args) {
+		// Create the app
+		SpringApplication app = new SpringApplication(app.class);
+
+		// Define properties
+		Properties properties = new Properties();
+
+		// Set up SSL
+		properties.put("server.port", 443);
+		properties.put("server.ssl.certificate", "file:cert/cert.pem");
+		properties.put("server.ssl.trust-certificate", "file:cert/cert.pem");
+		properties.put("server.ssl.certificate-private-key", "file:cert/key.pem");
+
+		properties.put("logging.level.root", "DEBUG");
+
+		// Configure views
+		properties.put("spring.mustache.prefix", "file:services/frontend/pages/");
+		properties.put("spring.mustache.suffix", ".html");
+
+		// Set properties
+		app.setDefaultProperties(properties);
+
+		System.out.println("start appliction");
+		app.run(args);
+	}
+}

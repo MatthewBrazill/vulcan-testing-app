@@ -49,6 +49,29 @@ services:
     labels:
       com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-js","path":"/vulcan-logs/node.log"}]'
       com.datadoghq.ad.tags: '["env:docker","service:vulcan-js"]'
+  vulcan-java:
+    image: maven:3.9-eclipse-temurin-17
+    container_name: vulcan-java
+    ports:
+      - 4431:443
+    networks:
+      - vulcan_app
+      - tracing_bridge
+    environment:
+      - DD_ENV=docker
+      - DD_SERIVCE=vulcan-java
+      - DD_AGENT_HOST=datadog-agent
+      - DD_TRACE_AGENT_PORT=8126
+      - DD_TRACE_CLIENT_IP_ENABLED=true
+      - VULCAN_SESSION_KEY=2PbmuNW_uRkaf6Kux!ByK!yT!UmMZZ9B
+    working_dir: /usr/vulcan
+    volumes:
+      - ./:/usr/vulcan/
+      - /tmp/vulcan-logs:/usr/vulcan/logs
+    command: bash -c "mvn clean install && java -jar ./target/vulcan.jar"
+    labels:
+      com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-java","path":"/vulcan-logs/java.log"}]'
+      com.datadoghq.ad.tags: '["env:docker","service:vulcan-java"]'
   god-database:
     image: mongo:latest
     container_name: god-database
