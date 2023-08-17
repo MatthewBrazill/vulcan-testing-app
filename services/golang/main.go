@@ -243,9 +243,10 @@ func main() {
 	// 404 page
 	app.NoRoute(func(ctx *gin.Context) {
 		gintrace.HTML(ctx, http.StatusNotFound, "error.html", gin.H{
-			"Title":    "Not Found",
-			"HttpCode": "404",
-			"Message":  "There was an issue with the Server, please try again later.",
+			"title":    "Not Found",
+			"language": "GO",
+			"httpCode": "404",
+			"message":  "There was an issue with the Server, please try again later.",
 		})
 	})
 

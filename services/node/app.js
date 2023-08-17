@@ -147,6 +147,7 @@ async function start() {
     app.use(function notFoundPage(req, res) {
         res.status(404).render("error", {
             title: "Not Found",
+            language: "JavaScript",
             httpCode: "404",
             message: "There was an issue with the Server, please try again later."
         })

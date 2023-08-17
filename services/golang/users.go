@@ -16,6 +16,7 @@ func LoginPage(ctx *gin.Context) {
 
 	gintrace.HTML(ctx, http.StatusOK, "login.html", gin.H{
 		"title": "Login Page",
+		"language": "GO",
 	})
 }
 
@@ -37,6 +38,7 @@ func UserPage(ctx *gin.Context) {
 
 		gintrace.HTML(ctx, http.StatusOK, "user.html", gin.H{
 			"title": "User",
+			"language": "GO",
 			"user":  result,
 		})
 
@@ -46,6 +48,7 @@ func UserPage(ctx *gin.Context) {
 	default:
 		gintrace.HTML(ctx, http.StatusFound, "error.html", gin.H{
 			"title":    "Error",
+			"language": "GO",
 			"httpCode": "500",
 			"message":  "There was an issue with the Server, please try again later.",
 		})

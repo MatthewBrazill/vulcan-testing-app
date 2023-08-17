@@ -15,6 +15,7 @@ func EditGodPage(ctx *gin.Context) {
 	case "user", "admin":
 		gintrace.HTML(ctx, http.StatusOK, "edit_god.html", gin.H{
 			"title": "Edit God",
+			"language": "GO",
 		})
 
 	case "no_auth":
@@ -23,6 +24,7 @@ func EditGodPage(ctx *gin.Context) {
 	default:
 		gintrace.HTML(ctx, http.StatusFound, "error.html", gin.H{
 			"title":    "Error",
+			"language": "GO",
 			"httpCode": "500",
 			"message":  "There was an issue with the Server, please try again later.",
 		})
@@ -35,6 +37,7 @@ func AddGodPage(ctx *gin.Context) {
 	case "user", "admin":
 		gintrace.HTML(ctx, http.StatusOK, "add_god.html", gin.H{
 			"title": "Add God",
+			"language": "GO",
 		})
 
 	case "no_auth":
@@ -43,6 +46,7 @@ func AddGodPage(ctx *gin.Context) {
 	default:
 		gintrace.HTML(ctx, http.StatusFound, "error.html", gin.H{
 			"title":    "Error",
+			"language": "GO",
 			"httpCode": "500",
 			"message":  "There was an issue with the Server, please try again later.",
 		})
@@ -55,6 +59,7 @@ func StoragePage(ctx *gin.Context) {
 	case "user", "admin":
 		gintrace.HTML(ctx, http.StatusOK, "storage.html", gin.H{
 			"title": "God Storage",
+			"language": "GO",
 		})
 
 	case "no_auth":
@@ -63,6 +68,7 @@ func StoragePage(ctx *gin.Context) {
 	default:
 		gintrace.HTML(ctx, http.StatusFound, "error.html", gin.H{
 			"title":    "Error",
+			"language": "GO",
 			"httpCode": "500",
 			"message":  "There was an issue with the Server, please try again later.",
 		})

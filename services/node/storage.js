@@ -11,7 +11,8 @@ const storage = {
         switch (perms) {
             case "user", "admin":
                 res.status(200).render("edit_god", {
-                    title: "Edit God"
+                    title: "Edit God",
+                    language: "JavaScript"
                 })
                 break
 
@@ -22,6 +23,7 @@ const storage = {
             default:
                 res.status(500).render("error", {
                     title: "Error",
+                    language: "JavaScript",
                     httpCode: "500",
                     message: "There was an issue with the Server, please try again later."
                 })
@@ -33,7 +35,8 @@ const storage = {
         switch (perms) {
             case "user", "admin":
                 res.status(200).render("add_god", {
-                    title: "Add God"
+                    title: "Add God",
+                    language: "JavaScript"
                 })
                 break
 
@@ -44,6 +47,7 @@ const storage = {
             default:
                 res.status(500).render("error", {
                     title: "Error",
+                    language: "JavaScript",
                     httpCode: "500",
                     message: "There was an issue with the Server, please try again later."
                 })
@@ -55,7 +59,8 @@ const storage = {
         switch (perms) {
             case "user", "admin":
                 res.status(200).render("storage", {
-                    title: "God Storage"
+                    title: "God Storage",
+                    language: "JavaScript"
                 })
                 break
 
@@ -66,6 +71,7 @@ const storage = {
             default:
                 res.status(500).render("error", {
                     title: "Error",
+                    language: "JavaScript",
                     httpCode: "500",
                     message: "There was an issue with the Server, please try again later."
                 })

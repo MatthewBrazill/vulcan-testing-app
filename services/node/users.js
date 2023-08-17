@@ -11,7 +11,8 @@ const users = {
         req.session.destroy()
 
         res.status(200).render("login", {
-            title: "Login Page"
+            title: "Login Page",
+            language: "JavaScript"
         })
     },
 
@@ -26,6 +27,7 @@ const users = {
 
                 res.status(200).render("user", {
                     title: "User",
+                    language: "JavaScript",
                     user: result
                 })
                 break
@@ -37,6 +39,7 @@ const users = {
             default:
                 res.status(500).render("error", {
                     title: "Error",
+                    language: "JavaScript",
                     httpCode: "500",
                     message: "There was an issue with the Server, please try again later."
                 })
