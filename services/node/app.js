@@ -129,22 +129,22 @@ async function start() {
     app.route("/user/:username").get(users.userPage)
 
     // Error endpoint
-    app.route("/error").get((req, res) => {
+    app.route("/error").get(function errorAPI(req, res) {
         var err = new Error("deliberate error: error testing enpoint")
+        const span = tracer.scope().active()
+        span.setTag('error', err)
         logger.error({
             error: err.message,
             stack: err.stack,
             message: "Error from the error testing enpoint."
         })
         setTimeout(() => {
-            res.status(500).json({
-                message: "This is a error testing endpoint. It will always return a 500 error.",
-            })
+            res.status(500).json({ message: "This is a error testing endpoint. It will always return a 500 error.", })
         }, 500)
     })
 
     // 404 page
-    app.use((req, res) => {
+    app.use(function notFoundPage(req, res) {
         res.status(404).render("error", {
             title: "Not Found",
             httpCode: "404",
