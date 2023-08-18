@@ -26,6 +26,19 @@ tags:
   - "app:vulcan"
 ---
 schema-version: v2
+dd-service: vulcan-java
+team: Matthew Brazill
+repos:
+  - name: Source Code
+    provider: GitHub
+    url: https://github.com/MatthewBrazill/vulcan-testing-app
+contacts:
+  - type: email
+    contact: matthew.brazill@datadoghq.com
+tags:
+  - "app:vulcan"
+---
+schema-version: v2
 dd-service: vulcan-ui
 team: Matthew Brazill
 repos:
