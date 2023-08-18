@@ -132,11 +132,13 @@ func main() {
 	pool := &redigo.Pool{
 		MaxIdle:   10,
 		MaxActive: 12000,
-		Dial: func() (redigo.Conn, error) {
-			return redigotrace.DialContext(&gin.Context{}, "tcp", redisURL, redigotrace.WithServiceName("session-store"))
+
+		DialContext: func(ctx context.Context) (redigo.Conn, error) {
+			return redigotrace.DialContext(context.Background(), "tcp", redisURL, redigotrace.WithServiceName("session-store"), redigotrace.WithContextConnection())
 		},
 	}
 	store, err := redisStore.NewStoreWithPool(pool, []byte(sessionKey))
+	redisStore.SetKeyPrefix(store, "go:sess:")
 	if err != nil {
 		LogInitEvent().WithError(err).Error("Failed to connect to session-store.")
 		os.Exit(1)

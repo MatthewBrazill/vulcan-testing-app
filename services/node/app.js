@@ -68,7 +68,7 @@ async function start() {
             secure: true,
             httpOnly: true,
         },
-        store: new redisStore.default({ client: redisClient })
+        store: new redisStore.default({ client: redisClient, prefix: "js:sess:" })
     }))
 
     // Set up middleware logging
