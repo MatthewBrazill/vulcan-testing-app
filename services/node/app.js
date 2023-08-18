@@ -127,7 +127,7 @@ async function start() {
 
     // Users
     app.route("/user/:username").get(users.userPage)
-
+ 
     // Error endpoint
     app.route("/error").get(function errorAPI(req, res) {
         var err = new Error("deliberate error: error testing enpoint")
@@ -147,7 +147,7 @@ async function start() {
     app.use(function notFoundPage(req, res) {
         res.status(404).render("error", {
             title: "Not Found",
-            language: "JavaScript",
+            language: "JS",
             httpCode: "404",
             message: "There was an issue with the Server, please try again later."
         })

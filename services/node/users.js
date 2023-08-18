@@ -12,7 +12,7 @@ const users = {
 
         res.status(200).render("login", {
             title: "Login Page",
-            language: "JavaScript"
+            language: "JS"
         })
     },
 
@@ -27,7 +27,7 @@ const users = {
 
                 res.status(200).render("user", {
                     title: "User",
-                    language: "JavaScript",
+                    language: "JS",
                     user: result
                 })
                 break
@@ -39,7 +39,7 @@ const users = {
             default:
                 res.status(500).render("error", {
                     title: "Error",
-                    language: "JavaScript",
+                    language: "JS",
                     httpCode: "500",
                     message: "There was an issue with the Server, please try again later."
                 })
