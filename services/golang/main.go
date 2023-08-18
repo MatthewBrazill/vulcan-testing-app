@@ -132,7 +132,6 @@ func main() {
 	pool := &redigo.Pool{
 		MaxIdle:   10,
 		MaxActive: 12000,
-
 		DialContext: func(ctx context.Context) (redigo.Conn, error) {
 			return redigotrace.DialContext(context.Background(), "tcp", redisURL, redigotrace.WithServiceName("session-store"), redigotrace.WithContextConnection())
 		},
