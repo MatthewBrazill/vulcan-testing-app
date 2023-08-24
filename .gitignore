@@ -1,6 +1,6 @@
 # Binaries and packages
-vulcan
 node_modules
+target
 
 # Log files/folder
 logs
@@ -10,4 +10,3 @@ database
 
 # Other
 .DS_Store
-target
