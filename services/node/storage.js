@@ -9,7 +9,8 @@ const storage = {
     async editGodPage(req, res) {
         var perms = await helpers.authorize(req)
         switch (perms) {
-            case "user", "admin":
+            case "user":
+            case "admin":
                 res.status(200).render("edit_god", {
                     title: "Edit God",
                     language: "JS"
@@ -33,7 +34,8 @@ const storage = {
     async addGodPage(req, res) {
         var perms = await helpers.authorize(req)
         switch (perms) {
-            case "user", "admin":
+            case "user":
+            case "admin":
                 res.status(200).render("add_god", {
                     title: "Add God",
                     language: "JS"
@@ -57,7 +59,8 @@ const storage = {
     async storagePage(req, res) {
         var perms = await helpers.authorize(req)
         switch (perms) {
-            case "user", "admin":
+            case "user":
+            case "admin":
                 res.status(200).render("storage", {
                     title: "God Storage",
                     language: "JS"
@@ -81,7 +84,8 @@ const storage = {
     async storageSearchAPI(req, res) {
         var perms = await helpers.authorize(req)
         switch (perms) {
-            case "user", "admin":
+            case "user":
+            case "admin":
                 if (!await helpers.validate(req.body, [["filter", "[a-zA-Z]{0,32}"]])) {
                     res.status(400).json({
                         message: "There was an issue with your request.",

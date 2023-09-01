@@ -2,6 +2,10 @@
 
 // Imports
 const winston = require("winston")
+const fs = require("fs")
+
+// Create log file if it doesn't exist
+fs.closeSync(fs.openSync("./logs/node.log", 'w'))
 
 // Create the Logger
 const logger = winston.createLogger({

@@ -9,11 +9,14 @@ const helpers = {
         var username = req.session.username
 
         if (username == null || username == "") {
+            logger.debug("authorize using api key")
             var result = await pgdb.query("SELECT * FROM apikeys WHERE apikey = $1::text", [req.headers["api-key"]])
         } else {
+            logger.debug("authorize using username")
             var result = await pgdb.query("SELECT * FROM users WHERE username = $1::text", [username])
         }
 
+        logger.debug({ message: `authorize returned permissions: ${result.rows[0].permissions}`, permissions: result.rows[0].permissions })
         if (result.rowCount > 0) return result.rows[0].permissions
         else return "no_auth"
     },
@@ -40,6 +43,7 @@ const helpers = {
                 return false
             }
         }
+        logger.debug("validated request body")
         return true
     }
 }

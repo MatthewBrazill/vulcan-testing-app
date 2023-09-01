@@ -19,7 +19,8 @@ const users = {
     async userPage(req, res) {
         var perms = await helpers.authorize(req)
         switch (perms) {
-            case "user", "admin":
+            case "user":
+            case "admin":
                 var result = await pgdb.query("SELECT * FROM users WHERE username = $1::text", [req.params.username])
 
                 result = result.rows[0]
