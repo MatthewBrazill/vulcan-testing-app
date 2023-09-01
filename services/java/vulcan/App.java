@@ -1,3 +1,5 @@
+package vulcan;
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
@@ -18,10 +20,10 @@ import com.samskivert.mustache.Mustache;
 
 @SpringBootConfiguration
 @EnableAutoConfiguration
-@ComponentScan("controllers")
-public class app implements WebMvcConfigurer {
+@ComponentScan("vulcan.controllers")
+public class App implements WebMvcConfigurer {
 
-	//* Add Mustache reader that supports partials
+	// * Add Mustache reader that supports partials
 	@Bean
 	public Mustache.Compiler mustacheCompiler(Mustache.TemplateLoader templateLoader, Environment environment) {
 		templateLoader = new Mustache.TemplateLoader() {
@@ -45,7 +47,7 @@ public class app implements WebMvcConfigurer {
 	}
 	// */
 
-	//* Set up statics
+	// * Set up statics
 	@Override
 	public void addResourceHandlers(final ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/js/**").addResourceLocations("file:js/");
@@ -56,7 +58,7 @@ public class app implements WebMvcConfigurer {
 
 	public static void main(String[] args) {
 		// Create the app
-		SpringApplication app = new SpringApplication(app.class);
+		SpringApplication app = new SpringApplication(App.class);
 
 		// Define properties
 		Properties properties = new Properties();
@@ -67,7 +69,13 @@ public class app implements WebMvcConfigurer {
 		properties.put("server.ssl.trust-certificate", "file:cert/cert.pem");
 		properties.put("server.ssl.certificate-private-key", "file:cert/key.pem");
 
-		properties.put("logging.level.root", "DEBUG");
+		// Configure Sessions
+		properties.put("server.servlet.session.timeout", 86400);
+		properties.put("spring.session.store-type", "redis");
+		properties.put("spring.session.redis.flush-mode", "on_save");
+		properties.put("spring.session.redis.namespace", "java:sess");
+		properties.put("spring.data.redis.host", "session-store");
+		properties.put("spring.data.redis.port", 6379);
 
 		// Configure views
 		properties.put("spring.mustache.prefix", "file:services/frontend/pages/");
