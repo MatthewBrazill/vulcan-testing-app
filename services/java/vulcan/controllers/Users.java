@@ -1,8 +1,8 @@
 package vulcan.controllers;
 
+import java.sql.ResultSet;
 import java.util.Collections;
 import java.util.HashMap;
-import java.sql.*;
 
 import io.opentracing.Span;
 import io.opentracing.log.Fields;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import vulcan.Helpers;
+import vulcan.Databases;
 
 @Controller
 public class Users {
@@ -41,22 +42,21 @@ public class Users {
 	public HashMap<String, Object> loginAPI(HttpServletRequest req, HttpServletResponse res) {
 		String[][] params = { { "username", "^[a-zA-Z]{1,32}$" }, { "password", "^.{1,64}$" } };
 		HashMap<String, Object> body = new HashMap<String, Object>();
+		HashMap<String, Object> reqBody = Helpers.getBody(req);
 		Span span = GlobalTracer.get().activeSpan();
 
 		try {
-			HashMap<String, Object> reqBody = Helpers.getBody(req);
-
 			if (!Helpers.validate(req, params)) {
 				res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				body.put("message", "There was an issue with your request.");
 				return body;
 			}
 
-			//TODO Get password from database
-			DriverManager.getConnection(null, null, null);
-			
+			ResultSet result = Databases.userDatabase().executeQuery("SELECT * FROM users WHERE username = '" + reqBody.get("username").toString() + "'");
+			result.first();
+			String password = result.getString("password");
 
-			if (reqBody.get("password").equals("testingpassword")) {
+			if (reqBody.get("password").equals(password)) {
 				req.getSession().setAttribute("username", reqBody.get("username"));
 				res.setStatus(HttpServletResponse.SC_OK);
 				body.put("message", "Successfully logged in.");
