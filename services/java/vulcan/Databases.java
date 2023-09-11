@@ -6,6 +6,12 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Collections;
 
+import org.bson.Document;
+
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+
 import io.opentracing.Span;
 import io.opentracing.log.Fields;
 import io.opentracing.tag.Tags;
@@ -31,7 +37,19 @@ public class Databases {
         return statement;
     }
 
-    public static void godDatabse() {
-        return;
+    public static MongoCollection<Document> godDatabse() {
+        MongoCollection<Document> coll;
+        Span span = GlobalTracer.get().activeSpan();
+
+        try {
+            MongoClient client = MongoClients.create("mongodb://god-database:27017");
+            coll = client.getDatabase("vulcan").getCollection("gods");
+        } catch (Exception e) {
+            span.setTag(Tags.ERROR, true);
+            span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
+
+            coll = null;
+        }
+        return coll;
     }
 }
