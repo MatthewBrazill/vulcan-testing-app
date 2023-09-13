@@ -76,7 +76,39 @@ public class Gods {
     @ResponseBody
     @RequestMapping(value = "/gods/get", method = RequestMethod.POST)
     public HashMap<String, Object> godGetAPI(HttpServletRequest req, HttpServletResponse res) {
-        return null;
+        String[][] params = { { "godId", "^[a-zA-Z0-9]{5}$" } };
+        HashMap<String, Object> resBody = new HashMap<String, Object>();
+        HashMap<String, Object> reqBody = Helpers.decodeBody(req);
+        Span span = GlobalTracer.get().activeSpan();
+
+        if (!Helpers.validate(req, params)) {
+            res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resBody.put("message", "There was an issue with your request.");
+            return resBody;
+        }
+
+        try {
+            Document result = Databases.godDatabse().find(Filters.eq("godId", reqBody.get("godId"))).first();
+
+            if (result != null) {
+                res.setStatus(HttpServletResponse.SC_OK);
+                resBody.put("message", "Successfully retreived god.");
+                resBody.put("god", result);
+                return resBody;
+            } else {
+                res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                resBody.put("message", "Couldn't find a god with that ID.");
+                return resBody;
+            }
+        } catch (Exception e) {
+			res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			resBody.put("message", "There was an issue with the Server, please try again later.");
+
+			span.setTag(Tags.ERROR, true);
+			span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
+
+			return resBody;
+        }
     }
 
     @ResponseBody
