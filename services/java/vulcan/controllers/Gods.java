@@ -175,7 +175,7 @@ public class Gods {
 
             if (result.getDeletedCount() > 0) {
                 res.setStatus(HttpServletResponse.SC_OK);
-                resBody.put("message", "Successfully retreived god.");
+                resBody.put("message", "Successfully deleted god.");
                 resBody.put("god", result);
                 return resBody;
             } else {
