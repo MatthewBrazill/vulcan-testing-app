@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
+import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 
@@ -135,7 +136,7 @@ public class Gods {
                     Updates.set("domain", reqBody.get("domain")));
             UpdateResult result = Databases.godDatabse().updateOne(Filters.eq("godId", reqBody.get("godId")), update);
 
-            if (result.wasAcknowledged()) {
+            if (result.getModifiedCount() > 0) {
                 res.setStatus(HttpServletResponse.SC_OK);
                 resBody.put("message", "Successfully updated god.");
                 return resBody;
@@ -158,6 +159,38 @@ public class Gods {
     @ResponseBody
     @RequestMapping(value = "/gods/delete", method = RequestMethod.POST)
     public HashMap<String, Object> godDeleteAPI(HttpServletRequest req, HttpServletResponse res) {
-        return null;
+        String[][] params = { { "godId", "^[a-zA-Z0-9]{5}$" } };
+        HashMap<String, Object> reqBody = Helpers.decodeBody(req);
+        HashMap<String, Object> resBody = new HashMap<String, Object>();
+        Span span = GlobalTracer.get().activeSpan();
+
+        if (!Helpers.validate(req, params)) {
+            res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resBody.put("message", "There was an issue with your request.");
+            return resBody;
+        }
+
+        try {
+            DeleteResult result = Databases.godDatabse().deleteOne(Filters.eq("godId", reqBody.get("godId")));
+
+            if (result.getDeletedCount() > 0) {
+                res.setStatus(HttpServletResponse.SC_OK);
+                resBody.put("message", "Successfully retreived god.");
+                resBody.put("god", result);
+                return resBody;
+            } else {
+                res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                resBody.put("message", "Couldn't find a god with that ID.");
+                return resBody;
+            }
+        } catch (Exception e) {
+			res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			resBody.put("message", "There was an issue with the Server, please try again later.");
+
+			span.setTag(Tags.ERROR, true);
+			span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
+
+			return resBody;
+        }
     }
 }
