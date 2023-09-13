@@ -29,7 +29,7 @@ public class Gods {
     public HashMap<String, Object> godCreateAPI(HttpServletRequest req, HttpServletResponse res) {
         String[][] params = { { "pantheon", "^[a-zA-Z]{1,32}$" }, { "name", "^[a-zA-Z]{1,32}$" }, { "domain", "^[0-9a-zA-Z ]{1,32}$" } };
         HashMap<String, Object> resBody = new HashMap<String, Object>();
-        HashMap<String, Object> reqBody = Helpers.getBody(req);
+        HashMap<String, Object> reqBody = Helpers.decodeBody(req);
         Span span = GlobalTracer.get().activeSpan();
 
         if (!Helpers.validate(req, params)) {

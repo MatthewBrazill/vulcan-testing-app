@@ -42,7 +42,7 @@ public class Users {
 	public HashMap<String, Object> loginAPI(HttpServletRequest req, HttpServletResponse res) {
 		String[][] params = { { "username", "^[a-zA-Z]{1,32}$" }, { "password", "^.{1,64}$" } };
 		HashMap<String, Object> body = new HashMap<String, Object>();
-		HashMap<String, Object> reqBody = Helpers.getBody(req);
+		HashMap<String, Object> reqBody = Helpers.decodeBody(req);
 		Span span = GlobalTracer.get().activeSpan();
 
 		try {
