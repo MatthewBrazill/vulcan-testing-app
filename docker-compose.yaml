@@ -9,7 +9,7 @@ services:
       - 80:80
     networks:
       - vulcan_app
-      - tracing_bridge
+      - datadog_bridge
     environment:
       - DD_ENV=docker
       - DD_SERIVCE=vulcan-go
@@ -32,7 +32,7 @@ services:
       - 4430:443
     networks:
       - vulcan_app
-      - tracing_bridge
+      - datadog_bridge
     environment:
       - DD_ENV=docker
       - DD_SERIVCE=vulcan-js
@@ -56,7 +56,7 @@ services:
       - 4431:443
     networks:
       - vulcan_app
-      - tracing_bridge
+      - datadog_bridge
     environment:
       - DD_ENV=docker
       - DD_SERIVCE=vulcan-java
@@ -68,7 +68,7 @@ services:
     volumes:
       - ./:/usr/vulcan/
       - /tmp/vulcan-logs:/usr/vulcan/logs
-    command: bash -c "mvn clean install && java -jar ./target/vulcan.jar"
+    command: bash -c "wget -nc -O /usr/src/dd-java-agent.jar https://dtdg.co/latest-java-tracer; mvn install && java -javaagent:/usr/src/dd-java-agent.jar -Ddd.env=docker -Ddd.service=vulcan-java -Ddd.version=0.1.1 -Ddd.service.mapping=redis:session-store,postgresql:user-database,mongo:god-database -Ddd.tags=git.commit.sha:$(git rev-parse HEAD),git.repository_url:github.com/MatthewBrazill/vulcan-testing-app -jar ./target/vulcan.jar"
     labels:
       com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-java","path":"/vulcan-logs/java.log"}]'
       com.datadoghq.ad.tags: '["env:docker","service:vulcan-java"]'
@@ -79,7 +79,7 @@ services:
       - 27017:27017
     networks:
       - vulcan_app
-      - tracing_bridge
+      - datadog_bridge
     volumes:
       - ./database/gods:/data/db
     labels:
@@ -95,7 +95,7 @@ services:
       - 5432:5432
     networks:
       - vulcan_app
-      - tracing_bridge
+      - datadog_bridge
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
@@ -113,7 +113,7 @@ services:
       - 6379:6379
     networks:
       - vulcan_app
-      - tracing_bridge
+      - datadog_bridge
     volumes:
       - ./database/sessions:/data
     labels:
@@ -125,6 +125,6 @@ services:
 networks:
   vulcan_app:
     name: vulcan_app
-  tracing_bridge:
-    name: tracing_bridge
+  datadog_bridge:
+    name: datadog_bridge
     external: true
