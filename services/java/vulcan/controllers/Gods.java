@@ -28,8 +28,8 @@ public class Gods {
     @RequestMapping(value = "/gods/create", method = RequestMethod.POST)
     public HashMap<String, Object> godCreateAPI(HttpServletRequest req, HttpServletResponse res) {
         String[][] params = { { "pantheon", "^[a-zA-Z]{1,32}$" }, { "name", "^[a-zA-Z]{1,32}$" }, { "domain", "^[0-9a-zA-Z ]{1,32}$" } };
-        HashMap<String, Object> resBody = new HashMap<String, Object>();
         HashMap<String, Object> reqBody = Helpers.decodeBody(req);
+        HashMap<String, Object> resBody = new HashMap<String, Object>();
         Span span = GlobalTracer.get().activeSpan();
 
         if (!Helpers.validate(req, params)) {
@@ -77,8 +77,8 @@ public class Gods {
     @RequestMapping(value = "/gods/get", method = RequestMethod.POST)
     public HashMap<String, Object> godGetAPI(HttpServletRequest req, HttpServletResponse res) {
         String[][] params = { { "godId", "^[a-zA-Z0-9]{5}$" } };
-        HashMap<String, Object> resBody = new HashMap<String, Object>();
         HashMap<String, Object> reqBody = Helpers.decodeBody(req);
+        HashMap<String, Object> resBody = new HashMap<String, Object>();
         Span span = GlobalTracer.get().activeSpan();
 
         if (!Helpers.validate(req, params)) {
