@@ -58,8 +58,13 @@ public class Helpers {
                         String[] body = req.getReader().readLine().split("&");
                         for (int i = 0; i < body.length; i++) {
                             String[] attribute = body[i].split("=");
-                            if (attribute[1] != "") {
+                            if (attribute.length == 2) {
                                 output.put(attribute[0], attribute[1]);
+                            } else if (attribute.length == 1) {
+                                output.put(attribute[0], "");
+                            } else {
+                                span.setTag(Tags.ERROR, true);
+                                span.log(Collections.singletonMap(Fields.ERROR_OBJECT, new Exception("Unexpected Attribute Length: length: " + attribute.length + "; value: " + attribute.toString())));
                             }
                         }
                         break;
