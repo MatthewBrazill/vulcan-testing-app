@@ -1,13 +1,21 @@
 package vulcan.controllers;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.bson.Document;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.model.Filters;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import vulcan.Databases;
 import vulcan.Helpers;
 
 @Controller
@@ -107,7 +115,42 @@ public class Storage {
 
     @ResponseBody
     @RequestMapping(value = "/storage/search", method = RequestMethod.POST)
-    public String storageSearchAPI(HttpServletRequest req, HttpServletResponse res) {
-        return "";
+    public HashMap<String, Object> storageSearchAPI(HttpServletRequest req, HttpServletResponse res) {
+        String perms = Helpers.authenticate(req);
+        String[][] params = { { "filter", "[a-zA-Z]{0,32}" } };
+        HashMap<String, Object> reqBody = Helpers.decodeBody(req);
+        HashMap<String, Object> resBody = new HashMap<String, Object>();
+
+        switch (perms) {
+            case "user":
+            case "admin":
+                if (!Helpers.validate(req, params)) {
+                    res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    resBody.put("message", "There was an issue with your request.");
+                    return resBody;
+                }
+ 
+                ArrayList<Document> gods = new ArrayList<Document>();
+                MongoCursor<Document> result = Databases.godDatabse().find(Filters.regex("name", reqBody.get("filter").toString(), "i")).cursor();
+                for (int i = 0; result.hasNext(); i++) {
+                    Document god = result.next();
+                    god.remove("_id");
+                    gods.add(i, god);
+                }
+
+                resBody.put("message", "Successfully filtered gods.");
+                resBody.put("result", gods);
+                return resBody;
+
+            case "no_auth":
+                res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                resBody.put("message", "Your credentials are invalid.");
+                return resBody;
+
+            default:
+                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                resBody.put("message", "There was an issue with the Server, please try again later.");
+                return resBody;
+        }
     }
 }
