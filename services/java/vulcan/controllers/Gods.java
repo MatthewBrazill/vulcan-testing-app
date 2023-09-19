@@ -95,6 +95,7 @@ public class Gods {
             Document result = Databases.godDatabse().find(Filters.eq("godId", reqBody.get("godId"))).first();
 
             if (result != null) {
+                result.remove("_id");
                 res.setStatus(HttpServletResponse.SC_OK);
                 resBody.put("message", "Successfully retreived god.");
                 resBody.put("god", result);
