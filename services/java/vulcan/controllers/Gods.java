@@ -48,7 +48,7 @@ public class Gods {
                String chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
                Random rand = new Random();
 
-               char selected = chars.charAt(rand.nextInt(64));
+               char selected = chars.charAt(rand.nextInt(62));
                godId = godId + selected;
             }
 
