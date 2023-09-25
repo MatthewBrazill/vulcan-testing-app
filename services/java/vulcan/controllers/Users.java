@@ -52,7 +52,7 @@ public class Users {
 				return body;
 			}
 
-			ResultSet result = Databases.userDatabase().executeQuery("SELECT * FROM users WHERE username = '" + reqBody.get("username").toString() + "'");
+			ResultSet result = Databases.userDatabase().executeQuery("SELECT * FROM users WHERE username = '" + reqBody.get("username") + "'");
 			result.first();
 			String password = result.getString("password");
 

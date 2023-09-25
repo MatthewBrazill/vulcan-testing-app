@@ -1,6 +1,8 @@
 package vulcan;
 
 import java.io.Reader;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.util.Collections;
 import java.util.HashMap;
@@ -59,7 +61,7 @@ public class Helpers {
                         for (int i = 0; i < body.length; i++) {
                             String[] attribute = body[i].split("=");
                             if (attribute.length == 2) {
-                                output.put(attribute[0], attribute[1]);
+                                output.put(attribute[0], URLDecoder.decode(attribute[1], StandardCharsets.UTF_8));
                             } else if (attribute.length == 1) {
                                 output.put(attribute[0], "");
                             } else {
