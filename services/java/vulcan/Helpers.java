@@ -21,6 +21,7 @@ import datadog.trace.api.Trace;
 
 public class Helpers {
 
+    @Trace(operationName = "vulcan.helper", resourceName = "Helpers.validate")
     public static Boolean validate(HttpServletRequest req, String[][] patterns) {
         return true;
     }
@@ -33,16 +34,28 @@ public class Helpers {
 
         try {
             if (req.getHeader("api-key") != null) {
+                span.setTag("auth_method", "api_key");
                 result = Databases.userDatabase().executeQuery("SELECT * FROM apikeys WHERE apikey = '" + req.getHeader("api-key") + "'");
             } else if (session.getAttribute("username") != null) {
+                span.setTag("auth_method", "session");
                 result = Databases.userDatabase().executeQuery("SELECT * FROM users WHERE username = '" + session.getAttribute("username") + "'");
-            } else return "no_auth";
+            } else {
+                span.setTag("auth_method", "none");
+                span.setTag("auth", false);
+                return "no_auth";
+            }
 
-            if (result.first()) return result.getString("permissions");
-            else return "no_auth";
+            if (result.first()) {
+                span.setTag("auth", true);
+                return result.getString("permissions");
+            } else {
+                span.setTag("auth", false);
+                return "no_auth";
+            }
         } catch (Exception e) {
             span.setTag(Tags.ERROR, true);
             span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
+            span.setTag("auth", true);
             return "error";
         }
     }
@@ -55,6 +68,7 @@ public class Helpers {
         try {
             if (req.getReader().ready()) {
                 String contentType = req.getContentType().split(";")[0];
+                span.setTag("content_type", contentType);
                 switch (contentType) {
                     case "application/x-www-form-urlencoded":
                         String[] body = req.getReader().readLine().split("&");
