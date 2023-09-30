@@ -1,24 +1,6 @@
 "use strict"
 
-// Initialize Datadog Traces
-//import "./tracer.js"
-
-/* Import the extensions
-import express from "express"
-import session from "express-session"
-import cookie from "cookie-parser"
-import redisStore from "connect-redis"
-import redis from "redis"
-import https from "https"
-import fs from "fs"
-import hbs from "express-handlebars"
-import logger from "./logger.js"
-import gods from "./gods.js"
-import storage from "./storage.js"
-import users from "./users.js"
-//*/
-
-//* Require the extentions
+// Require the extentions
 const tracer = require("dd-trace")
 tracer.init({
     hostname: 'datadog-agent',
@@ -47,7 +29,6 @@ const logger = require("./logger.js")
 const gods = require("./gods.js")
 const storage = require("./storage.js")
 const users = require("./users.js")
-//*/
 
 async function start() {
     // Create the app
@@ -101,6 +82,8 @@ async function start() {
     app.use(express.static("./statics"))
     app.use(cookie())
 
+
+
     // Define routes
     app.route("/").get((req, res) => { res.status(301).redirect("/storage") })
 
@@ -127,7 +110,7 @@ async function start() {
 
     // Users
     app.route("/user/:username").get(users.userPage)
- 
+
     // Error endpoint
     app.route("/error").get(function errorAPI(req, res) {
         var err = new Error("deliberate error: error testing enpoint")
@@ -165,7 +148,7 @@ start().catch((err) => {
     logger.error({
         error: err.message,
         stack: err.stack,
-        message: "Fatal error when starting server"
+        message: `fatal error when starting server: ${err.name}`
     })
-    console.log(`Fatal error when starting server: ${err}`)
+    console.log(`fatal error when starting server: ${err}`)
 })

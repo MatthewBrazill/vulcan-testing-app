@@ -32,7 +32,7 @@ const helpers = {
                 }
             } catch (err) {
                 span.setTag("auth", false)
-                return "error"
+                return err
             }
         })
     },
