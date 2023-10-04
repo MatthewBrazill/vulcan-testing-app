@@ -1,7 +1,7 @@
 ---
 schema-version: v2
 dd-service: vulcan-go
-team: Matthew Brazill
+team: matthew
 repos:
   - name: Source Code
     provider: GitHub
@@ -14,7 +14,7 @@ tags:
 ---
 schema-version: v2
 dd-service: vulcan-js
-team: Matthew Brazill
+team: matthew
 repos:
   - name: Source Code
     provider: GitHub
@@ -27,7 +27,7 @@ tags:
 ---
 schema-version: v2
 dd-service: vulcan-java
-team: Matthew Brazill
+team: matthew
 repos:
   - name: Source Code
     provider: GitHub
@@ -40,7 +40,7 @@ tags:
 ---
 schema-version: v2
 dd-service: vulcan-ui
-team: Matthew Brazill
+team: matthew
 repos:
   - name: Source Code
     provider: GitHub
@@ -53,7 +53,7 @@ tags:
 ---
 schema-version: v2
 dd-service: god-database
-team: Matthew Brazill
+team: matthew
 docs:
   - name: MongoDB Docs
     provider: mongodb
@@ -66,7 +66,7 @@ tags:
 ---
 schema-version: v2
 dd-service: user-database
-team: Matthew Brazill
+team: matthew
 docs:
   - name: PostgresSQL Docs
     provider: postgres
@@ -79,7 +79,7 @@ tags:
 ---
 schema-version: v2
 dd-service: session-store
-team: Matthew Brazill
+team: matthew
 docs:
   - name: Redis Docs
     provider: redis
