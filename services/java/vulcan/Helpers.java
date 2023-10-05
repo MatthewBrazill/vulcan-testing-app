@@ -55,7 +55,7 @@ public class Helpers {
         } catch (Exception e) {
             span.setTag(Tags.ERROR, true);
             span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
-            span.setTag("auth", true);
+            span.setTag("auth", false);
             return "error";
         }
     }
