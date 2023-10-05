@@ -36,10 +36,7 @@ public class Storage {
                     res.setStatus(HttpServletResponse.SC_FOUND);
                     res.sendRedirect("/login");
                     return null;
-                } catch (Exception e) {
-                    res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                    return "error";
-                }
+                } catch (Exception e) {}
 
             default:
                 model.addAttribute("title", "Error");
@@ -67,10 +64,7 @@ public class Storage {
                     res.setStatus(HttpServletResponse.SC_FOUND);
                     res.sendRedirect("/login");
                     return null;
-                } catch (Exception e) {
-                    res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                    return "error";
-                }
+                } catch (Exception e) {}
 
             default:
                 model.addAttribute("title", "Error");
@@ -98,10 +92,7 @@ public class Storage {
                     res.setStatus(HttpServletResponse.SC_FOUND);
                     res.sendRedirect("/login");
                     return null;
-                } catch (Exception e) {
-                    res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                    return "error";
-                }
+                } catch (Exception e) {}
 
             default:
                 model.addAttribute("title", "Error");
