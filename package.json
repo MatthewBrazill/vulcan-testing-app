@@ -1,6 +1,6 @@
 {
 	"name": "vulcan-js",
-	"version": "0.1.1",
+	"version": "1.2.0",
 	"description": "A small application I used to learn JavaScript and now use to test new stuff with.",
 	"main": "./services/node/app.js",
 	"scripts": {
