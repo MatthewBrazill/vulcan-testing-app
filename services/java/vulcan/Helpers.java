@@ -56,7 +56,7 @@ public class Helpers {
             span.setTag(Tags.ERROR, true);
             span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
             span.setTag("auth", false);
-            return "error";
+            return "no_auth";
         }
     }
 

@@ -33,7 +33,7 @@ func Authorize(ctx *gin.Context) string {
 
 				span.SetTag("auth", false)
 				Log(ctx).WithError(err).Error(ctx.Error(err).Error())
-				return "error"
+				return "no_auth"
 			}
 		} else {
 			span.SetTag("auth_method", "none")
@@ -53,7 +53,7 @@ func Authorize(ctx *gin.Context) string {
 
 			span.SetTag("auth", false)
 			Log(ctx).WithError(err).Error(ctx.Error(err).Error())
-			return "error"
+			return "no_auth"
 		}
 	}
 
