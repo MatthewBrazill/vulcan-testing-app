@@ -17,7 +17,14 @@ nav {
 
 #nav-title {
     text-align: center;
-    padding-right: 250px;
+}
+
+#nav-logout {
+    width: 250px;
+}
+
+#logout-button {
+    width: 100px;
 }
 
 
