@@ -4,8 +4,9 @@
 
 if [ "$DD_ENV" == "kubernetes" ]
 then
-    git clone -q https://github.com/MatthewBrazill/vulcan-testing-app.git /vulcan
     cd /vulcan
+    git init
+    git clone -q https://github.com/MatthewBrazill/vulcan-testing-app.git
 fi
 
 export VULCAN_COMMIT_SHA=$(git rev-parse HEAD)
