@@ -2,7 +2,12 @@
 #
 # A startup script for each of the different sandbox envs available here!
 
-cd /vulcan
+if [ "$DD_ENV" == "kubernetes" ]
+then
+    git clone -q https://github.com/MatthewBrazill/vulcan-testing-app.git /vulcan
+    cd /vulcan
+fi
+
 export VULCAN_COMMIT_SHA=$(git rev-parse HEAD)
 
 if [ "$DD_SERVICE" == "vulcan-go" ]
