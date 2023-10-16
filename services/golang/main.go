@@ -42,8 +42,8 @@ var env string
 
 func main() {
 	// Change settings based on environment
-	service = "vulcan-go"
-	version = "1.2.0"
+	service = os.Getenv("DD_SERVICE")
+	version = os.Getenv("DD_VERSION")
 	env = os.Getenv("DD_ENV")
 	if env == "docker" { // Dockerised
 		mongoURL = "mongodb://god-database:27017/?connect=direct"

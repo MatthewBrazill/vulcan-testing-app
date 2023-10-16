@@ -5,14 +5,14 @@ services:
     image: golang:latest
     container_name: vulcan-go
     ports:
-      - 443:443
-      - 80:80
+      - 4430:443
     networks:
       - vulcan_app
       - datadog_bridge
     environment:
       - DD_ENV=docker
-      - DD_SERIVCE=vulcan-go
+      - DD_SERVICE=vulcan-go
+      - DD_VERSION=1.2.0
       - DD_APPSEC_ENABLED=true
       - DD_IAST_ENABLED=true
       - DD_AGENT_HOST=datadog-agent
@@ -21,9 +21,9 @@ services:
       - VULCAN_SESSION_KEY=2PbmuNW_uRkaf6Kux!ByK!yT!UmMZZ9B
     working_dir: /usr/vulcan
     volumes:
-      - ./:/usr/vulcan/
+      - ./:/vulcan/
       - /tmp/vulcan-logs:/usr/vulcan/logs
-    command: bash -c "export VULCAN_COMMIT_SHA=$(git rev-parse HEAD) && go mod download && go mod verify && go build -o /usr/local/bin/vulcan -tags appsec ./services/golang/... && vulcan"
+    command: bash ./startup.sh
     labels:
       com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-go","path":"/vulcan-logs/golang.log"}]'
       com.datadoghq.ad.tags: '["env:docker","service:vulcan-go"]'
@@ -36,13 +36,14 @@ services:
     image: node:18
     container_name: vulcan-js
     ports:
-      - 4430:443
+      - 4431:443
     networks:
       - vulcan_app
       - datadog_bridge
     environment:
       - DD_ENV=docker
-      - DD_SERIVCE=vulcan-js
+      - DD_SERVICE=vulcan-js
+      - DD_VERSION=1.2.0
       - DD_IAST_ENABLED=true
       - DD_AGENT_HOST=datadog-agent
       - DD_TRACE_AGENT_PORT=8126
@@ -51,9 +52,9 @@ services:
       - VULCAN_SESSION_KEY=2PbmuNW_uRkaf6Kux!ByK!yT!UmMZZ9B
     working_dir: /usr/vulcan
     volumes:
-      - ./:/usr/vulcan/
+      - ./:/vulcan/
       - /tmp/vulcan-logs:/usr/vulcan/logs
-    command: bash -c "export VULCAN_COMMIT_SHA=$(git rev-parse HEAD) && npm install . && node ./services/node/app.js"
+    command: bash ./startup.sh
     labels:
       com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-js","path":"/vulcan-logs/node.log"}]'
       com.datadoghq.ad.tags: '["env:docker","service:vulcan-js"]'
@@ -66,22 +67,22 @@ services:
     image: maven:3.9-eclipse-temurin-17
     container_name: vulcan-java
     ports:
-      - 4431:443
+      - 4432:443
     networks:
       - vulcan_app
       - datadog_bridge
     environment:
       - DD_ENV=docker
-      - DD_SERIVCE=vulcan-java
+      - DD_SERVICE=vulcan-java
       - DD_AGENT_HOST=datadog-agent
       - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_CLIENT_IP_ENABLED=true
       - VULCAN_SESSION_KEY=2PbmuNW_uRkaf6Kux!ByK!yT!UmMZZ9B
     working_dir: /usr/vulcan
     volumes:
-      - ./:/usr/vulcan/
+      - ./:/vulcan/
       - /tmp/vulcan-logs:/usr/vulcan/logs
-    command: bash -c "wget -nc -O /usr/src/dd-java-agent.jar https://dtdg.co/latest-java-tracer; mvn install && java -javaagent:/usr/src/dd-java-agent.jar -Ddd.env=docker -Ddd.service=vulcan-java -Ddd.version=1.2.1 -Ddd.profiling.enabled=true -Ddd.appsec.enabled=true -Ddd.iast.enabled=true -Ddd.service.mapping=redis:session-store,postgresql:user-database,mongo:god-database -Ddd.tags=git.commit.sha:$(git rev-parse HEAD),git.repository_url:github.com/MatthewBrazill/vulcan-testing-app -jar ./target/vulcan.jar"
+    command: bash ./startup.sh
     labels:
       com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-java","path":"/vulcan-logs/java.log"}]'
       com.datadoghq.ad.tags: '["env:docker","service:vulcan-java"]'
