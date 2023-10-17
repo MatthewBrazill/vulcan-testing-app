@@ -5,7 +5,8 @@ const winston = require("winston")
 const fs = require("fs")
 
 // Create log file if it doesn't exist
-fs.closeSync(fs.openSync("./logs/node.log", 'w'))
+//fs.closeSync(fs.openSync("./logs/node.log", 'w'))
+fs.writeFileSync("./logs/node.log", "")
 
 // Create the Logger
 const logger = winston.createLogger({
