@@ -26,9 +26,9 @@ then
     mvn install
     java -javaagent:/usr/src/dd-java-agent.jar \
         -Dvulcan.session.key=2PbmuNW_uRkaf6Kux!ByK!yT!UmMZZ9B \
-        -Ddd.env=${DD_ENV} \
-        -Ddd.service=${DD_SERVICE} \
-        -Ddd.version=${DD_VERSION} \
+        -Ddd.env=$DD_ENV \
+        -Ddd.service=$DD_SERVICE \
+        -Ddd.version=$DD_VERSION \
         -Ddd.profiling.enabled=true \
         -Ddd.appsec.enabled=true \
         -Ddd.iast.enabled=true \
