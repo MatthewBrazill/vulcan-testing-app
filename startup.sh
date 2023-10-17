@@ -7,7 +7,7 @@ then
     rm -rf /vulcan
     mkdir /vulcan
     cd /vulcan
-    git clone -q https://github.com/MatthewBrazill/vulcan-testing-app.git
+    git clone https://github.com/MatthewBrazill/vulcan-testing-app.git /vulcan
 fi
 
 export VULCAN_COMMIT_SHA=$(git rev-parse HEAD)
