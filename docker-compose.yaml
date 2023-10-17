@@ -18,8 +18,8 @@ services:
       - DD_AGENT_HOST=datadog-agent
       - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_CLIENT_IP_ENABLED=true
-      - VULCAN_SESSION_KEY=2PbmuNW_uRkaf6Kux!ByK!yT!UmMZZ9B
-    working_dir: /usr/vulcan
+      - VULCAN_SESSION_KEY=ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*
+    working_dir: /vulcan
     volumes:
       - ./:/vulcan/
       - /tmp/vulcan-logs:/usr/vulcan/logs
@@ -31,7 +31,7 @@ services:
       resources:
         limits:
           cpus: "1"
-          memory: 2G
+          memory: 512M
   vulcan-js:
     image: node:18
     container_name: vulcan-js
@@ -49,8 +49,8 @@ services:
       - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_CLIENT_IP_ENABLED=true
       - DD_TRACE_STARTUP_LOGS=true
-      - VULCAN_SESSION_KEY=2PbmuNW_uRkaf6Kux!ByK!yT!UmMZZ9B
-    working_dir: /usr/vulcan
+      - VULCAN_SESSION_KEY=ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*
+    working_dir: /vulcan
     volumes:
       - ./:/vulcan/
       - /tmp/vulcan-logs:/usr/vulcan/logs
@@ -62,7 +62,7 @@ services:
       resources:
         limits:
           cpus: "1"
-          memory: 2G
+          memory: 512M
   vulcan-java:
     image: maven:3.9-eclipse-temurin-17
     container_name: vulcan-java
@@ -77,8 +77,8 @@ services:
       - DD_AGENT_HOST=datadog-agent
       - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_CLIENT_IP_ENABLED=true
-      - VULCAN_SESSION_KEY=2PbmuNW_uRkaf6Kux!ByK!yT!UmMZZ9B
-    working_dir: /usr/vulcan
+      - VULCAN_SESSION_KEY=ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*
+    working_dir: /vulcan
     volumes:
       - ./:/vulcan/
       - /tmp/vulcan-logs:/usr/vulcan/logs
@@ -90,7 +90,7 @@ services:
       resources:
         limits:
           cpus: "1"
-          memory: 2G
+          memory: 512M
   god-database:
     image: mongo:latest
     container_name: god-database
@@ -111,7 +111,7 @@ services:
       resources:
         limits:
           cpus: "0.5"
-          memory: 4G
+          memory: 512M
   user-database:
     image: postgres:latest
     container_name: user-database
@@ -134,7 +134,7 @@ services:
       resources:
         limits:
           cpus: "0.5"
-          memory: 4G
+          memory: 512M
   session-store:
     image: redis/redis-stack-server:latest
     container_name: session-store
@@ -155,7 +155,7 @@ services:
       resources:
         limits:
           cpus: "0.5"
-          memory: 4G
+          memory: 512M
 networks:
   vulcan_app:
     name: vulcan_app

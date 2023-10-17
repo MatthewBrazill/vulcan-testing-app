@@ -56,7 +56,7 @@ spec:
             - name: DD_TRACE_CLIENT_IP_ENABLED
               value: "true"
             - name: VULCAN_SESSION_KEY
-              value: 2PbmuNW_uRkaf6Kux!ByK!yT!UmMZZ9B
+              value: ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*
           ports:
             - containerPort: 443
               protocol: TCP
@@ -121,7 +121,7 @@ spec:
             - name: DD_TRACE_CLIENT_IP_ENABLED
               value: "true"
             - name: VULCAN_SESSION_KEY
-              value: 2PbmuNW_uRkaf6Kux!ByK!yT!UmMZZ9B
+              value: ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*
           ports:
             - containerPort: 443
               protocol: TCP

@@ -45,25 +45,10 @@ func main() {
 	service = os.Getenv("DD_SERVICE")
 	version = os.Getenv("DD_VERSION")
 	env = os.Getenv("DD_ENV")
-	if env == "docker" { // Dockerised
-		mongoURL = "mongodb://god-database:27017/?connect=direct"
-		postgresURL = "postgresql://vulcan:yKCstvg4-hrB9pmDPzu.gG.jxzhcCafT@user-database:5432/vulcan_users"
-		redisURL = "session-store:6379"
-		sessionKey = "ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*"
-	} else if env == "kube" { // Kubernetes
-		mongoURL = "mongodb://172.17.0.2:27017/?connect=direct"
-		postgresURL = "postgresql://vulcan:yKCstvg4-hrB9pmDPzu.gG.jxzhcCafT@172.17.0.2:5432/vulcan_users"
-		redisURL = "172.17.0.2:6379"
-		sessionKey = "ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*"
-	} else if env == "dev" { // Local
-		mongoURL = "mongodb://localhost:27017/?connect=direct"
-		postgresURL = "postgresql://vulcan:yKCstvg4-hrB9pmDPzu.gG.jxzhcCafT@localhost:5432/vulcan_users"
-		redisURL = "localhost:6379"
-		sessionKey = "ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*"
-	} else {
-		LogInitEvent().Error("Environment is not recognized.")
-		os.Exit(1)
-	}
+	sessionKey = os.Getenv("VULCAN_SESSION_KEY")
+	mongoURL = "mongodb://god-database:27017/?connect=direct"
+	postgresURL = "postgresql://vulcan:yKCstvg4-hrB9pmDPzu.gG.jxzhcCafT@user-database:5432/vulcan_users"
+	redisURL = "session-store:6379"
 
 	// Create log file if not exist
 	os.Mkdir("logs", 0755)
