@@ -4,8 +4,9 @@
 
 if [ "$DD_ENV" == "kubernetes" ]
 then
-    rm /vulcan -R
+    rm -rf /vulcan
     mkdir /vulcan
+    git init
     git clone -q https://github.com/MatthewBrazill/vulcan-testing-app.git
 fi
 
