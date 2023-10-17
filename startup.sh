@@ -6,10 +6,10 @@ if [ "$DD_ENV" == "kubernetes" ]
 then
     rm /vulcan -R
     mkdir /vulcan
-    cd /vulcan
     git clone -q https://github.com/MatthewBrazill/vulcan-testing-app.git
 fi
 
+cd /vulcan
 export VULCAN_COMMIT_SHA=$(git rev-parse HEAD)
 
 if [ "$DD_SERVICE" == "vulcan-go" ]
@@ -23,7 +23,7 @@ then
     node ./services/node/app.js
 elif [ "$DD_SERVICE" = "vulcan-java" ]
 then
-    wget -nc -O /usr/src/dd-java-agent.jar https://dtdg.co/latest-java-tracer
+    wget -nc -nv -O /usr/src/dd-java-agent.jar https://dtdg.co/latest-java-tracer
     mvn install
     java -javaagent:/usr/src/dd-java-agent.jar \
         -Dvulcan.session.key=2PbmuNW_uRkaf6Kux!ByK!yT!UmMZZ9B \
