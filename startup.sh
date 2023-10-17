@@ -7,7 +7,6 @@ then
     rm -rf /vulcan
     mkdir /vulcan
     cd /vulcan
-    git init
     git clone -q https://github.com/MatthewBrazill/vulcan-testing-app.git
 fi
 
