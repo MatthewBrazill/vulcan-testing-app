@@ -5,9 +5,8 @@
 if [ "$DD_ENV" == "kubernetes" ]
 then
     rm -rf /vulcan
-    mkdir /vulcan
-    cd /vulcan
     git clone https://github.com/MatthewBrazill/vulcan-testing-app.git /vulcan
+    cd /vulcan
 fi
 
 export VULCAN_COMMIT_SHA=$(git rev-parse HEAD)
