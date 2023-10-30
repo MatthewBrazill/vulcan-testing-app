@@ -36,7 +36,14 @@ async function start() {
     const app = express()
 
     // Set up redis client
-    var redisClient = redis.createClient({ url: "redis://session-store:6379" })
+    var redisURL
+    if (process.env.DD_ENV == "kubernetes") {
+        redisURL = "redis://10.10.10.102:6379"
+    } else {
+        redisURL = "redis://session-store:6379"
+    }
+
+    var redisClient = redis.createClient({ url: redisURL })
     await redisClient.connect()
 
     // Set up sessions

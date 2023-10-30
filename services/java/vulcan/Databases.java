@@ -25,7 +25,15 @@ public class Databases {
 
         try {
             Class.forName("org.postgresql.Driver");
-            Connection conn = DriverManager.getConnection("jdbc:postgresql://user-database:5432/vulcan_users", "vulcan", "yKCstvg4-hrB9pmDPzu.gG.jxzhcCafT@");
+
+            String postgresURL;
+            if (System.getProperty("dd.env") == "kubernetes") {
+                postgresURL = "jdbc:postgresql://10.10.10.101:5432/vulcan_users";
+            } else {
+                postgresURL = "jdbc:postgresql://user-database:5432/vulcan_users";
+            }
+
+            Connection conn = DriverManager.getConnection(postgresURL, "vulcan", "yKCstvg4-hrB9pmDPzu.gG.jxzhcCafT@");
             statement = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         } catch (Exception e) {
             span.setTag(Tags.ERROR, true);
@@ -42,7 +50,14 @@ public class Databases {
         Span span = GlobalTracer.get().activeSpan();
 
         try {
-            MongoClient client = MongoClients.create("mongodb://god-database:27017");
+            String mongoURL;
+            if (System.getProperty("dd.env") == "kubernetes") {
+                mongoURL = "mongodb://10.10.10.100:27017";
+            } else {
+                mongoURL = "mongodb://god-database:27017";
+            }
+
+            MongoClient client = MongoClients.create(mongoURL);
             coll = client.getDatabase("vulcan").getCollection("gods");
         } catch (Exception e) {
             span.setTag(Tags.ERROR, true);

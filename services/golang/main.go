@@ -46,9 +46,16 @@ func main() {
 	version = os.Getenv("DD_VERSION")
 	env = os.Getenv("DD_ENV")
 	sessionKey = os.Getenv("VULCAN_SESSION_KEY")
-	mongoURL = "mongodb://god-database:27017/?connect=direct"
-	postgresURL = "postgresql://vulcan:yKCstvg4-hrB9pmDPzu.gG.jxzhcCafT@user-database:5432/vulcan_users"
-	redisURL = "session-store:6379"
+
+	if env == "kubernetes" {
+		mongoURL = "mongodb://10.10.10.100:27017/?connect=direct"
+		postgresURL = "postgresql://vulcan:yKCstvg4-hrB9pmDPzu.gG.jxzhcCafT@10.10.10.101:5432/vulcan_users"
+		redisURL = "10.10.10.102:6379"
+	} else {
+		mongoURL = "mongodb://god-database:27017/?connect=direct"
+		postgresURL = "postgresql://vulcan:yKCstvg4-hrB9pmDPzu.gG.jxzhcCafT@user-database:5432/vulcan_users"
+		redisURL = "session-store:6379"
+	}
 
 	// Create log file if not exist
 	os.Mkdir("logs", 0755)

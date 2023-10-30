@@ -70,11 +70,18 @@ public class App implements WebMvcConfigurer {
 		properties.put("server.ssl.certificate-private-key", "file:cert/key.pem");
 
 		// Configure Sessions
+		String redisURL;
+		if (System.getProperty("dd.env") == "kubernetes") {
+			redisURL = "10.10.10.102";
+		} else {
+			redisURL = "session-store";
+		}
+
 		properties.put("server.servlet.session.timeout", 86400);
 		properties.put("spring.session.store-type", "redis");
 		properties.put("spring.session.redis.flush-mode", "on_save");
 		properties.put("spring.session.redis.namespace", "java:sess");
-		properties.put("spring.data.redis.host", "session-store");
+		properties.put("spring.data.redis.host", redisURL);
 		properties.put("spring.data.redis.port", 6379);
 
 		// Configure views
