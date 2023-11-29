@@ -12,6 +12,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 
+import datadog.trace.api.Trace;
 import io.opentracing.Span;
 import io.opentracing.log.Fields;
 import io.opentracing.tag.Tags;
@@ -19,6 +20,7 @@ import io.opentracing.util.GlobalTracer;
 
 public class Databases {
 
+    @Trace(operationName = "vulcan.database", resourceName = "Databases.userDatabase")
     public static Statement userDatabase() {
         Statement statement;
         Span span = GlobalTracer.get().activeSpan();
@@ -45,6 +47,7 @@ public class Databases {
         return statement;
     }
 
+    @Trace(operationName = "vulcan.database", resourceName = "Databases.godDatabase")
     public static MongoCollection<Document> godDatabse() {
         MongoCollection<Document> coll;
         Span span = GlobalTracer.get().activeSpan();
