@@ -1,8 +1,8 @@
 {
 "version":3,
-"file":"js/error.min.js",
+"file":"statics/js/error.min.js",
 "lineCount":1,
-"mappings":"AAAAA,CAAA,CAAEC,QAAF,CAAYC,CAAAA,KAAZ,CAAkB,EAAA,EAAM,EAAxB;",
-"sources":["js/unminified/error.js"],
-"names":["$","document","ready"]
+"mappings":"AAAAA,CAAA,CAAEC,QAAF,CAAYC,CAAAA,KAAZ,CAAkB,EAAA,EAAM,CACpBF,CAAA,CAAE,kBAAF,CAAsBG,CAAAA,KAAtB,CAA4B,EAAA,EAAM,CAC9BH,CAAEI,CAAAA,IAAF,CAAO,CACHC,IAAK,4CADF,CAEHC,OAAQ,KAFL,CAGHC,QAAUC,CAADD,EAAS,CAAE,KAAM,KAAK,kBAAiBC,CAAIC,CAAAA,OAArB,EAAX,CAAF,CAHf,CAIHC,MAAQF,CAADE,EAASC,KAAA,CAAO,mBAAkBH,CAAII,CAAAA,MAAtB,MAAkCJ,CAAIC,CAAAA,OAAtC,EAAP,CAJb,CAAP,CAD8B,CAAlC,CADoB,CAAxB;",
+"sources":["services/frontend/javascript/error.js"],
+"names":["$","document","ready","click","ajax","url","method","success","res","message","error","alert","status"]
 }
