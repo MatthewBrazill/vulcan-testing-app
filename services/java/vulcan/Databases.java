@@ -35,6 +35,7 @@ public class Databases {
                 postgresURL = "jdbc:postgresql://user-database:5432/vulcan_users";
             }
 
+            System.out.println(postgresURL);
             Connection conn = DriverManager.getConnection(postgresURL, "vulcan", "yKCstvg4hrB9pmDP");
             statement = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         } catch (Exception e) {
