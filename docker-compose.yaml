@@ -22,10 +22,10 @@ services:
     working_dir: /vulcan
     volumes:
       - ./:/vulcan/
-      - /tmp/vulcan-logs:/usr/vulcan/logs
+      - /vulcan-data/docker/logs:/logs
     command: bash ./startup.sh
     labels:
-      com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-go","path":"/vulcan-logs/golang.log"}]'
+      com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-go","path":"/vulcan-data/docker/logs/golang.log"}]'
       com.datadoghq.ad.tags: '["env:docker","service:vulcan-go"]'
     deploy:
       resources:
@@ -53,10 +53,10 @@ services:
     working_dir: /vulcan
     volumes:
       - ./:/vulcan/
-      - /tmp/vulcan-logs:/usr/vulcan/logs
+      - /vulcan-data/docker/logs:/logs
     command: bash ./startup.sh
     labels:
-      com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-js","path":"/vulcan-logs/node.log"}]'
+      com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-js","path":"/vulcan-data/docker/logs/node.log"}]'
       com.datadoghq.ad.tags: '["env:docker","service:vulcan-js"]'
     deploy:
       resources:
@@ -81,10 +81,10 @@ services:
     working_dir: /vulcan
     volumes:
       - ./:/vulcan/
-      - /tmp/vulcan-logs:/usr/vulcan/logs
+      - /vulcan-data/docker/logs:/logs
     command: bash ./startup.sh
     labels:
-      com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-java","path":"/vulcan-logs/java.log"}]'
+      com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-java","path":"/vulcan-data/docker/logs/java.log"}]'
       com.datadoghq.ad.tags: '["env:docker","service:vulcan-java"]'
     deploy:
       resources:

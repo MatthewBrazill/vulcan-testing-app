@@ -1,3 +1,34 @@
+# Volumes
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: vulcan-logs-volume
+  labels:
+    tags.datadoghq.com/env: kubernetes
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/vulcan-data/kubernetes/logs"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: vulcan-logs-pvc
+  labels:
+    tags.datadoghq.com/env: kubernetes
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
 # Golang
 ---
 apiVersion: v1
@@ -32,12 +63,21 @@ spec:
       labels:
         tags.datadoghq.com/env: kubernetes
         tags.datadoghq.com/service: vulcan-go
+      annotations:
+        ad.datadoghq.com/vulcan-go.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-go","path":"/vulcan-data/kubernetes/logs/golang.log"}]'
     spec:
+      volumes:
+        - name: logs
+          persistentVolumeClaim:
+            claimName: vulcan-logs-pvc
       containers:
         - name: vulcan-go
           image: golang:latest
           command: ["/bin/sh"]
           args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/startup.sh | bash -s"]
+          volumeMounts:
+            - mountPath: /logs
+              name: logs
           env:
             - name: DD_ENV
               value: kubernetes
@@ -99,12 +139,21 @@ spec:
       labels:
         tags.datadoghq.com/env: kubernetes
         tags.datadoghq.com/service: vulcan-js
+      annotations:
+        ad.datadoghq.com/vulcan-js.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-js","path":"/vulcan-data/kubernetes/logs/node.log"}]'
     spec:
+      volumes:
+        - name: logs
+          persistentVolumeClaim:
+            claimName: vulcan-logs-pvc
       containers:
         - name: vulcan-js
           image: node:18
           command: ["/bin/sh"]
           args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/startup.sh | bash -s"]
+          volumeMounts:
+            - mountPath: /logs
+              name: logs
           env:
             - name: DD_ENV
               value: kubernetes
@@ -164,12 +213,21 @@ spec:
       labels:
         tags.datadoghq.com/env: kubernetes
         tags.datadoghq.com/service: vulcan-java
+      annotations:
+        ad.datadoghq.com/vulcan-java.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-java","path":"/vulcan-data/kubernetes/logs/java.log"}]'
     spec:
+      volumes:
+        - name: logs
+          persistentVolumeClaim:
+            claimName: vulcan-logs-pvc
       containers:
         - name: vulcan-java
           image: maven:3.9-eclipse-temurin-17
           command: ["/bin/sh"]
           args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/startup.sh | bash -s"]
+          volumeMounts:
+            - mountPath: /logs
+              name: logs
           env:
             - name: DD_ENV
               value: kubernetes
