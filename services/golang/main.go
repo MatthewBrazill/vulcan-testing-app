@@ -58,8 +58,8 @@ func main() {
 	}
 
 	// Create log file if not exist
-	os.Mkdir("logs", 0755)
-	file, err := os.OpenFile("logs/golang.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	os.Mkdir("/logs", 0755)
+	file, err := os.OpenFile("/logs/golang.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		LogInitEvent().WithError(err).Error("Failed to access log file.")
 		os.Exit(1)
