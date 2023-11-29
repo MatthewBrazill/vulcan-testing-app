@@ -50,7 +50,7 @@ public class App implements WebMvcConfigurer {
 	// * Set up statics
 	@Override
 	public void addResourceHandlers(final ResourceHandlerRegistry registry) {
-		registry.addResourceHandler("/js/**").addResourceLocations("file:js/");
+		registry.addResourceHandler("/js/**").addResourceLocations("file:statics/js/");
 		registry.addResourceHandler("/css/**").addResourceLocations("file:statics/css/");
 		registry.addResourceHandler("/img/**").addResourceLocations("file:statics/img/");
 	}

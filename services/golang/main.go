@@ -193,7 +193,7 @@ func main() {
 	// Add public folder
 	app.Static("/css", "./statics/css")
 	app.Static("/img", "./statics/img")
-	app.Static("/js", "./js")
+	app.Static("/js", "./statics/js")
 
 	// Root redirect to storage page
 	app.GET("/", func(ctx *gin.Context) {
