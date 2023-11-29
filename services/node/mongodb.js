@@ -6,7 +6,7 @@ const mongo = require("mongodb")
 
 var mongoURL
 if (process.env.DD_ENV == "kubernetes") {
-    mongoURL = "mongodb://10.10.10.100:27017"
+    mongoURL = "mongodb://host.minikube.internal:27017"
 } else {
     mongoURL = "mongodb://god-database:27017"
 }

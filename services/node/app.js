@@ -38,7 +38,7 @@ async function start() {
     // Set up redis client
     var redisURL
     if (process.env.DD_ENV == "kubernetes") {
-        redisURL = "redis://10.10.10.102:6379"
+        redisURL = "redis://host.minikube.internal:6379"
     } else {
         redisURL = "redis://session-store:6379"
     }

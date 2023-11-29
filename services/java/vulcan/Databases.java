@@ -28,7 +28,7 @@ public class Databases {
 
             String postgresURL;
             if (System.getProperty("dd.env") == "kubernetes") {
-                postgresURL = "jdbc:postgresql://10.10.10.101:5432/vulcan_users";
+                postgresURL = "jdbc:postgresql://host.minikube.internal:5432/vulcan_users";
             } else {
                 postgresURL = "jdbc:postgresql://user-database:5432/vulcan_users";
             }
@@ -52,7 +52,7 @@ public class Databases {
         try {
             String mongoURL;
             if (System.getProperty("dd.env") == "kubernetes") {
-                mongoURL = "mongodb://10.10.10.100:27017";
+                mongoURL = "mongodb://host.minikube.internal:27017";
             } else {
                 mongoURL = "mongodb://god-database:27017";
             }
