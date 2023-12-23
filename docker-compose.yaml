@@ -15,14 +15,16 @@ services:
       - DD_VERSION=1.2.0
       - DD_APPSEC_ENABLED=true
       - DD_IAST_ENABLED=true
-      - DD_AGENT_HOST=datadog-agent
-      - DD_TRACE_AGENT_PORT=8126
+#      - DD_AGENT_HOST=datadog-agent
+#      - DD_TRACE_AGENT_PORT=8126
+      - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
       - DD_TRACE_CLIENT_IP_ENABLED=true
       - VULCAN_SESSION_KEY=ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*
     working_dir: /vulcan
     volumes:
       - ./:/vulcan/
       - /vulcan-data/docker/logs:/logs
+      - /var/run/datadog:/var/run/datadog
     command: bash ./startup.sh
     labels:
       com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-go","path":"/vulcan-data/docker/logs/golang.log"}]'
@@ -45,8 +47,10 @@ services:
       - DD_SERVICE=vulcan-js
       - DD_VERSION=1.2.0
       - DD_IAST_ENABLED=true
-      - DD_AGENT_HOST=datadog-agent
-      - DD_TRACE_AGENT_PORT=8126
+      - DD_TAGS=pod_name:js-docker
+#      - DD_AGENT_HOST=datadog-agent
+#      - DD_TRACE_AGENT_PORT=8126
+      - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
       - DD_TRACE_CLIENT_IP_ENABLED=true
       - DD_TRACE_STARTUP_LOGS=true
       - VULCAN_SESSION_KEY=ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*
@@ -54,6 +58,7 @@ services:
     volumes:
       - ./:/vulcan/
       - /vulcan-data/docker/logs:/logs
+      - /var/run/datadog:/var/run/datadog
     command: bash ./startup.sh
     labels:
       com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-js","path":"/vulcan-data/docker/logs/node.log"}]'
@@ -74,14 +79,16 @@ services:
     environment:
       - DD_ENV=docker
       - DD_SERVICE=vulcan-java
-      - DD_AGENT_HOST=datadog-agent
-      - DD_TRACE_AGENT_PORT=8126
+#      - DD_AGENT_HOST=datadog-agent
+#      - DD_TRACE_AGENT_PORT=8126
+      - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
       - DD_TRACE_CLIENT_IP_ENABLED=true
       - VULCAN_SESSION_KEY=ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*
     working_dir: /vulcan
     volumes:
       - ./:/vulcan/
       - /vulcan-data/docker/logs:/logs
+      - /var/run/datadog:/var/run/datadog
     command: bash ./startup.sh
     labels:
       com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-java","path":"/vulcan-data/docker/logs/java.log"}]'
