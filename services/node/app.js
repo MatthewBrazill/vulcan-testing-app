@@ -3,8 +3,6 @@
 // Require the extentions
 const tracer = require("dd-trace")
 tracer.init({
-    hostname: 'datadog-agent',
-    port: 8126,
     logInjection: true,
     runtimeMetrics: true,
     profiling: true,
