@@ -1,9 +1,19 @@
+# Namespace
+---
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: vulcan-lang
+  labels:
+    tags.datadoghq.com/env: kubernetes
+
 # Volumes
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: vulcan-logs-volume
+  namespace: vulcan-lang
   labels:
     tags.datadoghq.com/env: kubernetes
 spec:
@@ -19,6 +29,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: vulcan-logs-pvc
+  namespace: vulcan-lang
   labels:
     tags.datadoghq.com/env: kubernetes
 spec:
@@ -35,6 +46,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: vulcan-go
+  namespace: vulcan-lang
   labels:
     tags.datadoghq.com/env: kubernetes
     tags.datadoghq.com/service: vulcan-go
@@ -50,6 +62,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: vulcan-go
+  namespace: vulcan-lang
   labels:
     tags.datadoghq.com/env: kubernetes
     tags.datadoghq.com/service: vulcan-go
@@ -118,6 +131,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: vulcan-js
+  namespace: vulcan-lang
   labels:
     tags.datadoghq.com/env: kubernetes
     tags.datadoghq.com/service: vulcan-js
@@ -133,6 +147,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: vulcan-js
+  namespace: vulcan-lang
   labels:
     tags.datadoghq.com/env: kubernetes
     tags.datadoghq.com/service: vulcan-js
@@ -199,6 +214,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: vulcan-java
+  namespace: vulcan-lang
   labels:
     tags.datadoghq.com/env: kubernetes
     tags.datadoghq.com/service: vulcan-java
@@ -214,6 +230,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: vulcan-java
+  namespace: vulcan-lang
   labels:
     tags.datadoghq.com/env: kubernetes
     tags.datadoghq.com/service: vulcan-java
