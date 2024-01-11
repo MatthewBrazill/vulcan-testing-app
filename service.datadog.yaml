@@ -54,6 +54,10 @@ tags:
 schema-version: v2
 dd-service: god-database
 team: matthew
+repos:
+  - name: Config Files
+    provider: GitHub
+    url: https://github.com/MatthewBrazill/vulcan-testing-app
 docs:
   - name: MongoDB Docs
     provider: mongodb
@@ -67,6 +71,10 @@ tags:
 schema-version: v2
 dd-service: user-database
 team: matthew
+repos:
+  - name: Config Files
+    provider: GitHub
+    url: https://github.com/MatthewBrazill/vulcan-testing-app
 docs:
   - name: PostgresSQL Docs
     provider: postgres
@@ -80,6 +88,10 @@ tags:
 schema-version: v2
 dd-service: session-store
 team: matthew
+repos:
+  - name: Config Files
+    provider: GitHub
+    url: https://github.com/MatthewBrazill/vulcan-testing-app
 docs:
   - name: Redis Docs
     provider: redis
