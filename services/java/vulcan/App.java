@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
+import org.springframework.lang.NonNull;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -49,7 +50,8 @@ public class App implements WebMvcConfigurer {
 
 	// * Set up statics
 	@Override
-	public void addResourceHandlers(final ResourceHandlerRegistry registry) {
+	public void addResourceHandlers(@NonNull final ResourceHandlerRegistry registry) {
+		
 		registry.addResourceHandler("/js/**").addResourceLocations("file:statics/js/");
 		registry.addResourceHandler("/css/**").addResourceLocations("file:statics/css/");
 		registry.addResourceHandler("/img/**").addResourceLocations("file:statics/img/");
