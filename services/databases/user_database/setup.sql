@@ -1,7 +1,33 @@
-USE vulcan_users;
+CREATE DATABASE vulcan_users;
+\c vulcan_users
 
+
+
+-- Add the user and API key data to the database
+CREATE TABLE users (
+    username varchar(32),
+    password varchar(64),
+    permissions varchar(32)
+);
+
+CREATE TABLE apikeys (
+    apikey char(32),
+    permissions varchar(32)
+);
+
+INSERT INTO users VALUES ('matthew', 'testingpassword', 'admin');
+INSERT INTO users VALUES ('synthetics', '3J^eZ%u[D+', 'user');
+
+INSERT INTO apikeys VALUES ('f9fbde272f294dd3a2039e1f78f5262c', 'admin');
+
+
+
+-- Create users and permissions
 CREATE USER datadog WITH password '5aae8c35f7e16245';
+CREATE USER vulcan WITH password 'yKCstvg4hrB9pmDP';
 ALTER ROLE datadog INHERIT;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO vulcan;
+
 
 
 -- Set up the nececary schemas for Datadog
@@ -10,6 +36,7 @@ GRANT USAGE ON SCHEMA datadog TO datadog;
 GRANT USAGE ON SCHEMA public TO datadog;
 GRANT pg_monitor TO datadog;
 CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
+
 
 
 -- Create function to collect the explainplans
@@ -33,21 +60,3 @@ $$
 LANGUAGE 'plpgsql'
 RETURNS NULL ON NULL INPUT
 SECURITY DEFINER;
-
-
--- Add the user and API key data to the database
-CREATE TABLE users (
-    username varchar(32),
-    password varchar(64),
-    permissions varchar(32)
-);
-
-CREATE TABLE apikeys (
-    apikey char(32),
-    permissions varchar(32)
-);
-
-INSERT INTO users VALUES ('matthew', 'testingpassword', 'admin');
-INSERT INTO users VALUES ('synthetics', '3J^eZ%u[D+', 'user');
-
-INSERT INTO apikeys VALUES ('f9fbde272f294dd3a2039e1f78f5262c', 'admin');
