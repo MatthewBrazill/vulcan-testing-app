@@ -35,6 +35,7 @@ CREATE SCHEMA datadog;
 GRANT USAGE ON SCHEMA datadog TO datadog;
 GRANT USAGE ON SCHEMA public TO datadog;
 GRANT pg_monitor TO datadog;
+GRANT SELECT ON ALL TABLES TO datadog;
 CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
 
 
