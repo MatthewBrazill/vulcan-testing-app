@@ -109,9 +109,7 @@ services:
     volumes:
       - ./database/gods:/data/db
     labels:
-      com.datadoghq.ad.check_names: '["mongo"]'
-      com.datadoghq.ad.init_configs: '[{}]'
-      com.datadoghq.ad.instances: '[{"hosts":["%%host%%:%%port%%"],"username":"datadog","password":"5aae8c35f7e16245","database":"vulcan"}]'
+      com.datadoghq.ad.checks: '{"mongo":{"instances":[{"hosts":["god-database:27017"],"username":"datadog","password":"5aae8c35f7e16245","database":"vulcan"}]}}'
       com.datadoghq.ad.logs: '[{"source":"mongodb","service":"god-database"}]'
       com.datadoghq.ad.tags: '["env:docker","service:god-database"]'
     deploy:
@@ -120,7 +118,7 @@ services:
           cpus: "0.5"
           memory: 512M
   user-database:
-    image: postgres:latest
+    image: postgres:15
     container_name: user-database
     ports:
       - 5432:5432
@@ -130,11 +128,10 @@ services:
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
+      - ./services/databases/user_database/:/usr/src/psql
       - ./database/users:/var/lib/postgresql/data
     labels:
-      com.datadoghq.ad.check_names: '["postgres"]'
-      com.datadoghq.ad.init_configs: '[{}]'
-      com.datadoghq.ad.instances: '[{"host":"%%host%%","port":5432,"username":"datadog","password":"5aae8c35f7e16245"}]'
+      com.datadoghq.ad.checks: '{"postgres":{"instances":[{"dbm":"true","host":"user-database","port":5432,"username":"datadog","password":"5aae8c35f7e16245","dbname":"vulcan_users"}]}}'
       com.datadoghq.ad.logs: '[{"source":"postgresql","service":"user-database"}]'
       com.datadoghq.ad.tags: '["env:docker","service:user-database"]'
     deploy:
@@ -153,9 +150,7 @@ services:
     volumes:
       - ./database/sessions:/data
     labels:
-      com.datadoghq.ad.check_names: '["redisdb"]'
-      com.datadoghq.ad.init_configs: '[{}]'
-      com.datadoghq.ad.instances: '[{"host":"%%host%%","port":"6379","password":""}]'
+      com.datadoghq.ad.checks: '{"redisdb":{"instances":[{"host":"session-store","port":"6379","password":""}]}}'
       com.datadoghq.ad.logs: '[{"source":"redis","service":"session-store"}]'
       com.datadoghq.ad.tags: '["env:docker","service:session-store"]'
     deploy:
