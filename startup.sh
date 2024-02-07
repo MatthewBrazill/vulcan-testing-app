@@ -32,6 +32,7 @@ then
         -Ddd.profiling.enabled=true \
         -Ddd.appsec.enabled=true \
         -Ddd.iast.enabled=true \
+        -Ddd.dbm.propagation.mode=full \
         -Ddd.service.mapping=redis:session-store,postgresql:user-database,mongo:god-database \
         -Ddd.tags=git.commit.sha:$(git rev-parse HEAD),git.repository_url:github.com/MatthewBrazill/vulcan-testing-app -jar \
         ./target/vulcan.jar

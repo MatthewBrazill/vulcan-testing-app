@@ -116,7 +116,7 @@ func main() {
 	mongodb = client.Database("vulcan")
 
 	// Connect to user-database
-	sqltrace.Register("bun", pgdriver.Driver{}, sqltrace.WithServiceName("user-database"))
+	sqltrace.Register("bun", pgdriver.Driver{}, sqltrace.WithServiceName("user-database"), sqltrace.WithDBMPropagation(tracer.DBMPropagationModeFull))
 	sqldb := sqltrace.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(postgresURL), pgdriver.WithInsecure(true)))
 	pgdb = bun.NewDB(sqldb, pgdialect.New())
 
