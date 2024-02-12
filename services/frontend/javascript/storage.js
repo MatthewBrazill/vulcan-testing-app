@@ -24,18 +24,64 @@ $(document).ready(() => {
 
 
 
-    $("#god-search-button").click(() => {
-        url.searchParams.set("search", $("#god-search-bar").val())
-        window.history.pushState({ search: $("#god-search-bar").val() }, "", url);
+    $("#god-search-bar").keypress((e) => {
+        if (e.which == '13') {
+            e.preventDefault()
+            url.searchParams.set("search", $("#god-search-bar").val())
+            window.history.pushState({ search: $("#god-search-bar").val() }, "", url);
+            $.ajax({
+                url: "/storage/search",
+                method: "POST",
+                data: {
+                    filter: $("#god-search-bar").val()
+                },
+                success: searchSuccess,
+                error: searchError
+            })
+        }
+    });
+
+
+
+    $("#testing-log-input").keypress((e) => {
+        if (e.which == '13') {
+            e.preventDefault()
+            var log = $("#testing-log-input").val()
+            var method = $("#testing-log-dropdown").val()
+            switch (method) {
+                case "console":
+                    console.log(log)
+                    $("#testing-log-input").val("")
+                    break
+
+                case "datadog":
+                    $("#testing-log-input").val("")
+                    var logger = window.DD_LOGS && window.DD_LOGS.logger
+                    logger.info(log)
+                    break
+
+                default:
+                    alert(`Didn't recognize logging method: ${method}`)
+                    throw new Error(`Didn't recognize logging method: ${method}`)
+            }
+        }
+    });
+
+
+
+    $("#testing-error-button").click(() => {
         $.ajax({
-            url: "/storage/search",
-            method: "POST",
-            data: {
-                filter: $("#god-search-bar").val()
-            },
-            success: searchSuccess,
-            error: searchError
+            url: "https://random-word-api.herokuapp.com/word?number=3",
+            method: "GET",
+            success: (res) => { throw new Error(`Example error: ${res[0]} - ${res[1]} - ${res[2]}`) },
+            error: (res) => alert(`Request failed: ${res.status} - ${res.message}`)
         })
+    })
+
+
+
+    $("#testing-custom-event-button").click(() => {
+        window.DD_RUM && window.DD_RUM.addAction("custom-testing-action", { "value": "testing" })
     })
 })
 
