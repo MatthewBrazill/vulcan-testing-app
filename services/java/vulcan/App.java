@@ -73,6 +73,7 @@ public class App implements WebMvcConfigurer {
 
 		// Configure Sessions
 		String redisURL;
+		System.out.println(System.getProperty("dd.env"));
 		if (System.getProperty("dd.env") == "kubernetes") {
 			redisURL = "host.minikube.internal";
 		} else {
