@@ -29,6 +29,7 @@ public class Databases {
             Class.forName("org.postgresql.Driver");
 
             String postgresURL;
+            System.out.println(System.getProperty("dd.env"));
             if (System.getProperty("dd.env").equals("kubernetes")) {
                 postgresURL = "jdbc:postgresql://host.minikube.internal:5432/vulcan_users";
             } else {
