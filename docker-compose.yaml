@@ -1,6 +1,16 @@
 version: '3.9'
 name: vulcan-application
+networks:
+  vulcan_app:
+    name: vulcan_app
+  datadog_bridge:
+    name: datadog_bridge
+    external: true
 services:
+
+  ### -------------------------------------------------- ###
+  #   Web Apps                                             #
+  ### -------------------------------------------------- ###
   vulcan-go:
     image: golang:latest
     container_name: vulcan-go
@@ -15,8 +25,8 @@ services:
       - DD_VERSION=1.2.0
       - DD_APPSEC_ENABLED=true
       - DD_IAST_ENABLED=true
-#      - DD_AGENT_HOST=datadog-agent
-#      - DD_TRACE_AGENT_PORT=8126
+      # - DD_AGENT_HOST=datadog-agent
+      # - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
       - DD_TRACE_CLIENT_IP_ENABLED=true
       - VULCAN_SESSION_KEY=ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*
@@ -34,6 +44,8 @@ services:
         limits:
           cpus: "1"
           memory: 512M
+
+
   vulcan-js:
     image: node:18
     container_name: vulcan-js
@@ -47,9 +59,8 @@ services:
       - DD_SERVICE=vulcan-js
       - DD_VERSION=1.2.0
       - DD_IAST_ENABLED=true
-      - DD_TAGS=pod_name:js-docker
-#      - DD_AGENT_HOST=datadog-agent
-#      - DD_TRACE_AGENT_PORT=8126
+      # - DD_AGENT_HOST=datadog-agent
+      # - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
       - DD_TRACE_CLIENT_IP_ENABLED=true
       - DD_TRACE_STARTUP_LOGS=true
@@ -68,6 +79,8 @@ services:
         limits:
           cpus: "1"
           memory: 512M
+
+
   vulcan-java:
     image: maven:3.9-eclipse-temurin-17
     container_name: vulcan-java
@@ -79,8 +92,9 @@ services:
     environment:
       - DD_ENV=docker
       - DD_SERVICE=vulcan-java
-#      - DD_AGENT_HOST=datadog-agent
-#      - DD_TRACE_AGENT_PORT=8126
+      - DD_VERSION=1.2.1
+      # - DD_AGENT_HOST=datadog-agent
+      # - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
       - DD_TRACE_CLIENT_IP_ENABLED=true
       - VULCAN_SESSION_KEY=ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*
@@ -98,6 +112,14 @@ services:
         limits:
           cpus: "1"
           memory: 512M
+
+
+
+
+
+  ### -------------------------------------------------- ###
+  #   Data Storage                                         #
+  ### -------------------------------------------------- ###
   god-database:
     image: mongo:latest
     container_name: god-database
@@ -117,6 +139,8 @@ services:
         limits:
           cpus: "0.5"
           memory: 512M
+
+
   user-database:
     image: postgres:15
     container_name: user-database
@@ -139,6 +163,8 @@ services:
         limits:
           cpus: "0.5"
           memory: 512M
+
+
   session-store:
     image: redis/redis-stack-server:latest
     container_name: session-store
@@ -158,9 +184,3 @@ services:
         limits:
           cpus: "0.5"
           memory: 512M
-networks:
-  vulcan_app:
-    name: vulcan_app
-  datadog_bridge:
-    name: datadog_bridge
-    external: true
