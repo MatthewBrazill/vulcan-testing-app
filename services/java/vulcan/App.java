@@ -6,6 +6,16 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.core.config.builder.api.AppenderComponentBuilder;
+import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilder;
+import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilderFactory;
+import org.apache.logging.log4j.core.config.builder.api.LayoutComponentBuilder;
+import org.apache.logging.log4j.core.config.builder.api.LoggerComponentBuilder;
+import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -27,6 +37,8 @@ public class App implements WebMvcConfigurer {
 	// * Add Mustache reader that supports partials
 	@Bean
 	public Mustache.Compiler mustacheCompiler(Mustache.TemplateLoader templateLoader, Environment environment) {
+		Logger logger = LogManager.getLogger("vulcan");
+		logger.debug("Loading partials");
 		templateLoader = new Mustache.TemplateLoader() {
 			public Reader getTemplate(String name) throws FileNotFoundException {
 				ArrayList<String> partials = new ArrayList<String>();
@@ -51,7 +63,8 @@ public class App implements WebMvcConfigurer {
 	// * Set up statics
 	@Override
 	public void addResourceHandlers(@NonNull final ResourceHandlerRegistry registry) {
-		
+		Logger logger = LogManager.getLogger("vulcan");
+		logger.debug("Setting resource locations");
 		registry.addResourceHandler("/js/**").addResourceLocations("file:statics/js/");
 		registry.addResourceHandler("/css/**").addResourceLocations("file:statics/css/");
 		registry.addResourceHandler("/img/**").addResourceLocations("file:statics/img/");
@@ -59,8 +72,33 @@ public class App implements WebMvcConfigurer {
 	// */
 
 	public static void main(String[] args) {
+		ConfigurationBuilder<BuiltConfiguration> builder = ConfigurationBuilderFactory.newConfigurationBuilder();
+
+		// Create file appender
+		AppenderComponentBuilder file = builder.newAppender("jsonFile", "File");
+		file.addAttribute("fileName", "/logs/java.log");
+
+		// Create logger layout
+		LayoutComponentBuilder json = builder.newLayout("JsonLayout");
+		file.add(json);
+
+		// Add apender to builder
+		builder.add(file);
+
+		// Attach appernder to logger
+		LoggerComponentBuilder vulcan = builder.newLogger("vulcan", Level.ALL);
+		vulcan.add(builder.newAppenderRef("jsonFile"));
+		builder.add(vulcan);
+
+		// Configure logger
+		System.out.println(builder.toXmlConfiguration());
+		Configurator.initialize(builder.build());
+		Logger logger = LogManager.getLogger("vulcan");
+		logger.debug("Configured logging");
+
 		// Create the app
 		SpringApplication app = new SpringApplication(App.class);
+		logger.debug("Created spring application");
 
 		// Define properties
 		Properties properties = new Properties();
@@ -90,11 +128,13 @@ public class App implements WebMvcConfigurer {
 		// Configure views
 		properties.put("spring.mustache.prefix", "file:services/frontend/pages/");
 		properties.put("spring.mustache.suffix", ".html");
+		logger.debug("Defined properties");
 
 		// Set properties
 		app.setDefaultProperties(properties);
+		logger.debug("Applied properties");
 
-		System.out.println("start appliction");
+		logger.info("Started application");
 		app.run(args);
 	}
 }
