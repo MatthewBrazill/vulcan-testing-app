@@ -39,6 +39,7 @@ public class App implements WebMvcConfigurer {
 	public Mustache.Compiler mustacheCompiler(Mustache.TemplateLoader templateLoader, Environment environment) {
 		Logger logger = LogManager.getLogger("vulcan");
 		logger.debug("Loading partials");
+		
 		templateLoader = new Mustache.TemplateLoader() {
 			public Reader getTemplate(String name) throws FileNotFoundException {
 				ArrayList<String> partials = new ArrayList<String>();
@@ -65,6 +66,7 @@ public class App implements WebMvcConfigurer {
 	public void addResourceHandlers(@NonNull final ResourceHandlerRegistry registry) {
 		Logger logger = LogManager.getLogger("vulcan");
 		logger.debug("Setting resource locations");
+
 		registry.addResourceHandler("/js/**").addResourceLocations("file:statics/js/");
 		registry.addResourceHandler("/css/**").addResourceLocations("file:statics/css/");
 		registry.addResourceHandler("/img/**").addResourceLocations("file:statics/img/");
@@ -80,6 +82,9 @@ public class App implements WebMvcConfigurer {
 
 		// Create logger layout
 		LayoutComponentBuilder json = builder.newLayout("JsonLayout");
+		json.addAttribute("complete", false);
+		json.addAttribute("compact", true);
+		json.addAttribute("eventEol", true);
 		file.add(json);
 
 		// Add apender to builder
@@ -91,7 +96,6 @@ public class App implements WebMvcConfigurer {
 		builder.add(vulcan);
 
 		// Configure logger
-		System.out.println(builder.toXmlConfiguration());
 		Configurator.initialize(builder.build());
 		Logger logger = LogManager.getLogger("vulcan");
 		logger.debug("Configured logging");
