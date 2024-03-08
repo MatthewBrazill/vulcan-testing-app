@@ -6,7 +6,7 @@ target
 logs
 
 # Databases
-database
+services/databases/*/data
 
 # Other
 .DS_Store
