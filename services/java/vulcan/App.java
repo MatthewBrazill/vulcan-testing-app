@@ -48,9 +48,9 @@ public class App implements WebMvcConfigurer {
 				partials.add("nav");
 
 				if (partials.contains(name)) {
-					return new FileReader(ResourceUtils.getFile("file:services/frontend/partials/" + name + ".html"));
+					return new FileReader(ResourceUtils.getFile("file:../frontend/partials/" + name + ".html"));
 				} else {
-					return new FileReader(ResourceUtils.getFile("file:services/frontend/pages/" + name + ".html"));
+					return new FileReader(ResourceUtils.getFile("file:../frontend/pages/" + name + ".html"));
 				}
 			}
 		};
@@ -67,9 +67,9 @@ public class App implements WebMvcConfigurer {
 		Logger logger = LogManager.getLogger("vulcan");
 		logger.debug("Setting resource locations");
 
-		registry.addResourceHandler("/js/**").addResourceLocations("file:services/frontend/statics/js/");
-		registry.addResourceHandler("/css/**").addResourceLocations("file:services/frontend/statics/css/");
-		registry.addResourceHandler("/img/**").addResourceLocations("file:services/frontend/statics/img/");
+		registry.addResourceHandler("/js/**").addResourceLocations("file:../frontend/statics/js/");
+		registry.addResourceHandler("/css/**").addResourceLocations("file:../frontend/statics/css/");
+		registry.addResourceHandler("/img/**").addResourceLocations("file:../frontend/statics/img/");
 	}
 	// */
 
@@ -109,9 +109,9 @@ public class App implements WebMvcConfigurer {
 
 		// Set up SSL
 		properties.put("server.port", 443);
-		properties.put("server.ssl.certificate", "file:certificate/cert.pem");
-		properties.put("server.ssl.trust-certificate", "file:certificate/cert.pem");
-		properties.put("server.ssl.certificate-private-key", "file:certificate/key.pem");
+		properties.put("server.ssl.certificate", "file:../certificate/cert.pem");
+		properties.put("server.ssl.trust-certificate", "file:../certificate/cert.pem");
+		properties.put("server.ssl.certificate-private-key", "file:../certificate/key.pem");
 
 		// Configure Sessions
 		String redisURL;
@@ -130,7 +130,7 @@ public class App implements WebMvcConfigurer {
 		properties.put("spring.data.redis.port", 6379);
 
 		// Configure views
-		properties.put("spring.mustache.prefix", "file:services/frontend/pages/");
+		properties.put("spring.mustache.prefix", "file:../frontend/pages/");
 		properties.put("spring.mustache.suffix", ".html");
 		logger.debug("Defined properties");
 

@@ -170,20 +170,20 @@ func main() {
 
 	// Register pages and set raymond renderer
 	app.HTMLRender = ginraymond.New(&ginraymond.RenderOptions{
-		TemplateDir: "./services/frontend/pages",
+		TemplateDir: "./../frontend/pages",
 	})
-	partialsDir, err := os.ReadDir("./services/frontend/partials")
+	partialsDir, err := os.ReadDir("./../frontend/partials")
 	if err != nil {
 		LogInitEvent().WithError(err).Error("Failed to load template partials directory.")
 		os.Exit(1)
 	}
 	for _, partial := range partialsDir {
-		file, err := os.ReadFile(fmt.Sprintf("./services/frontend/partials/%s", partial.Name()))
+		file, err := os.ReadFile(fmt.Sprintf("./../frontend/partials/%s", partial.Name()))
 		if err != nil {
 			LogInitEvent().WithError(err).WithFields(logrus.Fields{
 				"partialName": partial.Name(),
-				"partialDir":  "./services/frontend/partials",
-				"partialPath": fmt.Sprintf("./services/frontend/partials/%s", partial.Name()),
+				"partialDir":  "./../frontend/partials",
+				"partialPath": fmt.Sprintf("./../frontend/partials/%s", partial.Name()),
 			}).Error(fmt.Sprintf("Failed to load template partial '%s'.", partial.Name()))
 		} else {
 			raymond.RegisterPartial(strings.Split(partial.Name(), ".")[0], string(file))
@@ -191,9 +191,9 @@ func main() {
 	}
 
 	// Add public folder
-	app.Static("/css", "./services/frontend/statics/css")
-	app.Static("/img", "./services/frontend/statics/img")
-	app.Static("/js", "./services/frontend/statics/js")
+	app.Static("/css", "./../frontend/statics/css")
+	app.Static("/img", "./../frontend/statics/img")
+	app.Static("/js", "./../frontend/statics/js")
 
 	// Root redirect to storage page
 	app.GET("/", func(ctx *gin.Context) {
@@ -244,7 +244,7 @@ func main() {
 	})
 
 	LogInitEvent().Info("Starting Server")
-	err = app.RunTLS(":443", "./certificate/cert.pem", "./certificate/key.pem")
+	err = app.RunTLS(":443", "./../certificate/cert.pem", "./../certificate/key.pem")
 	if err != nil {
 		LogInitEvent().WithError(err).Error("Failed to start server.")
 		os.Exit(1)

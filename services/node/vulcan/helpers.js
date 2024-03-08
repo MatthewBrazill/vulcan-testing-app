@@ -74,6 +74,14 @@ const helpers = {
                 return false
             }
         })
+    },
+
+    // Do some useless work just to show off async features in Datadog
+    async asyncExample(number) {
+        return await tracer.trace("vulcan.helper", { resource: "asyncExample" }, async () => {
+            number = Math.floor(number * 4) + 1
+            await new Promise(r => setTimeout(r, number))
+        })
     }
 }
 

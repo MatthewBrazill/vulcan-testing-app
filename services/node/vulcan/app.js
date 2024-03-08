@@ -74,17 +74,17 @@ async function start() {
     // Register templates
     app.engine("html", hbs.engine({
         extname: ".html",
-        layoutsDir: "./services/frontend/pages",
-        partialsDir: "./services/frontend/partials",
+        layoutsDir: "./../frontend/pages",
+        partialsDir: "./../frontend/partials",
         defaultLayout: false
     }))
     app.set("view engine", "html")
-    app.set("views", "./services/frontend/pages")
+    app.set("views", "./../frontend/pages")
 
     // Remaining WebApp settings
     app.use(express.json())
     app.use(express.urlencoded({ extended: true }))
-    app.use(express.static("./services/frontend/statics"))
+    app.use(express.static("./../frontend/statics"))
     app.use(cookie())
 
 
@@ -142,8 +142,8 @@ async function start() {
     })
 
     https.createServer({
-        key: fs.readFileSync("./certificate/key.pem"),
-        cert: fs.readFileSync("./certificate/cert.pem")
+        key: fs.readFileSync("./../certificate/key.pem"),
+        cert: fs.readFileSync("./../certificate/cert.pem")
     }, app).listen(443, () => {
         console.log("Server started")
     })

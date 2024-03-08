@@ -30,12 +30,15 @@ services:
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
       - DD_TRACE_CLIENT_IP_ENABLED=true
       - VULCAN_SESSION_KEY=ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*
-    working_dir: /vulcan
+    working_dir: /vulcan/golang
     volumes:
-      - ./:/vulcan/
+      - ./services/golang:/vulcan/golang
+      - ./services/frontend:/vulcan/frontend
+      - ./startup.sh:/startup.sh
+      - ./certificate:/vulcan/certificate
       - /vulcan-data/docker/logs:/logs
       - /var/run/datadog:/var/run/datadog
-    command: bash ./startup.sh
+    command: bash /startup.sh
     labels:
       com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-go","path":"/vulcan-data/docker/logs/golang.log"}]'
       com.datadoghq.ad.tags: '["env:docker","service:vulcan-go"]'
@@ -65,12 +68,15 @@ services:
       - DD_TRACE_CLIENT_IP_ENABLED=true
       - DD_TRACE_STARTUP_LOGS=true
       - VULCAN_SESSION_KEY=ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*
-    working_dir: /vulcan
+    working_dir: /vulcan/node
     volumes:
-      - ./:/vulcan/
+      - ./services/node:/vulcan/node
+      - ./services/frontend:/vulcan/frontend
+      - ./startup.sh:/startup.sh
+      - ./certificate:/vulcan/certificate
       - /vulcan-data/docker/logs:/logs
       - /var/run/datadog:/var/run/datadog
-    command: bash ./startup.sh
+    command: bash /startup.sh
     labels:
       com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-js","path":"/vulcan-data/docker/logs/node.log"}]'
       com.datadoghq.ad.tags: '["env:docker","service:vulcan-js"]'
@@ -98,6 +104,47 @@ services:
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
       - DD_TRACE_CLIENT_IP_ENABLED=true
       - VULCAN_SESSION_KEY=ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*
+    working_dir: /vulcan/java
+    volumes:
+      - ./services/java:/vulcan/java
+      - ./services/frontend:/vulcan/frontend
+      - ./startup.sh:/startup.sh
+      - ./certificate:/vulcan/certificate
+      - /vulcan-data/docker/logs:/logs
+      - /var/run/datadog:/var/run/datadog
+    command: bash /startup.sh
+    labels:
+      com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-java","path":"/vulcan-data/docker/logs/java.log"}]'
+      com.datadoghq.ad.tags: '["env:docker","service:vulcan-java"]'
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 512M
+
+
+
+
+
+  ### -------------------------------------------------- ###
+  #   Supporting Infrastructure                            #
+  ### -------------------------------------------------- ###
+  vulcan-auth:
+    image: python:bookworm
+    container_name: vulcan-auth
+    ports:
+      - 4433:443
+    networks:
+      - vulcan_app
+      - datadog_bridge
+    environment:
+      - DD_ENV=docker
+      - DD_SERVICE=vulcan-auth
+      - DD_VERSION=0.1.0
+      # - DD_AGENT_HOST=datadog-agent
+      # - DD_TRACE_AGENT_PORT=8126
+      - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
+      - DD_TRACE_CLIENT_IP_ENABLED=true
     working_dir: /vulcan
     volumes:
       - ./:/vulcan/
@@ -105,8 +152,8 @@ services:
       - /var/run/datadog:/var/run/datadog
     command: bash ./startup.sh
     labels:
-      com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-java","path":"/vulcan-data/docker/logs/java.log"}]'
-      com.datadoghq.ad.tags: '["env:docker","service:vulcan-java"]'
+      com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-auth","path":"/vulcan-data/docker/logs/auth.log"}]'
+      com.datadoghq.ad.tags: '["env:docker","service:vulcan-auth"]'
     deploy:
       resources:
         limits:
@@ -129,7 +176,7 @@ services:
       - vulcan_app
       - datadog_bridge
     volumes:
-      - ./databases/gods/data:/data/db
+      - ./services/databases/gods/data:/data/db
     labels:
       com.datadoghq.ad.checks: '{"mongo":{"instances":[{"hosts":["god-database:27017"],"username":"datadog","password":"5aae8c35f7e16245","database":"vulcan"}]}}'
       com.datadoghq.ad.logs: '[{"source":"mongodb","service":"god-database"}]'
@@ -152,8 +199,7 @@ services:
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
-      - ./services/databases/user_database/:/usr/src/psql
-      - ./databases/users/data:/var/lib/postgresql/data
+      - ./services/databases/users/data:/var/lib/postgresql/data
     labels:
       com.datadoghq.ad.checks: '{"postgres":{"instances":[{"dbm":"true","host":"user-database","port":5432,"username":"datadog","password":"5aae8c35f7e16245","dbname":"vulcan_users"}]}}'
       com.datadoghq.ad.logs: '[{"source":"postgresql","service":"user-database"}]'
@@ -174,7 +220,7 @@ services:
       - vulcan_app
       - datadog_bridge
     volumes:
-      - ./databases/sessions/data:/data
+      - ./services/databases/sessions/data:/data
     labels:
       com.datadoghq.ad.checks: '{"redisdb":{"instances":[{"host":"session-store","port":"6379","password":""}]}}'
       com.datadoghq.ad.logs: '[{"source":"redis","service":"session-store"}]'
