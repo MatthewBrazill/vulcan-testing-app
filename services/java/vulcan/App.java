@@ -67,9 +67,9 @@ public class App implements WebMvcConfigurer {
 		Logger logger = LogManager.getLogger("vulcan");
 		logger.debug("Setting resource locations");
 
-		registry.addResourceHandler("/js/**").addResourceLocations("file:statics/js/");
-		registry.addResourceHandler("/css/**").addResourceLocations("file:statics/css/");
-		registry.addResourceHandler("/img/**").addResourceLocations("file:statics/img/");
+		registry.addResourceHandler("/js/**").addResourceLocations("file:services/frontend/statics/js/");
+		registry.addResourceHandler("/css/**").addResourceLocations("file:services/frontend/statics/css/");
+		registry.addResourceHandler("/img/**").addResourceLocations("file:services/frontend/statics/img/");
 	}
 	// */
 

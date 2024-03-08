@@ -84,7 +84,7 @@ async function start() {
     // Remaining WebApp settings
     app.use(express.json())
     app.use(express.urlencoded({ extended: true }))
-    app.use(express.static("./statics"))
+    app.use(express.static("./services/frontend/statics"))
     app.use(cookie())
 
 
