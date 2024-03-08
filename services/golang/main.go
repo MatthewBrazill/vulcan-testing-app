@@ -244,7 +244,7 @@ func main() {
 	})
 
 	LogInitEvent().Info("Starting Server")
-	err = app.RunTLS(":443", "./cert/cert.pem", "./cert/key.pem")
+	err = app.RunTLS(":443", "./certificate/cert.pem", "./certificate/key.pem")
 	if err != nil {
 		LogInitEvent().WithError(err).Error("Failed to start server.")
 		os.Exit(1)
