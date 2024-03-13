@@ -126,7 +126,8 @@
 
 	<build>
 		<finalName>vulcan</finalName>
-		<sourceDirectory>${basedir}</sourceDirectory>
+		<directory>${basedir}/target</directory>
+		<sourceDirectory>${basedir}/src</sourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
