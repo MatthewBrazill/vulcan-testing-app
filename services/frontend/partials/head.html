@@ -7,15 +7,15 @@
 <title>Vulcan {{language}} - {{title}}</title>
 <link rel="icon" type="image/x-icon" href="/img/icon.png">
 
-<script src="https://www.datadoghq-browser-agent.com/datadog-rum-v4.js"></script>
-<script src="https://www.datadoghq-browser-agent.com/us1/v4/datadog-logs.js"></script>
+<script src="https://www.datadoghq-browser-agent.com/us1/v5/datadog-rum.js"></script>
+<script src="https://www.datadoghq-browser-agent.com/us1/v5/datadog-logs.js"></script>
 <script>
   window.DD_RUM && window.DD_RUM.init({
     clientToken: 'pubca069499426c38f0c05d569e1b76d301',
     applicationId: '9f4eadd0-3a89-4fce-ab51-0ce6952dbab3',
     service: 'vulcan-ui',
     env: 'docker',
-    version: '1.3',
+    version: '1.4',
     site: 'datadoghq.com',
     sessionSampleRate: 100,
     sessionReplaySampleRate: 100,
