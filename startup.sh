@@ -6,7 +6,23 @@ if [ "$DD_ENV" == "kubernetes" ]
 then
     rm -rf /vulcan
     git clone https://github.com/MatthewBrazill/vulcan-testing-app.git /vulcan
-    cd /vulcan
+    cd /vulcan/services/
+    if [ "$DD_SERVICE" == "vulcan-go" ]
+    then
+        cd /vulcan/services/golang
+    elif [ "$DD_SERVICE" = "vulcan-js" ]
+    then
+        cd /vulcan/services/ndoe
+    elif [ "$DD_SERVICE" = "vulcan-java" ]
+    then
+        cd /vulcan/services/java
+    elif [ "$DD_SERVICE" = "vulcan-auth" ]
+    then
+        cd /vulcan/services/authenticator
+    elif [ "$DD_SERVICE" = "vulcan-flutter" ]
+    then
+        cd /vulcan/services/flutter
+    fi
 fi
 
 export VULCAN_COMMIT_SHA=$(git rev-parse HEAD)
