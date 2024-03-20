@@ -16,4 +16,4 @@ fi
 # Build
 export SHA=$(git rev-parse HEAD)
 docker-compose up -d
-kubectl apply -f deploymnet.yaml
+kubectl apply -f deployment.yaml
