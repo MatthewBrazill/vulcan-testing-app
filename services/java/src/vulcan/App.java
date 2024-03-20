@@ -109,9 +109,9 @@ public class App implements WebMvcConfigurer {
 
 		// Set up SSL
 		properties.put("server.port", 443);
-		properties.put("server.ssl.certificate", "file:../certificate/cert.pem");
-		properties.put("server.ssl.trust-certificate", "file:../certificate/cert.pem");
-		properties.put("server.ssl.certificate-private-key", "file:../certificate/key.pem");
+		properties.put("server.ssl.certificate", "file:" + System.getenv("VLCN_CERT_FOLDER") + "/cert.pem");
+		properties.put("server.ssl.trust-certificate", "file:" + System.getenv("VLCN_CERT_FOLDER") + "/cert.pem");
+		properties.put("server.ssl.certificate-private-key", "file:" + System.getenv("VLCN_CERT_FOLDER") + "/cert.pem");
 
 		// Configure Sessions
 		String redisURL;

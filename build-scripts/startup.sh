@@ -6,7 +6,10 @@ if [ "$DD_ENV" == "kubernetes" ]
 then
     rm -rf /vulcan
     git clone https://github.com/MatthewBrazill/vulcan-testing-app.git /vulcan
-    cd /vulcan/services/
+    
+    cd /vulcan
+    export VLCN_COMMIT_SHA=$(git rev-parse HEAD)
+    
     if [ "$DD_SERVICE" == "vulcan-go" ]
     then
         cd /vulcan/services/golang
@@ -24,8 +27,6 @@ then
         cd /vulcan/services/flutter
     fi
 fi
-
-export VULCAN_COMMIT_SHA=$(git rev-parse HEAD)
 
 if [ "$DD_SERVICE" == "vulcan-go" ]
 then
@@ -66,7 +67,7 @@ then
         -Ddd.iast.enabled=true \
         -Ddd.dbm.propagation.mode=full \
         -Ddd.service.mapping=redis:session-store,postgresql:user-database,mongo:god-database \
-        -Ddd.tags=git.commit.sha:$(git rev-parse HEAD),git.repository_url:github.com/MatthewBrazill/vulcan-testing-app \
+        -Ddd.tags=git.commit.sha:$VLCN_COMMIT_SHA,git.repository_url:github.com/MatthewBrazill/vulcan-testing-app \
         -jar ./target/vulcan.jar
 elif [ "$DD_SERVICE" = "vulcan-flutter" ]
 then

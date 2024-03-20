@@ -90,7 +90,7 @@ spec:
         - name: vulcan-go
           image: golang:latest
           command: ["/bin/sh"]
-          args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/startup.sh | bash -s"]
+          args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | bash -s"]
           volumeMounts:
             - mountPath: /logs
               name: logs
@@ -175,7 +175,7 @@ spec:
         - name: vulcan-js
           image: node:18
           command: ["/bin/sh"]
-          args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/startup.sh | bash -s"]
+          args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | bash -s"]
           volumeMounts:
             - mountPath: /logs
               name: logs
@@ -258,7 +258,7 @@ spec:
         - name: vulcan-java
           image: maven:3.9-eclipse-temurin-17
           command: ["/bin/sh"]
-          args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/startup.sh | bash -s"]
+          args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/build-scripts/main/startup.sh | bash -s"]
           volumeMounts:
             - mountPath: /logs
               name: logs

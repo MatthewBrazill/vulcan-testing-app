@@ -8,7 +8,7 @@ tracer.init({
     profiling: true,
     appsec: true,
     tags: {
-        "git.commit.sha": process.env.VULCAN_COMMIT_SHA,
+        "git.commit.sha": process.env.VLCN_COMMIT_SHA,
         "git.repository_url": "https://github.com/MatthewBrazill/vulcan-testing-app"
     }
 })
@@ -142,8 +142,8 @@ async function start() {
     })
 
     https.createServer({
-        key: fs.readFileSync("./../certificate/key.pem"),
-        cert: fs.readFileSync("./../certificate/cert.pem")
+        key: fs.readFileSync(`${process.env.VLCN_CERT_FOLDER}/key.pem`),
+        cert: fs.readFileSync(`${process.env.VLCN_CERT_FOLDER}/cert.pem`)
     }, app).listen(443, () => {
         console.log("Server started")
     })

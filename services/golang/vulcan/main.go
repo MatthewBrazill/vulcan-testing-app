@@ -35,7 +35,6 @@ var pgdb *bun.DB
 var mongoURL string
 var postgresURL string
 var redisURL string
-var sessionKey string
 var service string
 var version string
 var env string
@@ -45,7 +44,6 @@ func main() {
 	service = os.Getenv("DD_SERVICE")
 	version = os.Getenv("DD_VERSION")
 	env = os.Getenv("DD_ENV")
-	sessionKey = os.Getenv("VULCAN_SESSION_KEY")
 
 	if env == "kubernetes" {
 		mongoURL = "mongodb://host.minikube.internal:27017/?connect=direct"
@@ -75,7 +73,7 @@ func main() {
 		tracer.WithService(service),
 		tracer.WithServiceVersion(version),
 		tracer.WithRuntimeMetrics(),
-		tracer.WithGlobalTag("git.commit.sha", os.Getenv("VULCAN_COMMIT_SHA")),
+		tracer.WithGlobalTag("git.commit.sha", os.Getenv("VLCN_COMMIT_SHA")),
 		tracer.WithGlobalTag("git.repository_url", "https://github.com/MatthewBrazill/vulcan-testing-app"),
 	)
 	defer tracer.Stop()
@@ -128,7 +126,7 @@ func main() {
 			return redigotrace.DialContext(context.Background(), "tcp", redisURL, redigotrace.WithServiceName("session-store"), redigotrace.WithContextConnection())
 		},
 	}
-	store, err := redisStore.NewStoreWithPool(pool, []byte(sessionKey))
+	store, err := redisStore.NewStoreWithPool(pool, []byte(os.Getenv("VLCN_SESSION_KEY")))
 	redisStore.SetKeyPrefix(store, "go:sess:")
 	if err != nil {
 		LogInitEvent().WithError(err).Error("Failed to connect to session-store.")
@@ -244,7 +242,8 @@ func main() {
 	})
 
 	LogInitEvent().Info("Starting Server")
-	err = app.RunTLS(":443", "./../certificate/cert.pem", "./../certificate/key.pem")
+	var certFolder = os.Getenv("VLCN_CERT_FOLDER")
+	err = app.RunTLS(":443", fmt.Sprintf("%s/cert.pem", certFolder), fmt.Sprintf("%s/key.pem", certFolder))
 	if err != nil {
 		LogInitEvent().WithError(err).Error("Failed to start server.")
 		os.Exit(1)

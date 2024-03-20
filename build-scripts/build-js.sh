@@ -1,3 +1,4 @@
+#! bin/bash
 for f in services/frontend/javascript/*.js; do
     java -jar ~/Playground/closure-compiler-v20231112.jar \
     --js $f \
