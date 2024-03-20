@@ -15,7 +15,7 @@ then
         cd /vulcan/services/golang
     elif [ "$DD_SERVICE" = "vulcan-js" ]
     then
-        cd /vulcan/services/ndoe
+        cd /vulcan/services/node
     elif [ "$DD_SERVICE" = "vulcan-java" ]
     then
         cd /vulcan/services/java

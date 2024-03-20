@@ -46,7 +46,7 @@ async function start() {
 
     // Set up sessions
     app.use(session({
-        secret: process.env.VULCAN_SESSION_KEY,
+        secret: process.env.VLCN_SESSION_KEY,
         saveUninitialized: true,
         resave: false,
         name: "vulcan-js",

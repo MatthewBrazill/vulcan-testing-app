@@ -115,8 +115,10 @@ spec:
               value: 'unix:///var/run/datadog/apm.socket'
             - name: DD_TRACE_CLIENT_IP_ENABLED
               value: "true"
-            - name: VULCAN_SESSION_KEY
+            - name: VLCN_SESSION_KEY
               value: ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*
+            - name: VLCN_CERT_FOLDER
+              value: /vulcan/certificate
           ports:
             - containerPort: 443
               protocol: TCP
@@ -198,8 +200,10 @@ spec:
               value: 'unix:///var/run/datadog/apm.socket'
             - name: DD_TRACE_CLIENT_IP_ENABLED
               value: "true"
-            - name: VULCAN_SESSION_KEY
+            - name: VLCN_SESSION_KEY
               value: ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*
+            - name: VLCN_CERT_FOLDER
+              value: /vulcan/certificate
           ports:
             - containerPort: 443
               protocol: TCP
@@ -277,6 +281,10 @@ spec:
 #              value: "8126"
             - name: DD_TRACE_AGENT_URL
               value: 'unix:///var/run/datadog/apm.socket'
+            - name: VLCN_SESSION_KEY
+              value: ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*
+            - name: VLCN_CERT_FOLDER
+              value: /vulcan/certificate
           ports:
             - containerPort: 443
               protocol: TCP

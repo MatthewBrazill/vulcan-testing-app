@@ -36,7 +36,7 @@ services:
     volumes:
       - ./services/golang:/vulcan/golang
       - ./services/frontend:/vulcan/frontend
-      - ./startup.sh:/startup.sh
+      - ./build-scripts/startup.sh:/startup.sh
       - ./certificate:/vulcan/certificate
       - /vulcan-data/docker/logs:/logs
       - /var/run/datadog:/var/run/datadog
@@ -76,7 +76,7 @@ services:
     volumes:
       - ./services/node:/vulcan/node
       - ./services/frontend:/vulcan/frontend
-      - ./startup.sh:/startup.sh
+      - ./build-scripts/startup.sh:/startup.sh
       - ./certificate:/vulcan/certificate
       - /vulcan-data/docker/logs:/logs
       - /var/run/datadog:/var/run/datadog
@@ -114,7 +114,7 @@ services:
     volumes:
       - ./services/java:/vulcan/java
       - ./services/frontend:/vulcan/frontend
-      - ./startup.sh:/startup.sh
+      - ./build-scripts/startup.sh:/startup.sh
       - ./certificate:/vulcan/certificate
       - /vulcan-data/docker/logs:/logs
       - /var/run/datadog:/var/run/datadog
