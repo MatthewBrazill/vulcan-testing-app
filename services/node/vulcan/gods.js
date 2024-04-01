@@ -28,7 +28,12 @@ const gods = {
                 message: "Successfully created god.",
                 godId: godId
             })
-            else throw new Error("VulcanError: failed to create god")
+            else throw new Error(`VulcanError: failed to create god "${{
+                godId: godId,
+                pantheon: req.body.pantheon,
+                name: req.body.name,
+                domain: req.body.domain
+            }}"`)
         } catch (err) {
             logger.error({
                 error: err.message,

@@ -54,7 +54,7 @@ const users = {
                     break
 
                 default:
-                    throw new Error("VulcanError: unsupported permissions")
+                    throw new Error(`VulcanError: unsupported permission ${perms}`)
             }
         } catch (err) {
             logger.error({
