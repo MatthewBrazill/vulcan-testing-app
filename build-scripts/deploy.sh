@@ -49,7 +49,7 @@ if [ "$taredown" == 1 ]; then
         kubectl delete -f deployment.yaml 2> /dev/null
     elif [ "$docker" == 1 ]; then
         echo "  Docker..."
-        docker-compose down #2> /dev/null
+        docker-compose down 2> /dev/null
     elif [ "$kube" == 1 ]; then
         echo "  Kubernetes..."
         kubectl delete -f deployment.yaml 2> /dev/null
@@ -67,7 +67,7 @@ if [ "$docker" == 0 ] && [ "$kube" == 0 ]; then
     kubectl apply -f deployment.yaml 2> /dev/null
 elif [ "$docker" == 1 ]; then
     echo "  Docker..."
-    docker-compose up -d #2> /dev/null
+    docker-compose up -d 2> /dev/null
 elif [ "$kube" == 1 ]; then
     echo "  Kubernetes..."
     kubectl apply -f deployment.yaml 2> /dev/null
