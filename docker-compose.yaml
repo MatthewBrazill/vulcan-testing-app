@@ -11,6 +11,8 @@ services:
   ### -------------------------------------------------- ###
   #   Web Apps                                             #
   ### -------------------------------------------------- ###
+  
+  # Golang
   vulcan-go:
     image: golang:latest
     container_name: vulcan-go
@@ -51,6 +53,7 @@ services:
           memory: 512M
 
 
+  # JavaScript
   vulcan-js:
     image: node:18
     container_name: vulcan-js
@@ -91,6 +94,7 @@ services:
           memory: 512M
 
 
+  # Java
   vulcan-java:
     image: maven:3.9-eclipse-temurin-17
     container_name: vulcan-java
@@ -135,11 +139,13 @@ services:
   ### -------------------------------------------------- ###
   #   Supporting Infrastructure                            #
   ### -------------------------------------------------- ###
+
+  # Authenticator
   vulcan-auth:
     image: python:bookworm
     container_name: vulcan-auth
     ports:
-      - 4433:443
+      - 2884:2884
     networks:
       - vulcan_app
       - datadog_bridge
@@ -151,12 +157,14 @@ services:
       # - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
       - DD_TRACE_CLIENT_IP_ENABLED=true
-    working_dir: /vulcan
+      - VLCN_COMMIT_SHA=$SHA
+    working_dir: /vulcan/authenticator
     volumes:
-      - ./:/vulcan/
+      - ./services/authenticator:/vulcan/authenticator
+      - ./build-scripts/startup.sh:/startup.sh
       - /vulcan-data/docker/logs:/logs
       - /var/run/datadog:/var/run/datadog
-    command: bash ./startup.sh
+    command: bash /startup.sh
     labels:
       com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-auth","path":"/vulcan-data/docker/logs/auth.log"}]'
       com.datadoghq.ad.tags: '["env:docker","service:vulcan-auth"]'

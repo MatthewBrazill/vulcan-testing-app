@@ -1,4 +1,8 @@
-# Namespace (Optional)
+### -------------------------------------------------- ###
+#   Namespace                                            #
+### -------------------------------------------------- ###
+
+# Vulcan Lang
 ---
 kind: Namespace
 apiVersion: v1
@@ -7,7 +11,15 @@ metadata:
   labels:
     tags.datadoghq.com/env: kubernetes
 
-# Volumes
+
+
+
+
+### -------------------------------------------------- ###
+#   Volumes                                              #
+### -------------------------------------------------- ###
+
+# Logs
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -39,6 +51,14 @@ spec:
   resources:
     requests:
       storage: 1Gi
+
+
+
+
+
+### -------------------------------------------------- ###
+#   Web Apps                                             #
+### -------------------------------------------------- ###
 
 # Golang
 ---
@@ -78,6 +98,7 @@ spec:
         tags.datadoghq.com/service: vulcan-go
       annotations:
         ad.datadoghq.com/vulcan-go.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-go","path":"/vulcan-data/kubernetes/logs/golang.log"}]'
+        ad.datadoghq.com/tags: '{"team":"john"}'
     spec:
       volumes:
         - name: logs
@@ -127,6 +148,7 @@ spec:
               memory: "512Mi"
               cpu: "1"
 
+
 # JavaScript
 ---
 apiVersion: v1
@@ -165,6 +187,7 @@ spec:
         tags.datadoghq.com/service: vulcan-js
       annotations:
         ad.datadoghq.com/vulcan-js.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-js","path":"/vulcan-data/kubernetes/logs/node.log"}]'
+        ad.datadoghq.com/tags: '{"team":"matthew"}'
     spec:
       volumes:
         - name: logs
@@ -212,6 +235,7 @@ spec:
               memory: "512Mi"
               cpu: "1"
 
+
 # Java
 ---
 apiVersion: v1
@@ -250,6 +274,7 @@ spec:
         tags.datadoghq.com/service: vulcan-java
       annotations:
         ad.datadoghq.com/vulcan-java.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-java","path":"/vulcan-data/kubernetes/logs/java.log"}]'
+        ad.datadoghq.com/tags: '{"team":"matthew"}'
     spec:
       volumes:
         - name: logs
