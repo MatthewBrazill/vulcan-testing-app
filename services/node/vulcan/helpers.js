@@ -2,6 +2,7 @@
 
 // Imports
 const tracer = require("dd-trace").tracer
+const fetch = require("node-fetch")
 const logger = require("./logger.js")
 const pgdb = require("./postgres.js")
 
@@ -10,29 +11,35 @@ const helpers = {
         return await tracer.trace("vulcan.helper", { resource: "authorize" }, async () => {
             const span = tracer.scope().active()
             try {
-                var username = req.session.username
-
-                if (username == null || username == "") {
-                    logger.debug("authorize using api key")
+                if (!req.session.auth) {
+                    logger.debug("session not authorized - authorising")
                     span.setTag("auth_method", "api_key")
-                    var result = await pgdb.query("SELECT * FROM apikeys WHERE apikey = $1::text", [req.headers["api-key"]])
-                } else {
-                    logger.debug("authorize using username")
-                    span.setTag("auth_method", "session")
-                    var result = await pgdb.query("SELECT * FROM users WHERE username = $1::text", [username])
-                }
 
-                logger.debug({ message: `authorize returned permissions: ${result.rows[0].permissions}`, permissions: result.rows[0].permissions })
-                if (result.rowCount > 0) {
-                    span.setTag("auth", true)
-                    return result.rows[0].permissions
+                    var auth = await fetch("http://vulcan-auth:2884/auth", {
+                        method: "POST",
+                        body: {
+                            apiKey: req.headers["api-key"] ? req.headers["api-key"] : null,
+                            username: req.body.username ? req.body.username : null,
+                            password: req.body.password ? req.body.password : null,
+                        }
+                    })
+
+                    if (auth.status == 200) {
+                        console.log(auth.json(), auth)
+                        return auth.json().perms
+                    } else {
+                        logger.debug("session failed to authorize")
+                        span.setTag("authorized", false)
+                        return "no_auth"
+                    }
                 } else {
-                    span.setTag("auth", false)
-                    return "no_auth"
+                    logger.debug("session authorized")
+                    span.setTag("authorized", true)
+                    return req.session.perms
                 }
             } catch (err) {
                 span.setTag("error", err)
-                span.setTag("auth", false)
+                span.setTag("authorized", false)
                 return "no_auth"
             }
         })

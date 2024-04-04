@@ -88,6 +88,8 @@ const users = {
 
             // Validate user
             if (result.rowCount > 0) if (req.body.password == user.password) {
+                req.session.perms = helpers.authorize(req)
+                req.session.auth = true
                 req.session.username = user.username
                 res.status(200).json({
                     "message": "Successfully logged in."
