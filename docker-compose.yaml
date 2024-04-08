@@ -141,9 +141,9 @@ services:
   ### -------------------------------------------------- ###
 
   # Authenticator
-  vulcan-auth:
+  authenticator:
     image: python:bookworm
-    container_name: vulcan-auth
+    container_name: authenticator
     ports:
       - 2884:2884
     networks:
@@ -151,8 +151,8 @@ services:
       - datadog_bridge
     environment:
       - DD_ENV=docker
-      - DD_SERVICE=vulcan-auth
-      - DD_VERSION=0.1.0
+      - DD_SERVICE=authenticator
+      - DD_VERSION=0.1.1
       # - DD_AGENT_HOST=datadog-agent
       # - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
@@ -166,8 +166,8 @@ services:
       - /var/run/datadog:/var/run/datadog
     command: bash /startup.sh
     labels:
-      com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-auth","path":"/vulcan-data/docker/logs/auth.log"}]'
-      com.datadoghq.ad.tags: '["env:docker","service:vulcan-auth"]'
+      com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"authenticator","path":"/vulcan-data/docker/logs/auth.log"}]'
+      com.datadoghq.ad.tags: '["env:docker","service:authenticator"]'
     deploy:
       resources:
         limits:

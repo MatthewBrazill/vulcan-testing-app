@@ -317,3 +317,93 @@ spec:
             limits:
               memory: "512Mi"
               cpu: "1"
+
+
+
+
+
+### -------------------------------------------------- ###
+#   Supporting Infrastructure                            #
+### -------------------------------------------------- ###
+
+# Authenticator
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: authenticator
+  #namespace: vulcan-lang
+  labels:
+    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/service: authenticator
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 12884
+      targetPort: 2884
+  selector:
+    tags.datadoghq.com/service: authenticator
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authenticator
+  #namespace: vulcan-lang
+  labels:
+    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/service: authenticator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tags.datadoghq.com/service: authenticator
+  template:
+    metadata:
+      labels:
+        tags.datadoghq.com/env: kubernetes
+        tags.datadoghq.com/service: authenticator
+      annotations:
+        ad.datadoghq.com/authenticator.logs: '[{"type":"file","source":"vulcan-app","service":"authenticator","path":"/vulcan-data/kubernetes/logs/auth.log"}]'
+        ad.datadoghq.com/tags: '{"team":"matthew"}'
+    spec:
+      volumes:
+        - name: logs
+          persistentVolumeClaim:
+            claimName: vulcan-logs-pvc
+        - hostPath:
+            path: /var/run/datadog/
+          name: apmsocketpath
+      containers:
+        - name: authenticator
+          image: maven:3.9-eclipse-temurin-17
+          command: ["/bin/sh"]
+          args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | bash -s"]
+          volumeMounts:
+            - mountPath: /logs
+              name: logs
+            - name: apmsocketpath
+              mountPath: /var/run/datadog
+          env:
+            - name: DD_ENV
+              value: kubernetes
+            - name: DD_SERVICE
+              value: authenticator
+            - name: DD_VERSION
+              value: "1.2.1"
+#            - name: DD_AGENT_HOST
+#              value: datadog-agent
+#            - name: DD_TRACE_AGENT_PORT
+#              value: "8126"
+            - name: DD_TRACE_AGENT_URL
+              value: 'unix:///var/run/datadog/apm.socket'
+            - name: VLCN_SESSION_KEY
+              value: ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*
+            - name: VLCN_CERT_FOLDER
+              value: /vulcan/certificate
+          ports:
+            - containerPort: 443
+              protocol: TCP
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "1"
