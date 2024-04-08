@@ -190,7 +190,7 @@ services:
       - vulcan_app
       - datadog_bridge
     volumes:
-      - ./services/databases/gods/data:/data/db
+      - ./services/databases/god-database/data:/data/db
     labels:
       com.datadoghq.ad.checks: '{"mongo":{"instances":[{"hosts":["god-database:27017"],"username":"datadog","password":"5aae8c35f7e16245","database":"vulcan"}]}}'
       com.datadoghq.ad.logs: '[{"source":"mongodb","service":"god-database"}]'
@@ -213,7 +213,7 @@ services:
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
-      - ./services/databases/users/data:/var/lib/postgresql/data
+      - ./services/databases/user-database/data:/var/lib/postgresql/data
     labels:
       com.datadoghq.ad.checks: '{"postgres":{"instances":[{"dbm":"true","host":"user-database","port":5432,"username":"datadog","password":"5aae8c35f7e16245","dbname":"vulcan_users"}]}}'
       com.datadoghq.ad.logs: '[{"source":"postgresql","service":"user-database"}]'
@@ -234,7 +234,7 @@ services:
       - vulcan_app
       - datadog_bridge
     volumes:
-      - ./services/databases/sessions/data:/data
+      - ./services/databases/session-store/data:/data
     labels:
       com.datadoghq.ad.checks: '{"redisdb":{"instances":[{"host":"session-store","port":"6379","password":""}]}}'
       com.datadoghq.ad.logs: '[{"source":"redis","service":"session-store"}]'
