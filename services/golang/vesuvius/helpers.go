@@ -16,7 +16,7 @@ func Authorize(ctx *gin.Context) string {
 	username := sess.Get("username")
 	result := make(map[string]interface{})
 
-	span, c := tracer.StartSpanFromContext(ctx.Request.Context(), "http.authorize", tracer.ResourceName("Authorize"))
+	span, c := tracer.StartSpanFromContext(ctx.Request.Context(), "vesuvius.authorize", tracer.ResourceName("Authorize"))
 	defer span.Finish()
 
 	if username == nil || username == "" {
@@ -62,7 +62,7 @@ func Authorize(ctx *gin.Context) string {
 }
 
 func Validate(ctx *gin.Context, obj map[string]string, params [][2]string) bool {
-	span, _ := tracer.StartSpanFromContext(ctx.Request.Context(), "http.validate", tracer.ResourceName("Validate"))
+	span, _ := tracer.StartSpanFromContext(ctx.Request.Context(), "vesuvius.validate", tracer.ResourceName("Validate"))
 	defer span.Finish()
 
 	for i := 0; i < len(params); i++ {
