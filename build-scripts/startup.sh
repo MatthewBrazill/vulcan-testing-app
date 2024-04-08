@@ -10,7 +10,7 @@ then
     cd /vulcan
     export VLCN_COMMIT_SHA=$(git rev-parse HEAD)
     
-    if [ "$DD_SERVICE" == "vulcan-go" ]
+    if [ "$DD_SERVICE" == "vesuvius" ]
     then
         cd /vulcan/services/golang
     elif [ "$DD_SERVICE" = "vulcan-js" ]
@@ -28,7 +28,7 @@ then
     fi
 fi
 
-if [ "$DD_SERVICE" == "vulcan-go" ]
+if [ "$DD_SERVICE" == "vesuvius" ]
 then
     go mod download && go mod verify
     go build -o /usr/local/bin/vulcan -tags appsec ./vulcan/...

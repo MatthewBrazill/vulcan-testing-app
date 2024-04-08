@@ -1,6 +1,6 @@
 ---
 schema-version: v2
-dd-service: vulcan-go
+dd-service: vesuvius
 team: matthew
 repos:
   - name: Source Code

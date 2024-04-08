@@ -13,9 +13,9 @@ services:
   ### -------------------------------------------------- ###
   
   # Golang
-  vulcan-go:
+  vesuvius:
     image: golang:latest
-    container_name: vulcan-go
+    container_name: vesuvius
     ports:
       - 4430:443
     networks:
@@ -23,7 +23,7 @@ services:
       - datadog_bridge
     environment:
       - DD_ENV=docker
-      - DD_SERVICE=vulcan-go
+      - DD_SERVICE=vesuvius
       - DD_VERSION=1.2.0
       - DD_APPSEC_ENABLED=true
       - DD_IAST_ENABLED=true
@@ -44,8 +44,8 @@ services:
       - /var/run/datadog:/var/run/datadog
     command: bash /startup.sh
     labels:
-      com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-go","path":"/vulcan-data/docker/logs/golang.log"}]'
-      com.datadoghq.ad.tags: '["env:docker","service:vulcan-go"]'
+      com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vesuvius","path":"/vulcan-data/docker/logs/golang.log"}]'
+      com.datadoghq.ad.tags: '["env:docker","service:vesuvius"]'
     deploy:
       resources:
         limits:

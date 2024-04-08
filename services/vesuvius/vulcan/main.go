@@ -138,7 +138,7 @@ func main() {
 		Secure:   true,
 		HttpOnly: true,
 	})
-	app.Use(sessions.Sessions("vulcan-go", store))
+	app.Use(sessions.Sessions("vesuvius", store))
 
 	// Route logging
 	app.Use(func(ctx *gin.Context) {

@@ -65,39 +65,39 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: vulcan-go
+  name: vesuvius
   #namespace: vulcan-lang
   labels:
     tags.datadoghq.com/env: kubernetes
-    tags.datadoghq.com/service: vulcan-go
+    tags.datadoghq.com/service: vesuvius
 spec:
   type: LoadBalancer
   ports:
     - port: 14430
       targetPort: 443
   selector:
-    tags.datadoghq.com/service: vulcan-go
+    tags.datadoghq.com/service: vesuvius
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: vulcan-go
+  name: vesuvius
   #namespace: vulcan-lang
   labels:
     tags.datadoghq.com/env: kubernetes
-    tags.datadoghq.com/service: vulcan-go
+    tags.datadoghq.com/service: vesuvius
 spec:
   replicas: 1
   selector:
     matchLabels:
-      tags.datadoghq.com/service: vulcan-go
+      tags.datadoghq.com/service: vesuvius
   template:
     metadata:
       labels:
         tags.datadoghq.com/env: kubernetes
-        tags.datadoghq.com/service: vulcan-go
+        tags.datadoghq.com/service: vesuvius
       annotations:
-        ad.datadoghq.com/vulcan-go.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-go","path":"/vulcan-data/kubernetes/logs/golang.log"}]'
+        ad.datadoghq.com/vesuvius.logs: '[{"type":"file","source":"vulcan-app","service":"vesuvius","path":"/vulcan-data/kubernetes/logs/golang.log"}]'
         ad.datadoghq.com/tags: '{"team":"john"}'
     spec:
       volumes:
@@ -108,7 +108,7 @@ spec:
             path: /var/run/datadog/
           name: apmsocketpath
       containers:
-        - name: vulcan-go
+        - name: vesuvius
           image: golang:latest
           command: ["/bin/sh"]
           args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | bash -s"]
@@ -121,7 +121,7 @@ spec:
             - name: DD_ENV
               value: kubernetes
             - name: DD_SERVICE
-              value: vulcan-go
+              value: vesuvius
             - name: DD_VERSION
               value: "1.2.0"
             - name: DD_APPSEC_ENABLED
