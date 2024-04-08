@@ -13,7 +13,7 @@ then
     if [ "$DD_SERVICE" == "vesuvius" ]
     then
         cd /vulcan/services/golang
-    elif [ "$DD_SERVICE" = "vulcan-js" ]
+    elif [ "$DD_SERVICE" = "etna" ]
     then
         cd /vulcan/services/node
     elif [ "$DD_SERVICE" = "vulcan-java" ]
@@ -33,7 +33,7 @@ then
     go mod download && go mod verify
     go build -o /usr/local/bin/vulcan -tags appsec ./vulcan/...
     vulcan
-elif [ "$DD_SERVICE" = "vulcan-js" ]
+elif [ "$DD_SERVICE" = "etna" ]
 then
     npm install .
     npm start

@@ -54,9 +54,9 @@ services:
 
 
   # JavaScript
-  vulcan-js:
+  etna:
     image: node:18
-    container_name: vulcan-js
+    container_name: etna
     ports:
       - 4431:443
     networks:
@@ -64,7 +64,7 @@ services:
       - datadog_bridge
     environment:
       - DD_ENV=docker
-      - DD_SERVICE=vulcan-js
+      - DD_SERVICE=etna
       - DD_VERSION=1.2.0
       - DD_IAST_ENABLED=true
       # - DD_AGENT_HOST=datadog-agent
@@ -85,8 +85,8 @@ services:
       - /var/run/datadog:/var/run/datadog
     command: bash /startup.sh
     labels:
-      com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-js","path":"/vulcan-data/docker/logs/node.log"}]'
-      com.datadoghq.ad.tags: '["env:docker","service:vulcan-js"]'
+      com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"etna","path":"/vulcan-data/docker/logs/node.log"}]'
+      com.datadoghq.ad.tags: '["env:docker","service:etna"]'
     deploy:
       resources:
         limits:

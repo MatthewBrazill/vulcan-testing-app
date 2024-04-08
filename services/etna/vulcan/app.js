@@ -49,7 +49,7 @@ async function start() {
         secret: process.env.VLCN_SESSION_KEY,
         saveUninitialized: true,
         resave: false,
-        name: "vulcan-js",
+        name: "etna",
         cookie: {
             maxAge: 86400000,
             secure: true,

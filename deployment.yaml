@@ -154,39 +154,39 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: vulcan-js
+  name: etna
   #namespace: vulcan-lang
   labels:
     tags.datadoghq.com/env: kubernetes
-    tags.datadoghq.com/service: vulcan-js
+    tags.datadoghq.com/service: etna
 spec:
   type: LoadBalancer
   ports:
     - port: 14431
       targetPort: 443
   selector:
-    tags.datadoghq.com/service: vulcan-js
+    tags.datadoghq.com/service: etna
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: vulcan-js
+  name: etna
   #namespace: vulcan-lang
   labels:
     tags.datadoghq.com/env: kubernetes
-    tags.datadoghq.com/service: vulcan-js
+    tags.datadoghq.com/service: etna
 spec:
   replicas: 1
   selector:
     matchLabels:
-      tags.datadoghq.com/service: vulcan-js
+      tags.datadoghq.com/service: etna
   template:
     metadata:
       labels:
         tags.datadoghq.com/env: kubernetes
-        tags.datadoghq.com/service: vulcan-js
+        tags.datadoghq.com/service: etna
       annotations:
-        ad.datadoghq.com/vulcan-js.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan-js","path":"/vulcan-data/kubernetes/logs/node.log"}]'
+        ad.datadoghq.com/etna.logs: '[{"type":"file","source":"vulcan-app","service":"etna","path":"/vulcan-data/kubernetes/logs/node.log"}]'
         ad.datadoghq.com/tags: '{"team":"matthew"}'
     spec:
       volumes:
@@ -197,7 +197,7 @@ spec:
             path: /var/run/datadog/
           name: apmsocketpath
       containers:
-        - name: vulcan-js
+        - name: etna
           image: node:18
           command: ["/bin/sh"]
           args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | bash -s"]
@@ -210,7 +210,7 @@ spec:
             - name: DD_ENV
               value: kubernetes
             - name: DD_SERVICE
-              value: vulcan-js
+              value: etna
             - name: DD_VERSION
               value: "1.2.0"
             - name: DD_IAST_ENABLED

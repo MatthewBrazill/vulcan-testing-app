@@ -13,7 +13,7 @@ tags:
   - "app:vulcan"
 ---
 schema-version: v2
-dd-service: vulcan-js
+dd-service: etna
 team: matthew
 repos:
   - name: Source Code
