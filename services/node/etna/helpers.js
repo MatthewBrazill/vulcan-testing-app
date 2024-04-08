@@ -7,7 +7,7 @@ const logger = require("./logger.js")
 
 const helpers = {
     async authorize(req) {
-        return await tracer.trace("vulcan.helper", { resource: "authorize" }, async () => {
+        return await tracer.trace("etna.helper", { resource: "authorize" }, async () => {
             const span = tracer.scope().active()
             try {
                 if (!req.session.auth) {
@@ -46,7 +46,7 @@ const helpers = {
     },
 
     async validate(params, tests) {
-        return await tracer.trace("vulcan.helper", { resource: "validate" }, async () => {
+        return await tracer.trace("etna.helper", { resource: "validate" }, async () => {
             const span = tracer.scope().active()
             try {
                 for (var test of tests) {
@@ -85,7 +85,7 @@ const helpers = {
 
     // Do some useless work just to show off async features in Datadog
     async asyncExample(number) {
-        return await tracer.trace("vulcan.helper", { resource: "asyncExample" }, async () => {
+        return await tracer.trace("etna.helper", { resource: "asyncExample" }, async () => {
             number = Math.floor(number * 4) + 1
             await new Promise(r => setTimeout(r, number))
         })
