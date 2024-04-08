@@ -4,7 +4,6 @@
 const tracer = require("dd-trace").tracer
 const fetch = require("node-fetch")
 const logger = require("./logger.js")
-const pgdb = require("./postgres.js")
 
 const helpers = {
     async authorize(req) {
@@ -15,18 +14,19 @@ const helpers = {
                     logger.debug("session not authorized - authorising")
                     span.setTag("auth_method", "api_key")
 
-                    var auth = await fetch("http://vulcan-auth:2884/auth", {
+                    var auth = await fetch("http://authenticator:2884/auth", {
                         method: "POST",
-                        body: {
-                            apiKey: req.headers["api-key"] ? req.headers["api-key"] : null,
-                            username: req.body.username ? req.body.username : null,
-                            password: req.body.password ? req.body.password : null,
-                        }
+                        body: JSON.stringify(req.headers["api-key"] ? {
+                            apiKey: req.headers["api-key"]
+                        } : {
+                            username: req.body.username,
+                            password: req.body.password
+                        })
                     })
 
                     if (auth.status == 200) {
-                        console.log(auth.json(), auth)
-                        return auth.json().perms
+                        var res = await auth.json()
+                        return res.perms
                     } else {
                         logger.debug("session failed to authorize")
                         span.setTag("authorized", false)
