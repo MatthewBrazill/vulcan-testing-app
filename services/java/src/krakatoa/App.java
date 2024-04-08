@@ -1,4 +1,4 @@
-package vulcan;
+package krakatoa;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -31,13 +31,13 @@ import com.samskivert.mustache.Mustache;
 
 @SpringBootConfiguration
 @EnableAutoConfiguration
-@ComponentScan("vulcan.controllers")
+@ComponentScan("krakatoa.controllers")
 public class App implements WebMvcConfigurer {
 
 	// * Add Mustache reader that supports partials
 	@Bean
 	public Mustache.Compiler mustacheCompiler(Mustache.TemplateLoader templateLoader, Environment environment) {
-		Logger logger = LogManager.getLogger("vulcan");
+		Logger logger = LogManager.getLogger("krakatoa");
 		logger.debug("Loading partials");
 		
 		templateLoader = new Mustache.TemplateLoader() {
@@ -64,7 +64,7 @@ public class App implements WebMvcConfigurer {
 	// * Set up statics
 	@Override
 	public void addResourceHandlers(@NonNull final ResourceHandlerRegistry registry) {
-		Logger logger = LogManager.getLogger("vulcan");
+		Logger logger = LogManager.getLogger("krakatoa");
 		logger.debug("Setting resource locations");
 
 		registry.addResourceHandler("/js/**").addResourceLocations("file:../frontend/statics/js/");
@@ -91,13 +91,13 @@ public class App implements WebMvcConfigurer {
 		builder.add(file);
 
 		// Attach appernder to logger
-		LoggerComponentBuilder vulcan = builder.newLogger("vulcan", Level.ALL);
-		vulcan.add(builder.newAppenderRef("jsonFile"));
-		builder.add(vulcan);
+		LoggerComponentBuilder krakatoaLogger = builder.newLogger("krakatoa", Level.ALL);
+		krakatoaLogger.add(builder.newAppenderRef("jsonFile"));
+		builder.add(krakatoaLogger);
 
 		// Configure logger
 		Configurator.initialize(builder.build());
-		Logger logger = LogManager.getLogger("vulcan");
+		Logger logger = LogManager.getLogger("krakatoa");
 		logger.debug("Configured logging");
 
 		// Create the app
@@ -122,7 +122,7 @@ public class App implements WebMvcConfigurer {
 		}
 
 		properties.put("server.servlet.session.timeout", 86400);
-		properties.put("server.servlet.session.cookie.name", "vulcan-java");
+		properties.put("server.servlet.session.cookie.name", "krakatoa");
 		properties.put("spring.session.store-type", "redis");
 		properties.put("spring.session.redis.flush-mode", "on_save");
 		properties.put("spring.session.redis.namespace", "java:sess");

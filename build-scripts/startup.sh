@@ -16,7 +16,7 @@ then
     elif [ "$DD_SERVICE" = "etna" ]
     then
         cd /vulcan/services/node
-    elif [ "$DD_SERVICE" = "vulcan-java" ]
+    elif [ "$DD_SERVICE" = "krakatoa" ]
     then
         cd /vulcan/services/java
     elif [ "$DD_SERVICE" = "authenticator" ]
@@ -37,7 +37,7 @@ elif [ "$DD_SERVICE" = "etna" ]
 then
     npm install .
     npm start
-elif [ "$DD_SERVICE" = "vulcan-java" ]
+elif [ "$DD_SERVICE" = "krakatoa" ]
 then
     wget -nc -nv -O /vulcan/dd-java-agent.jar https://dtdg.co/latest-java-tracer
     mvn install

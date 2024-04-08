@@ -26,7 +26,7 @@ tags:
   - "app:vulcan"
 ---
 schema-version: v2
-dd-service: vulcan-java
+dd-service: krakatoa
 team: matthew
 repos:
   - name: Source Code

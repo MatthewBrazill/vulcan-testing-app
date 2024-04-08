@@ -1,4 +1,4 @@
-package vulcan;
+package krakatoa;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -20,7 +20,7 @@ import io.opentracing.util.GlobalTracer;
 
 public class Databases {
 
-    @Trace(operationName = "vulcan.database", resourceName = "Databases.userDatabase")
+    @Trace(operationName = "krakatoa.database", resourceName = "Databases.userDatabase")
     public static Statement userDatabase() {
         Statement statement;
         Span span = GlobalTracer.get().activeSpan();
@@ -48,7 +48,7 @@ public class Databases {
         return statement;
     }
 
-    @Trace(operationName = "vulcan.database", resourceName = "Databases.godDatabase")
+    @Trace(operationName = "krakatoa.database", resourceName = "Databases.godDatabase")
     public static MongoCollection<Document> godDatabse() {
         MongoCollection<Document> coll;
         Span span = GlobalTracer.get().activeSpan();

@@ -1,4 +1,4 @@
-package vulcan.controllers;
+package krakatoa.controllers;
 
 import java.sql.ResultSet;
 import java.util.Collections;
@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import vulcan.Helpers;
-import vulcan.Databases;
+import krakatoa.Helpers;
+import krakatoa.Databases;
 
 @Controller
 public class Users {
