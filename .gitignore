@@ -1,6 +1,10 @@
-# Binaries and packages
+# Binaries and Executables
+build-scripts/js-mapper.jar
+
+# Packages
 node_modules
 target
+__pycache__
 
 # Log files/folder
 logs
