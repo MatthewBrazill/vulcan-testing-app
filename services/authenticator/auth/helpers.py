@@ -18,8 +18,8 @@ async def validate(params, tests):
 @tracer.wrap(name="authenticator.database", resource="userDatabase")
 async def userDatabase():
     global database
-    if isinstance(database, asyncpg.Connection):
-        return database
-    else:
+    if database == None:
         database = await asyncpg.connect(host="user-database", port="5432", user="vulcan", password="yKCstvg4hrB9pmDP", database="vulcan_users")
-        return database
+    elif database.is_closed():
+        database = await asyncpg.connect(host="user-database", port="5432", user="vulcan", password="yKCstvg4hrB9pmDP", database="vulcan_users")
+    return database
