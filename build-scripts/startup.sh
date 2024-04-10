@@ -31,8 +31,8 @@ fi
 if [ "$DD_SERVICE" == "vesuvius" ]
 then
     go mod download && go mod verify
-    go build -o /usr/local/bin/vulcan -tags appsec ./vulcan/...
-    vulcan
+    go build -o /usr/local/bin/vesuvius -tags appsec ./vesuvius/...
+    vesuvius
 elif [ "$DD_SERVICE" = "etna" ]
 then
     npm install .
@@ -52,11 +52,11 @@ then
         -Ddd.dbm.propagation.mode=full \
         -Ddd.service.mapping=redis:session-store,postgresql:user-database,mongo:god-database \
         -Ddd.tags=git.commit.sha:$(git rev-parse HEAD),git.repository_url:github.com/MatthewBrazill/vulcan-testing-app \
-        -jar ./target/vulcan.jar
+        -jar ./target/krakatoa.jar
 elif [ "$DD_SERVICE" = "authenticator" ]
 then
     pip3 install -r requirements.txt
-    ddtrace-run python3 ./auth/main.py
+    ddtrace-run python3 ./authenticator/main.py
 elif [ "$DD_SERVICE" = "vulcan-flutter" ]
 then
     echo "Not yet implemented"
