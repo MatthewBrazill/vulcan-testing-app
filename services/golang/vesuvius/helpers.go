@@ -39,8 +39,15 @@ func Authenticate(ctx *gin.Context) string {
 			return "none"
 		}
 
-		if req.Response.StatusCode == http.StatusOK {
-			rawBody, err := io.ReadAll(req.Response.Body)
+		res, err := http.DefaultClient.Do(req)
+		if err != nil {
+			span.SetTag("authorized", false)
+			Log(ctx).WithError(err).Error(ctx.Error(err).Error())
+			return "none"
+		}
+
+		if res.StatusCode == http.StatusOK {
+			rawBody, err := io.ReadAll(res.Body)
 			if err != nil {
 				span.SetTag("authorized", false)
 				Log(ctx).WithError(err).Error(ctx.Error(err).Error())
