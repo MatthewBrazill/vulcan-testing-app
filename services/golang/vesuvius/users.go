@@ -81,6 +81,8 @@ func LoginAPI(ctx *gin.Context) {
 	if login["password"] == result["password"] {
 		sess := sessions.Default(ctx)
 		sess.Set("username", result["username"])
+		sess.Set("authorized", true)
+		sess.Set("permissions", result["permissions"])
 		sess.Save()
 
 		ctx.JSON(http.StatusOK, gin.H{

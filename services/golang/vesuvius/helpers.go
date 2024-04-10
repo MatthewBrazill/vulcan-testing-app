@@ -1,64 +1,71 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
 	"regexp"
+	"strings"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"github.com/uptrace/bun"
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 )
 
 func Authorize(ctx *gin.Context) string {
 	sess := sessions.Default(ctx)
-	username := sess.Get("username")
-	result := make(map[string]interface{})
+	authorized := sess.Get("authorized")
+	permissions := sess.Get("permissions")
 
 	span, c := tracer.StartSpanFromContext(ctx.Request.Context(), "vesuvius.authorize", tracer.ResourceName("Authorize"))
 	defer span.Finish()
 
-	if username == nil || username == "" {
-		fmt.Print(ctx.GetHeader("Api-Key"))
+	if authorized != true {
+		body := ""
 		if apiKey, exists := ctx.Request.Header["Api-Key"]; exists {
-			span.SetTag("auth_method", "api_key")
-			err := pgdb.NewSelect().Table("apikeys").Where("? = ?", bun.Ident("apikey"), apiKey[0]).Scan(c, &result)
-			if err != nil {
-				if err.Error() == "sql: no rows in result set" {
-					span.SetTag("auth", false)
-					Log(ctx).WithField("key", apiKey).WithField("result", result).Warnf("No API key for value '%s'", apiKey)
-					return "no_auth"
-				}
-
-				span.SetTag("auth", false)
-				Log(ctx).WithError(err).Error(ctx.Error(err).Error())
-				return "no_auth"
-			}
+			body = fmt.Sprintf(`{"apiKey":"%s"}`, apiKey[0])
 		} else {
-			span.SetTag("auth_method", "none")
-			span.SetTag("auth", false)
-			Log(ctx).Debug("No API key or user session attached.")
-			return "no_auth"
+			userdata := make(map[string]string)
+			ctx.ShouldBind(&userdata)
+			body = fmt.Sprintf(`{"username":"%s","password":"%s"}`, userdata["username"], userdata["password"])
 		}
-	} else {
-		span.SetTag("auth_method", "session")
-		err := pgdb.NewSelect().Table("users").Where("? = ?", bun.Ident("username"), username).Scan(c, &result)
+
+		req, err := http.NewRequestWithContext(c, http.MethodPost, "http://authenticator:2448/auth", strings.NewReader(body))
 		if err != nil {
-			if err.Error() == "sql: no rows in result set" {
-				span.SetTag("auth", false)
-				Log(ctx).WithField("username", username).WithField("result", result).Warnf("No user for username '%s'", username)
-				return "no_auth"
+			span.SetTag("authorized", false)
+			Log(ctx).WithError(err).Error(ctx.Error(err).Error())
+			return "none"
+		}
+
+		if req.Response.StatusCode == http.StatusOK {
+			rawBody, err := io.ReadAll(req.Response.Body)
+			if err != nil {
+				span.SetTag("authorized", false)
+				Log(ctx).WithError(err).Error(ctx.Error(err).Error())
+				return "none"
 			}
 
-			span.SetTag("auth", false)
-			Log(ctx).WithError(err).Error(ctx.Error(err).Error())
-			return "no_auth"
+			jsonBody := make(map[string]string)
+			err = json.Unmarshal(rawBody, &jsonBody)
+			if err != nil {
+				span.SetTag("authorized", false)
+				Log(ctx).WithError(err).Error(ctx.Error(err).Error())
+				return "none"
+			}
+
+			span.SetTag("authorized", true)
+			return jsonBody["permissions"]
+		} else {
+			Log(ctx).Debug("Session failed to authorize.")
+			span.SetTag("authorized", false)
+			return "none"
 		}
 	}
 
-	span.SetTag("auth", true)
-	return fmt.Sprint(result["permissions"])
+	span.SetTag("authorized", true)
+	return fmt.Sprint(permissions)
 }
 
 func Validate(ctx *gin.Context, obj map[string]string, params [][2]string) bool {
