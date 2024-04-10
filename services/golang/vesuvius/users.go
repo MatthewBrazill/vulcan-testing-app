@@ -21,7 +21,7 @@ func LoginPage(ctx *gin.Context) {
 }
 
 func UserPage(ctx *gin.Context) {
-	permissions := Authorize(ctx)
+	permissions := Authenticate(ctx)
 	switch permissions {
 	case "user", "admin":
 		result := make(map[string]interface{})

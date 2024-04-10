@@ -10,7 +10,7 @@ import (
 )
 
 func EditGodPage(ctx *gin.Context) {
-	permissions := Authorize(ctx)
+	permissions := Authenticate(ctx)
 	switch permissions {
 	case "user", "admin":
 		gintrace.HTML(ctx, http.StatusOK, "edit_god.html", gin.H{
@@ -32,7 +32,7 @@ func EditGodPage(ctx *gin.Context) {
 }
 
 func AddGodPage(ctx *gin.Context) {
-	permissions := Authorize(ctx)
+	permissions := Authenticate(ctx)
 	switch permissions {
 	case "user", "admin":
 		gintrace.HTML(ctx, http.StatusOK, "add_god.html", gin.H{
@@ -54,7 +54,7 @@ func AddGodPage(ctx *gin.Context) {
 }
 
 func StoragePage(ctx *gin.Context) {
-	permissions := Authorize(ctx)
+	permissions := Authenticate(ctx)
 	switch permissions {
 	case "user", "admin":
 		gintrace.HTML(ctx, http.StatusOK, "storage.html", gin.H{
@@ -76,7 +76,7 @@ func StoragePage(ctx *gin.Context) {
 }
 
 func StorageSearchAPI(ctx *gin.Context) {
-	permissions := Authorize(ctx)
+	permissions := Authenticate(ctx)
 	switch permissions {
 	case "user", "admin":
 		filter := make(map[string]string)
