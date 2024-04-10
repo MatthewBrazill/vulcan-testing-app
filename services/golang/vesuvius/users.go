@@ -15,14 +15,14 @@ func LoginPage(ctx *gin.Context) {
 	sess.Clear()
 
 	gintrace.HTML(ctx, http.StatusOK, "login.html", gin.H{
-		"title": "Login Page",
+		"title":    "Login Page",
 		"language": "GO",
 	})
 }
 
 func UserPage(ctx *gin.Context) {
-	perms := Authorize(ctx)
-	switch perms {
+	permissions := Authorize(ctx)
+	switch permissions {
 	case "user", "admin":
 		result := make(map[string]interface{})
 		err := pgdb.NewSelect().Table("users").Where("? = ?", bun.Ident("username"), ctx.Param("username")).Scan(ctx.Request.Context(), &result)
@@ -37,12 +37,12 @@ func UserPage(ctx *gin.Context) {
 		delete(result, "password")
 
 		gintrace.HTML(ctx, http.StatusOK, "user.html", gin.H{
-			"title": "User",
+			"title":    "User",
 			"language": "GO",
-			"user":  result,
+			"user":     result,
 		})
 
-	case "no_auth":
+	case "none":
 		ctx.Redirect(http.StatusFound, "/login")
 
 	default:

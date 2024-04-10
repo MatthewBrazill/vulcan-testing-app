@@ -22,8 +22,8 @@ import krakatoa.Helpers;
 public class Storage {
     @RequestMapping(value = "/storage", method = RequestMethod.GET)
     public String storagePage(HttpServletRequest req, HttpServletResponse res, Model model) {
-        String perms = Helpers.authenticate(req);
-        switch (perms) {
+        String permissions = Helpers.authenticate(req);
+        switch (permissions) {
             case "user":
             case "admin":
                 model.addAttribute("title", "God Storage");
@@ -31,7 +31,7 @@ public class Storage {
                 res.setStatus(HttpServletResponse.SC_OK);
                 return "storage";
 
-            case "no_auth":
+            case "none":
                 try {
                     res.setStatus(HttpServletResponse.SC_FOUND);
                     res.sendRedirect("/login");
@@ -50,8 +50,8 @@ public class Storage {
 
     @RequestMapping(value = "/add", method = RequestMethod.GET)
     public String addGodPage(HttpServletRequest req, HttpServletResponse res, Model model) {
-        String perms = Helpers.authenticate(req);
-        switch (perms) {
+        String permissions = Helpers.authenticate(req);
+        switch (permissions) {
             case "user":
             case "admin":
                 model.addAttribute("title", "Add God");
@@ -59,7 +59,7 @@ public class Storage {
                 res.setStatus(HttpServletResponse.SC_OK);
                 return "add_god";
 
-            case "no_auth":
+            case "none":
                 try {
                     res.setStatus(HttpServletResponse.SC_FOUND);
                     res.sendRedirect("/login");
@@ -78,8 +78,8 @@ public class Storage {
 
     @RequestMapping(value = "/edit", method = RequestMethod.GET)
     public String editGodPage(HttpServletRequest req, HttpServletResponse res, Model model) {
-        String perms = Helpers.authenticate(req);
-        switch (perms) {
+        String permissions = Helpers.authenticate(req);
+        switch (permissions) {
             case "user":
             case "admin":
                 model.addAttribute("title", "Edit God");
@@ -87,7 +87,7 @@ public class Storage {
                 res.setStatus(HttpServletResponse.SC_OK);
                 return "edit_god";
 
-            case "no_auth":
+            case "none":
                 try {
                     res.setStatus(HttpServletResponse.SC_FOUND);
                     res.sendRedirect("/login");
@@ -107,12 +107,12 @@ public class Storage {
     @ResponseBody
     @RequestMapping(value = "/storage/search", method = RequestMethod.POST)
     public HashMap<String, Object> storageSearchAPI(HttpServletRequest req, HttpServletResponse res) {
-        String perms = Helpers.authenticate(req);
+        String permissions = Helpers.authenticate(req);
         String[][] params = { { "filter", "[a-zA-Z]{0,32}" } };
         HashMap<String, Object> reqBody = Helpers.decodeBody(req);
         HashMap<String, Object> resBody = new HashMap<String, Object>();
 
-        switch (perms) {
+        switch (permissions) {
             case "user":
             case "admin":
                 if (!Helpers.validate(req, params)) {
@@ -133,7 +133,7 @@ public class Storage {
                 resBody.put("result", gods);
                 return resBody;
 
-            case "no_auth":
+            case "none":
                 res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 resBody.put("message", "Your credentials are invalid.");
                 return resBody;

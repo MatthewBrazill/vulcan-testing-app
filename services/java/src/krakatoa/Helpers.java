@@ -42,7 +42,7 @@ public class Helpers {
             } else {
                 span.setTag("auth_method", "none");
                 span.setTag("auth", false);
-                return "no_auth";
+                return "none";
             }
 
             if (result.first()) {
@@ -50,13 +50,13 @@ public class Helpers {
                 return result.getString("permissions");
             } else {
                 span.setTag("auth", false);
-                return "no_auth";
+                return "none";
             }
         } catch (Exception e) {
             span.setTag(Tags.ERROR, true);
             span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
             span.setTag("auth", false);
-            return "no_auth";
+            return "none";
         }
     }
 

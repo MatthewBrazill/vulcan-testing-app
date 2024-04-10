@@ -33,8 +33,8 @@ const users = {
 
     async userPage(req, res) {
         try {
-            var perms = await helpers.authorize(req)
-            switch (perms) {
+            var permissions = await helpers.authorize(req)
+            switch (permissions) {
                 case "user":
                 case "admin":
                     var result = await pgdb.query("SELECT * FROM users WHERE username = $1::text", [req.params.username])
@@ -49,12 +49,12 @@ const users = {
                     })
                     break
 
-                case "no_auth":
+                case "none":
                     res.status(302).redirect("/login")
                     break
 
                 default:
-                    throw new Error(`VulcanError: unsupported permission ${perms}`)
+                    throw new Error(`VulcanError: unsupported permission ${permissions}`)
             }
         } catch (err) {
             logger.error({
@@ -88,7 +88,7 @@ const users = {
 
             // Validate user
             if (result.rowCount > 0) if (req.body.password == user.password) {
-                req.session.perms = await helpers.authorize(req)
+                req.session.permissions = user.permissions
                 req.session.auth = true
                 req.session.username = user.username
                 res.status(200).json({

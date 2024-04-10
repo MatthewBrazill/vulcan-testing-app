@@ -10,15 +10,15 @@ import (
 )
 
 func EditGodPage(ctx *gin.Context) {
-	perms := Authorize(ctx)
-	switch perms {
+	permissions := Authorize(ctx)
+	switch permissions {
 	case "user", "admin":
 		gintrace.HTML(ctx, http.StatusOK, "edit_god.html", gin.H{
-			"title": "Edit God",
+			"title":    "Edit God",
 			"language": "GO",
 		})
 
-	case "no_auth":
+	case "none":
 		ctx.Redirect(http.StatusFound, "/login")
 
 	default:
@@ -32,15 +32,15 @@ func EditGodPage(ctx *gin.Context) {
 }
 
 func AddGodPage(ctx *gin.Context) {
-	perms := Authorize(ctx)
-	switch perms {
+	permissions := Authorize(ctx)
+	switch permissions {
 	case "user", "admin":
 		gintrace.HTML(ctx, http.StatusOK, "add_god.html", gin.H{
-			"title": "Add God",
+			"title":    "Add God",
 			"language": "GO",
 		})
 
-	case "no_auth":
+	case "none":
 		ctx.Redirect(http.StatusFound, "/login")
 
 	default:
@@ -54,15 +54,15 @@ func AddGodPage(ctx *gin.Context) {
 }
 
 func StoragePage(ctx *gin.Context) {
-	perms := Authorize(ctx)
-	switch perms {
+	permissions := Authorize(ctx)
+	switch permissions {
 	case "user", "admin":
 		gintrace.HTML(ctx, http.StatusOK, "storage.html", gin.H{
-			"title": "God Storage",
+			"title":    "God Storage",
 			"language": "GO",
 		})
 
-	case "no_auth":
+	case "none":
 		ctx.Redirect(http.StatusFound, "/login")
 
 	default:
@@ -76,8 +76,8 @@ func StoragePage(ctx *gin.Context) {
 }
 
 func StorageSearchAPI(ctx *gin.Context) {
-	perms := Authorize(ctx)
-	switch perms {
+	permissions := Authorize(ctx)
+	switch permissions {
 	case "user", "admin":
 		filter := make(map[string]string)
 		ctx.ShouldBind(&filter)
@@ -115,7 +115,7 @@ func StorageSearchAPI(ctx *gin.Context) {
 			"result":  result,
 		})
 
-	case "no_auth":
+	case "none":
 		ctx.JSON(http.StatusUnauthorized, gin.H{
 			"message": "Your credentials are invalid.",
 		})

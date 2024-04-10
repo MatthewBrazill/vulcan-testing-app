@@ -26,21 +26,21 @@ const helpers = {
 
                     if (auth.status == 200) {
                         var res = await auth.json()
-                        return res.perms
+                        return res.permissions
                     } else {
                         logger.debug("session failed to authorize")
                         span.setTag("authorized", false)
-                        return "no_auth"
+                        return "none"
                     }
                 } else {
                     logger.debug("session authorized")
                     span.setTag("authorized", true)
-                    return req.session.perms
+                    return req.session.permissions
                 }
             } catch (err) {
                 span.setTag("error", err)
                 span.setTag("authorized", false)
-                return "no_auth"
+                return "none"
             }
         })
     },

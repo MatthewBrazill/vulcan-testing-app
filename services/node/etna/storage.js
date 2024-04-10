@@ -7,9 +7,9 @@ const mongodb = require("./mongodb.js")
 
 const storage = {
     async editGodPage(req, res) {
-        var perms = await helpers.authorize(req)
+        var permissions = await helpers.authorize(req)
         try {
-            switch (perms) {
+            switch (permissions) {
                 case "user":
                 case "admin":
                     res.status(200).render("edit_god", {
@@ -18,12 +18,12 @@ const storage = {
                     })
                     break
 
-                case "no_auth":
+                case "none":
                     res.status(302).redirect("/login")
                     break
 
                 default:
-                    throw new Error(`VulcanError: unsupported permission ${perms}`)
+                    throw new Error(`VulcanError: unsupported permission ${permissions}`)
             }
         } catch (err) {
             logger.error({
@@ -43,8 +43,8 @@ const storage = {
 
     async addGodPage(req, res) {
         try {
-            var perms = await helpers.authorize(req)
-            switch (perms) {
+            var permissions = await helpers.authorize(req)
+            switch (permissions) {
                 case "user":
                 case "admin":
                     res.status(200).render("add_god", {
@@ -53,12 +53,12 @@ const storage = {
                     })
                     break
 
-                case "no_auth":
+                case "none":
                     res.status(302).redirect("/login")
                     break
 
                 default:
-                    throw new Error(`VulcanError: unsupported permission ${perms}`)
+                    throw new Error(`VulcanError: unsupported permission ${permissions}`)
             }
         } catch (err) {
             logger.error({
@@ -78,8 +78,8 @@ const storage = {
 
     async storagePage(req, res) {
         try {
-            var perms = await helpers.authorize(req)
-            switch (perms) {
+            var permissions = await helpers.authorize(req)
+            switch (permissions) {
                 case "user":
                 case "admin":
                     res.status(200).render("storage", {
@@ -88,12 +88,12 @@ const storage = {
                     })
                     break
 
-                case "no_auth":
+                case "none":
                     res.status(302).redirect("/login")
                     break
 
                 default:
-                    throw new Error(`VulcanError: unsupported permission ${perms}`)
+                    throw new Error(`VulcanError: unsupported permission ${permissions}`)
             }
         } catch (err) {
             logger.error({
@@ -113,8 +113,8 @@ const storage = {
 
     async storageSearchAPI(req, res) {
         try {
-            var perms = await helpers.authorize(req)
-            switch (perms) {
+            var permissions = await helpers.authorize(req)
+            switch (permissions) {
                 case "user":
                 case "admin":
                     if (!await helpers.validate(req.body, [["filter", "[a-zA-Z]{0,32}"]])) {
@@ -129,12 +129,12 @@ const storage = {
                     })
                     break
 
-                case "no_auth":
+                case "none":
                     res.status(401).json({ message: "Your credentials are invalid." })
                     break
 
                 default:
-                    throw new Error(`VulcanError: unsupported permission ${perms}`)
+                    throw new Error(`VulcanError: unsupported permission ${permissions}`)
             }
         } catch (err) {
             logger.error({
