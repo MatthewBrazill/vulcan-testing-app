@@ -14,12 +14,12 @@ import (
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 )
 
-func Authorize(ctx *gin.Context) string {
+func Authenticate(ctx *gin.Context) string {
 	sess := sessions.Default(ctx)
 	authorized := sess.Get("authorized")
 	permissions := sess.Get("permissions")
 
-	span, c := tracer.StartSpanFromContext(ctx.Request.Context(), "vesuvius.authorize", tracer.ResourceName("Authorize"))
+	span, c := tracer.StartSpanFromContext(ctx.Request.Context(), "vesuvius.helper", tracer.ResourceName("Authenticate"))
 	defer span.Finish()
 
 	if authorized != true {
@@ -69,7 +69,7 @@ func Authorize(ctx *gin.Context) string {
 }
 
 func Validate(ctx *gin.Context, obj map[string]string, params [][2]string) bool {
-	span, _ := tracer.StartSpanFromContext(ctx.Request.Context(), "vesuvius.validate", tracer.ResourceName("Validate"))
+	span, _ := tracer.StartSpanFromContext(ctx.Request.Context(), "vesuvius.helper", tracer.ResourceName("Validate"))
 	defer span.Finish()
 
 	for i := 0; i < len(params); i++ {

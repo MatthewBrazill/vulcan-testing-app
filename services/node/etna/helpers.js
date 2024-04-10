@@ -6,8 +6,8 @@ const fetch = require("node-fetch")
 const logger = require("./logger.js")
 
 const helpers = {
-    async authorize(req) {
-        return await tracer.trace("etna.helper", { resource: "authorize" }, async () => {
+    async authenticate(req) {
+        return await tracer.trace("etna.helper", { resource: "authenticate" }, async () => {
             const span = tracer.scope().active()
             try {
                 if (!req.session.auth) {
