@@ -32,7 +32,7 @@ func Authenticate(ctx *gin.Context) string {
 			body = fmt.Sprintf(`{"username":"%s","password":"%s"}`, userdata["username"], userdata["password"])
 		}
 
-		req, err := http.NewRequestWithContext(c, http.MethodPost, "http://authenticator:2448/auth", strings.NewReader(body))
+		req, err := http.NewRequestWithContext(c, http.MethodPost, "http://authenticator:2884/auth", strings.NewReader(body))
 		if err != nil {
 			span.SetTag("authorized", false)
 			Log(ctx).WithError(err).Error(ctx.Error(err).Error())
