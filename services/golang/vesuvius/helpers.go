@@ -12,6 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
+	httptrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/net/http"
 )
 
 func Authenticate(ctx *gin.Context) string {
@@ -39,7 +40,7 @@ func Authenticate(ctx *gin.Context) string {
 			return "none"
 		}
 
-		res, err := http.DefaultClient.Do(req)
+		res, err := httptrace.WrapClient(http.DefaultClient, httptrace.RTWithResourceNamer(HttpResourceNamer)).Do(req)
 		if err != nil {
 			span.SetTag("authorized", false)
 			Log(ctx).WithError(err).Error(ctx.Error(err).Error())
@@ -123,4 +124,8 @@ func LogInitEvent() *logrus.Entry {
 			"env":     env,
 		},
 	})
+}
+
+func HttpResourceNamer(req *http.Request) string {
+	return fmt.Sprintf("%s %s", req.Method, req.URL.Path)
 }
