@@ -22,7 +22,7 @@ import krakatoa.Helpers;
 public class Storage {
     @RequestMapping(value = "/storage", method = RequestMethod.GET)
     public String storagePage(HttpServletRequest req, HttpServletResponse res, Model model) {
-        String permissions = Helpers.authenticate(req);
+        String permissions = Helpers.authorize(req);
         switch (permissions) {
             case "user":
             case "admin":
@@ -50,7 +50,7 @@ public class Storage {
 
     @RequestMapping(value = "/add", method = RequestMethod.GET)
     public String addGodPage(HttpServletRequest req, HttpServletResponse res, Model model) {
-        String permissions = Helpers.authenticate(req);
+        String permissions = Helpers.authorize(req);
         switch (permissions) {
             case "user":
             case "admin":
@@ -78,7 +78,7 @@ public class Storage {
 
     @RequestMapping(value = "/edit", method = RequestMethod.GET)
     public String editGodPage(HttpServletRequest req, HttpServletResponse res, Model model) {
-        String permissions = Helpers.authenticate(req);
+        String permissions = Helpers.authorize(req);
         switch (permissions) {
             case "user":
             case "admin":
@@ -107,7 +107,7 @@ public class Storage {
     @ResponseBody
     @RequestMapping(value = "/storage/search", method = RequestMethod.POST)
     public HashMap<String, Object> storageSearchAPI(HttpServletRequest req, HttpServletResponse res) {
-        String permissions = Helpers.authenticate(req);
+        String permissions = Helpers.authorize(req);
         String[][] params = { { "filter", "[a-zA-Z]{0,32}" } };
         HashMap<String, Object> reqBody = Helpers.decodeBody(req);
         HashMap<String, Object> resBody = new HashMap<String, Object>();

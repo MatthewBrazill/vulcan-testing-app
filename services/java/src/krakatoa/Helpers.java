@@ -26,21 +26,18 @@ public class Helpers {
         return true;
     }
 
-    @Trace(operationName = "krakatoa.helper", resourceName = "Helpers.authenticate")
-    public static String authenticate(HttpServletRequest req) {
+    @Trace(operationName = "krakatoa.helper", resourceName = "Helpers.authorize")
+    public static String authorize(HttpServletRequest req) {
         HttpSession session = req.getSession();
         Span span = GlobalTracer.get().activeSpan();
         ResultSet result;
 
         try {
             if (req.getHeader("api-key") != null) {
-                span.setTag("auth_method", "api_key");
                 result = Databases.userDatabase().executeQuery("SELECT * FROM apikeys WHERE apikey = '" + req.getHeader("api-key") + "'");
             } else if (session.getAttribute("username") != null) {
-                span.setTag("auth_method", "session");
                 result = Databases.userDatabase().executeQuery("SELECT * FROM users WHERE username = '" + session.getAttribute("username") + "'");
             } else {
-                span.setTag("auth_method", "none");
                 span.setTag("auth", false);
                 return "none";
             }

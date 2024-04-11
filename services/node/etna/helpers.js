@@ -6,15 +6,14 @@ const fetch = require("node-fetch")
 const logger = require("./logger.js")
 
 const helpers = {
-    async authenticate(req) {
-        return await tracer.trace("etna.helper", { resource: "authenticate" }, async () => {
+    async authorize(req) {
+        return await tracer.trace("etna.helper", { resource: "authorize" }, async () => {
             const span = tracer.scope().active()
             try {
-                if (!req.session.auth) {
+                if (!req.session.authorized) {
                     logger.debug("session not authorized - authorising")
-                    span.setTag("auth_method", "api_key")
 
-                    var auth = await fetch("http://authenticator:2884/auth", {
+                    var authReq = await fetch("http://authenticator:2884/authorize", {
                         method: "POST",
                         body: JSON.stringify(req.headers["api-key"] ? {
                             apiKey: req.headers["api-key"]
@@ -24,9 +23,11 @@ const helpers = {
                         })
                     })
 
-                    if (auth.status == 200) {
-                        var res = await auth.json()
-                        return res.permissions
+                    if (authReq.status == 200) {
+                        var authRes = await authReq.json()
+                        logger.debug("session authorize")
+                        span.setTag("authorized", true)
+                        return authRes.permissions
                     } else {
                         logger.debug("session failed to authorize")
                         span.setTag("authorized", false)

@@ -11,16 +11,16 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 	httptrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/net/http"
+	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 )
 
-func Authenticate(ctx *gin.Context) string {
+func Authorize(ctx *gin.Context) string {
 	sess := sessions.Default(ctx)
 	authorized := sess.Get("authorized")
 	permissions := sess.Get("permissions")
 
-	span, c := tracer.StartSpanFromContext(ctx.Request.Context(), "vesuvius.helper", tracer.ResourceName("Authenticate"))
+	span, c := tracer.StartSpanFromContext(ctx.Request.Context(), "vesuvius.helper", tracer.ResourceName("Authorize"))
 	defer span.Finish()
 
 	if authorized != true {
@@ -33,7 +33,7 @@ func Authenticate(ctx *gin.Context) string {
 			body = fmt.Sprintf(`{"username":"%s","password":"%s"}`, userdata["username"], userdata["password"])
 		}
 
-		req, err := http.NewRequestWithContext(c, http.MethodPost, "http://authenticator:2884/auth", strings.NewReader(body))
+		req, err := http.NewRequestWithContext(c, http.MethodPost, "http://authenticator:2884/authorize", strings.NewReader(body))
 		if err != nil {
 			span.SetTag("authorized", false)
 			Log(ctx).WithError(err).Error(ctx.Error(err).Error())
