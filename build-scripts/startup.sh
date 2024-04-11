@@ -16,7 +16,7 @@ then
     elif [ "$DD_SERVICE" = "etna" ]
     then
         cd /vulcan/services/node
-    elif [ "$DD_SERVICE" = "krakatoa" ]
+    elif [ "$DD_SERVICE" = "vulcan" ]
     then
         cd /vulcan/services/java
     elif [ "$DD_SERVICE" = "authenticator" ]
@@ -37,7 +37,7 @@ elif [ "$DD_SERVICE" = "etna" ]
 then
     npm install .
     npm start
-elif [ "$DD_SERVICE" = "krakatoa" ]
+elif [ "$DD_SERVICE" = "vulcan" ]
 then
     wget -nc -nv -O /vulcan/dd-java-agent.jar https://dtdg.co/latest-java-tracer
     mvn install
@@ -52,7 +52,7 @@ then
         -Ddd.dbm.propagation.mode=full \
         -Ddd.service.mapping=redis:session-store,postgresql:user-database,mongo:god-database \
         -Ddd.tags=git.commit.sha:$(git rev-parse HEAD),git.repository_url:github.com/MatthewBrazill/vulcan-testing-app \
-        -jar ./target/krakatoa.jar
+        -jar ./target/vulcan.jar
 elif [ "$DD_SERVICE" = "authenticator" ]
 then
     pip3 install -r requirements.txt

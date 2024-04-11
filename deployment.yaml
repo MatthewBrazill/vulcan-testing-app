@@ -241,39 +241,39 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: krakatoa
+  name: vulcan
   #namespace: vulcan-lang
   labels:
     tags.datadoghq.com/env: kubernetes
-    tags.datadoghq.com/service: krakatoa
+    tags.datadoghq.com/service: vulcan
 spec:
   type: LoadBalancer
   ports:
     - port: 14432
       targetPort: 443
   selector:
-    tags.datadoghq.com/service: krakatoa
+    tags.datadoghq.com/service: vulcan
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: krakatoa
+  name: vulcan
   #namespace: vulcan-lang
   labels:
     tags.datadoghq.com/env: kubernetes
-    tags.datadoghq.com/service: krakatoa
+    tags.datadoghq.com/service: vulcan
 spec:
   replicas: 1
   selector:
     matchLabels:
-      tags.datadoghq.com/service: krakatoa
+      tags.datadoghq.com/service: vulcan
   template:
     metadata:
       labels:
         tags.datadoghq.com/env: kubernetes
-        tags.datadoghq.com/service: krakatoa
+        tags.datadoghq.com/service: vulcan
       annotations:
-        ad.datadoghq.com/krakatoa.logs: '[{"type":"file","source":"vulcan-app","service":"krakatoa","path":"/vulcan-data/kubernetes/logs/java.log"}]'
+        ad.datadoghq.com/vulcan.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan","path":"/vulcan-data/kubernetes/logs/java.log"}]'
         ad.datadoghq.com/tags: '{"team":"matthew"}'
     spec:
       volumes:
@@ -284,7 +284,7 @@ spec:
             path: /var/run/datadog/
           name: apmsocketpath
       containers:
-        - name: krakatoa
+        - name: vulcan
           image: maven:3.9-eclipse-temurin-17
           command: ["/bin/sh"]
           args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | bash -s"]
@@ -297,7 +297,7 @@ spec:
             - name: DD_ENV
               value: kubernetes
             - name: DD_SERVICE
-              value: krakatoa
+              value: vulcan
             - name: DD_VERSION
               value: "1.2.1"
 #            - name: DD_AGENT_HOST

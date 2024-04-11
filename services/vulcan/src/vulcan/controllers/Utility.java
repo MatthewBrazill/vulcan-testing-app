@@ -1,4 +1,4 @@
-package krakatoa.controllers;
+package vulcan.controllers;
 
 import java.util.Collections;
 import java.util.HashMap;

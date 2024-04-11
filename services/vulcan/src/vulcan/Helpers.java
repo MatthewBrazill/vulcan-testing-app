@@ -1,4 +1,4 @@
-package krakatoa;
+package vulcan;
 
 import java.io.Reader;
 import java.net.URLDecoder;
@@ -21,12 +21,12 @@ import datadog.trace.api.Trace;
 
 public class Helpers {
 
-    @Trace(operationName = "krakatoa.helper", resourceName = "Helpers.validate")
+    @Trace(operationName = "vulcan.helper", resourceName = "Helpers.validate")
     public static Boolean validate(HttpServletRequest req, String[][] patterns) {
         return true;
     }
 
-    @Trace(operationName = "krakatoa.helper", resourceName = "Helpers.authorize")
+    @Trace(operationName = "vulcan.helper", resourceName = "Helpers.authorize")
     public static String authorize(HttpServletRequest req) {
         HttpSession session = req.getSession();
         Span span = GlobalTracer.get().activeSpan();
@@ -57,7 +57,7 @@ public class Helpers {
         }
     }
 
-    @Trace(operationName = "krakatoa.helper", resourceName = "Helpers.decodeBody")
+    @Trace(operationName = "vulcan.helper", resourceName = "Helpers.decodeBody")
     public static HashMap<String, Object> decodeBody(HttpServletRequest req) {
         HashMap<String, Object> output = new HashMap<String, Object>();
         Span span = GlobalTracer.get().activeSpan();

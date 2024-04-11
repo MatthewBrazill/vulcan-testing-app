@@ -11,7 +11,7 @@
 	</parent>
 
 	<groupId>com</groupId>
-	<artifactId>krakatoa</artifactId>
+	<artifactId>vulcan</artifactId>
 	<version>1.2.1</version>
 	<name>app</name>
 	<description>A small application I used to learn JavaScript and now use to test new stuff with.</description>
@@ -125,7 +125,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>krakatoa</finalName>
+		<finalName>vulcan</finalName>
 		<directory>${basedir}/target</directory>
 		<sourceDirectory>${basedir}/src</sourceDirectory>
 		<plugins>

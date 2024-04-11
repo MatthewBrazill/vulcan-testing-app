@@ -1,4 +1,4 @@
-package krakatoa.controllers;
+package vulcan.controllers;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,8 +23,8 @@ import io.opentracing.tag.Tags;
 import io.opentracing.util.GlobalTracer;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import krakatoa.Databases;
-import krakatoa.Helpers;
+import vulcan.Databases;
+import vulcan.Helpers;
 
 @Controller
 public class Gods {
