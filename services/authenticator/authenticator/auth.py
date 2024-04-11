@@ -11,22 +11,41 @@ from ddtrace import tracer
 app = FastAPI()
 
 # Routes
-@app.post("/auth")
+@app.post("/authenticate")
 async def auth(request: Request) -> JSONResponse:
 
     body = await request.json()
-    if await validate(body, [["apiKey", "^[a-f0-9]{32}$"], ["username", "^[a-zA-Z]{1,32}$"], ["password", "^.{1,64}$"]]) == False:
-        return JSONResponse(content={"permissions": "none"}, status_code=400)
+    if await validate(body, [["username", "^[a-zA-Z]{1,32}$"], ["pwHash", "^.{1,64}$"]]) == False:
+        return JSONResponse(content={"authenticated": False}, status_code=400)
 
     database = await userDatabase()
+    user = await database.fetch("SELECT password FROM users WHERE username = $1", body["username"])
+    if len(user) == 1:
+        if body["password"] == user[0].get("pwHash"):
+            return JSONResponse(content={"authenticated": True}, status_code=200)
+
+    return JSONResponse(content={"authenticated": False}, status_code=401)
+
+
+@app.post("/authorize")
+async def auth(request: Request) -> JSONResponse:
+
+    body = await request.json()
+    database = await userDatabase()
     if "apiKey" in body.keys():
-        user = await database.fetch("SELECT * FROM apikeys WHERE apikey = $1", body["apiKey"])
-        if user != None and len(user) == 1:
+        if await validate(body, [["apiKey", "^[a-f0-9]{32}$"]]) == False:
+            return JSONResponse(content={"permissions": "none"}, status_code=400)
+        
+        user = await database.fetch("SELECT permissions FROM apikeys WHERE apikey = $1", body["apiKey"])
+        if len(user) == 1:
             return JSONResponse(content={"permissions": user[0].get("permissions")}, status_code=200)
 
-    elif "username" in body.keys():
-        user = await database.fetch("SELECT * FROM users WHERE username = $1", body["username"])
-        if user != None and len(user) == 1 and user[0].get("password") == body["password"]:
+    if "username" in body.keys():
+        if await validate(body, [["username", "^[a-zA-Z]{1,32}$"]]) == False:
+            return JSONResponse(content={"permissions": "none"}, status_code=400)
+        
+        user = await database.fetch("SELECT permissions FROM users WHERE username = $1", body["username"])
+        if len(user) == 1:
             return JSONResponse(content={"permissions": user[0].get("permissions")}, status_code=200)
 
-    return JSONResponse(content={"permissions": "none"}, status_code=400)
+    return JSONResponse(content={"permissions": "none"}, status_code=403)
