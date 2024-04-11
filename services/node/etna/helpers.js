@@ -18,14 +18,13 @@ const helpers = {
                         body: JSON.stringify(req.headers["api-key"] ? {
                             apiKey: req.headers["api-key"]
                         } : {
-                            username: req.body.username,
-                            password: req.body.password
+                            username: req.body.username
                         })
                     })
 
                     if (authReq.status == 200) {
                         var authRes = await authReq.json()
-                        logger.debug("session authorize")
+                        logger.debug("session authorized")
                         span.setTag("authorized", true)
                         return authRes.permissions
                     } else {
