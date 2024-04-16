@@ -171,7 +171,7 @@ services:
     image: nginx:1.25-alpine
     container_name: nginx-proxy
     ports:
-      - 500:500
+      - 555:555
     networks:
       - vulcan_app
       - datadog_bridge
