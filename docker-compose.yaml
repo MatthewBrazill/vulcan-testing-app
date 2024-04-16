@@ -12,94 +12,12 @@ services:
   #   Web Apps                                             #
   ### -------------------------------------------------- ###
   
-  # Golang
-  vesuvius:
-    image: golang:latest
-    container_name: vesuvius
-    ports:
-      - 4430:443
-    networks:
-      - vulcan_app
-      - datadog_bridge
-    environment:
-      - DD_ENV=docker
-      - DD_SERVICE=vesuvius
-      - DD_VERSION=1.2.0
-      - DD_APPSEC_ENABLED=true
-      - DD_IAST_ENABLED=true
-      # - DD_AGENT_HOST=datadog-agent
-      # - DD_TRACE_AGENT_PORT=8126
-      - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
-      - DD_TRACE_CLIENT_IP_ENABLED=true
-      - VLCN_SESSION_KEY=ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*
-      - VLCN_CERT_FOLDER=/vulcan/certificate
-      - VLCN_COMMIT_SHA=$SHA
-    working_dir: /vulcan/golang
-    volumes:
-      - ./services/golang:/vulcan/golang
-      - ./services/frontend:/vulcan/frontend
-      - ./build-scripts/startup.sh:/startup.sh
-      - ./certificate:/vulcan/certificate
-      - /vulcan-data/docker/logs:/logs
-      - /var/run/datadog:/var/run/datadog
-    command: bash /startup.sh
-    labels:
-      com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vesuvius","path":"/vulcan-data/docker/logs/golang.log"}]'
-      com.datadoghq.ad.tags: '["env:docker","service:vesuvius"]'
-    deploy:
-      resources:
-        limits:
-          cpus: "1"
-          memory: 512M
-
-
-  # JavaScript
-  etna:
-    image: node:18
-    container_name: etna
-    ports:
-      - 4431:443
-    networks:
-      - vulcan_app
-      - datadog_bridge
-    environment:
-      - DD_ENV=docker
-      - DD_SERVICE=etna
-      - DD_VERSION=1.2.0
-      - DD_IAST_ENABLED=true
-      # - DD_AGENT_HOST=datadog-agent
-      # - DD_TRACE_AGENT_PORT=8126
-      - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
-      - DD_TRACE_CLIENT_IP_ENABLED=true
-      - DD_TRACE_STARTUP_LOGS=true
-      - VLCN_SESSION_KEY=ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*
-      - VLCN_CERT_FOLDER=/vulcan/certificate
-      - VLCN_COMMIT_SHA=$SHA
-    working_dir: /vulcan/node
-    volumes:
-      - ./services/node:/vulcan/node
-      - ./services/frontend:/vulcan/frontend
-      - ./build-scripts/startup.sh:/startup.sh
-      - ./certificate:/vulcan/certificate
-      - /vulcan-data/docker/logs:/logs
-      - /var/run/datadog:/var/run/datadog
-    command: bash /startup.sh
-    labels:
-      com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"etna","path":"/vulcan-data/docker/logs/node.log"}]'
-      com.datadoghq.ad.tags: '["env:docker","service:etna"]'
-    deploy:
-      resources:
-        limits:
-          cpus: "1"
-          memory: 512M
-
-
-  # Java
+  # Vulcan Backend
   vulcan:
     image: maven:3.9-eclipse-temurin-17
     container_name: vulcan
     ports:
-      - 4432:443
+      - 443:443
     networks:
       - vulcan_app
       - datadog_bridge
@@ -114,9 +32,9 @@ services:
       - VLCN_SESSION_KEY=ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*
       - VLCN_CERT_FOLDER=/vulcan/certificate
       - VLCN_COMMIT_SHA=$SHA
-    working_dir: /vulcan/java
+    working_dir: /vulcan/vulcan
     volumes:
-      - ./services/java:/vulcan/java
+      - ./services/vulcan:/vulcan/vulcan
       - ./services/frontend:/vulcan/frontend
       - ./build-scripts/startup.sh:/startup.sh
       - ./certificate:/vulcan/certificate
@@ -124,8 +42,81 @@ services:
       - /var/run/datadog:/var/run/datadog
     command: bash /startup.sh
     labels:
-      com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan","path":"/vulcan-data/docker/logs/java.log"}]'
+      com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan","path":"/vulcan-data/docker/logs/vulcan.log"}]'
       com.datadoghq.ad.tags: '["env:docker","service:vulcan"]'
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 512M
+
+
+  # God Manager
+  vesuvius:
+    image: golang:latest
+    container_name: god-manager
+    ports:
+      - 9000:9000
+    networks:
+      - vulcan_app
+      - datadog_bridge
+    environment:
+      - DD_ENV=docker
+      - DD_SERVICE=god-manager
+      - DD_VERSION=1.0.0
+      - DD_APPSEC_ENABLED=true
+      - DD_IAST_ENABLED=true
+      # - DD_AGENT_HOST=datadog-agent
+      # - DD_TRACE_AGENT_PORT=8126
+      - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
+      - VLCN_COMMIT_SHA=$SHA
+    working_dir: /vulcan/god-manager
+    volumes:
+      - ./services/god-manager:/vulcan/god-manager
+      - ./build-scripts/startup.sh:/startup.sh
+      - /vulcan-data/docker/logs:/logs
+      - /var/run/datadog:/var/run/datadog
+    command: bash /startup.sh
+    labels:
+      com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"god-manager","path":"/vulcan-data/docker/logs/god-manager.log"}]'
+      com.datadoghq.ad.tags: '["env:docker","service:god-manager"]'
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 512M
+
+
+  # User Manager
+  user-manager:
+    image: node:18
+    container_name: user-manager
+    ports:
+      - 9100:9100
+    networks:
+      - vulcan_app
+      - datadog_bridge
+    environment:
+      - DD_ENV=docker
+      - DD_SERVICE=user-manager
+      - DD_VERSION=1.2.0
+      - DD_IAST_ENABLED=true
+      # - DD_AGENT_HOST=datadog-agent
+      # - DD_TRACE_AGENT_PORT=8126
+      - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
+      - DD_TRACE_CLIENT_IP_ENABLED=true
+      - DD_TRACE_STARTUP_LOGS=true
+      - VLCN_COMMIT_SHA=$SHA
+    working_dir: /vulcan/user-manager
+    volumes:
+      - ./services/user-manager:/vulcan/user-manager
+      - ./build-scripts/startup.sh:/startup.sh
+      - /vulcan-data/docker/logs:/logs
+      - /var/run/datadog:/var/run/datadog
+    command: bash /startup.sh
+    labels:
+      com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"user-manager","path":"/vulcan-data/docker/logs/user-manager.log"}]'
+      com.datadoghq.ad.tags: '["env:docker","service:user-manager"]'
     deploy:
       resources:
         limits:
@@ -237,6 +228,7 @@ services:
           memory: 512M
 
 
+  # User Database
   user-database:
     image: postgres:15
     container_name: user-database
@@ -260,6 +252,7 @@ services:
           memory: 512M
 
 
+  # Session Store
   session-store:
     image: redis/redis-stack-server:latest
     container_name: session-store
