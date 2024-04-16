@@ -1,6 +1,6 @@
-module vulcan.com
+module god-manager.com
 
-go 1.19
+go 1.21
 
 require (
 	github.com/dchest/uniuri v1.2.0
