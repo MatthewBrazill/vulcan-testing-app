@@ -9,7 +9,7 @@ networks:
 services:
 
   ### -------------------------------------------------- ###
-  #   Web Apps                                             #
+  #   Vulcan Application                                   #
   ### -------------------------------------------------- ###
   
   # Vulcan Backend
@@ -69,11 +69,13 @@ services:
       # - DD_AGENT_HOST=datadog-agent
       # - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
+      - VLCN_CERT_FOLDER=/vulcan/certificate
       - VLCN_COMMIT_SHA=$SHA
     working_dir: /vulcan/god-manager
     volumes:
       - ./services/god-manager:/vulcan/god-manager
       - ./build-scripts/startup.sh:/startup.sh
+      - ./certificate:/vulcan/certificate
       - /vulcan-data/docker/logs:/logs
       - /var/run/datadog:/var/run/datadog
     command: bash /startup.sh
@@ -106,11 +108,13 @@ services:
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
       - DD_TRACE_CLIENT_IP_ENABLED=true
       - DD_TRACE_STARTUP_LOGS=true
+      - VLCN_CERT_FOLDER=/vulcan/certificate
       - VLCN_COMMIT_SHA=$SHA
     working_dir: /vulcan/user-manager
     volumes:
       - ./services/user-manager:/vulcan/user-manager
       - ./build-scripts/startup.sh:/startup.sh
+      - ./certificate:/vulcan/certificate
       - /vulcan-data/docker/logs:/logs
       - /var/run/datadog:/var/run/datadog
     command: bash /startup.sh
@@ -148,6 +152,7 @@ services:
       # - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
       - DD_TRACE_CLIENT_IP_ENABLED=true
+      - VLCN_CERT_FOLDER=/vulcan/certificate
       - VLCN_COMMIT_SHA=$SHA
     working_dir: /vulcan/authenticator
     volumes:
@@ -249,8 +254,6 @@ services:
   god-database:
     image: mongo:latest
     container_name: god-database
-    ports:
-      - 27017:27017
     networks:
       - vulcan_app
       - datadog_bridge
@@ -271,8 +274,6 @@ services:
   user-database:
     image: postgres:15
     container_name: user-database
-    ports:
-      - 5432:5432
     networks:
       - vulcan_app
       - datadog_bridge
@@ -295,8 +296,6 @@ services:
   session-store:
     image: redis/redis-stack-server:latest
     container_name: session-store
-    ports:
-      - 6379:6379
     networks:
       - vulcan_app
       - datadog_bridge
