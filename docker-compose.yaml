@@ -207,6 +207,45 @@ services:
   ### -------------------------------------------------- ###
   #   Data Storage                                         #
   ### -------------------------------------------------- ###
+
+  # Database Proxy
+  database-proxy:
+    image: nginx:1.25-alpine
+    container_name: database-proxy
+    ports:
+      - 5432:5432
+      - 27017:27017
+      - 6379:6379
+    networks:
+      - vulcan_app
+      - datadog_bridge
+    environment:
+      - DD_ENV=docker
+      - DD_SERVICE=database-proxy
+      - DD_VERSION=0.1.0
+      # - DD_AGENT_HOST=datadog-agent
+      # - DD_TRACE_AGENT_PORT=8126
+      - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
+      - DD_TRACE_CLIENT_IP_ENABLED=true
+      - VLCN_COMMIT_SHA=$SHA
+    volumes:
+      - ./services/database-proxy:/etc/nginx
+      - ./build-scripts/startup.sh:/startup.sh
+      - ./certificate:/vulcan/certificate
+      - /var/run/datadog:/var/run/datadog
+    command: /startup.sh
+    labels:
+      com.datadoghq.ad.checks: '{"nginx":{"instances":[{"nginx_status_url":"http://%%host%%:81/nginx_status/"}]}}'
+      com.datadoghq.ad.logs: '[{"source":"nginx","service":"database-proxy"}]'
+      com.datadoghq.ad.tags: '["env:docker","service:database-proxy"]'
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 512M
+
+
+  # God Database
   god-database:
     image: mongo:latest
     container_name: god-database

@@ -26,17 +26,7 @@ public class Databases {
         Span span = GlobalTracer.get().activeSpan();
 
         try {
-            Class.forName("org.postgresql.Driver");
-
-            String postgresURL;
-            if (System.getProperty("dd.env").equals("kubernetes")) {
-                postgresURL = "jdbc:postgresql://host.minikube.internal:5432/vulcan_users";
-            } else {
-                postgresURL = "jdbc:postgresql://user-database:5432/vulcan_users";
-            }
-
-            System.out.println(postgresURL);
-            Connection conn = DriverManager.getConnection(postgresURL, "vulcan", "yKCstvg4hrB9pmDP");
+            Connection conn = DriverManager.getConnection("jdbc:postgresql://database-proxy:5432/vulcan_users", "vulcan", "yKCstvg4hrB9pmDP");
             statement = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         } catch (Exception e) {
             span.setTag(Tags.ERROR, true);
@@ -54,14 +44,7 @@ public class Databases {
         Span span = GlobalTracer.get().activeSpan();
 
         try {
-            String mongoURL;
-            if (System.getProperty("dd.env") == "kubernetes") {
-                mongoURL = "mongodb://host.minikube.internal:27017";
-            } else {
-                mongoURL = "mongodb://god-database:27017";
-            }
-
-            MongoClient client = MongoClients.create(mongoURL);
+            MongoClient client = MongoClients.create("mongodb://database-proxy:27017");
             coll = client.getDatabase("vulcan").getCollection("gods");
         } catch (Exception e) {
             span.setTag(Tags.ERROR, true);
