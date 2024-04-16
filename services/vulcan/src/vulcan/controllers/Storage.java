@@ -41,7 +41,6 @@ public class Storage {
             default:
                 model.addAttribute("title", "Error");
                 model.addAttribute("language", "Java");
-                model.addAttribute("statusCode", "500");
                 model.addAttribute("message", "There was an issue with the Server, please try again later.");
                 res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 return "error";
@@ -69,7 +68,6 @@ public class Storage {
             default:
                 model.addAttribute("title", "Error");
                 model.addAttribute("language", "Java");
-                model.addAttribute("statusCode", "500");
                 model.addAttribute("message", "There was an issue with the Server, please try again later.");
                 res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 return "error";
@@ -97,7 +95,6 @@ public class Storage {
             default:
                 model.addAttribute("title", "Error");
                 model.addAttribute("language", "Java");
-                model.addAttribute("statusCode", "500");
                 model.addAttribute("message", "There was an issue with the Server, please try again later.");
                 res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 return "error";

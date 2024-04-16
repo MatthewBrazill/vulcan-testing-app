@@ -34,7 +34,7 @@ import com.samskivert.mustache.Mustache;
 @ComponentScan("vulcan.controllers")
 public class App implements WebMvcConfigurer {
 
-	// * Add Mustache reader that supports partials
+	// Add Mustache reader that supports partials
 	@Bean
 	public Mustache.Compiler mustacheCompiler(Mustache.TemplateLoader templateLoader, Environment environment) {
 		Logger logger = LogManager.getLogger("vulcan");
@@ -59,9 +59,8 @@ public class App implements WebMvcConfigurer {
 				.defaultValue("error")
 				.withLoader(templateLoader);
 	}
-	// */
 
-	// * Set up statics
+	// Set up statics
 	@Override
 	public void addResourceHandlers(@NonNull final ResourceHandlerRegistry registry) {
 		Logger logger = LogManager.getLogger("vulcan");
@@ -71,7 +70,6 @@ public class App implements WebMvcConfigurer {
 		registry.addResourceHandler("/css/**").addResourceLocations("file:../frontend/statics/css/");
 		registry.addResourceHandler("/img/**").addResourceLocations("file:../frontend/statics/img/");
 	}
-	// */
 
 	public static void main(String[] args) {
 		ConfigurationBuilder<BuiltConfiguration> builder = ConfigurationBuilderFactory.newConfigurationBuilder();
