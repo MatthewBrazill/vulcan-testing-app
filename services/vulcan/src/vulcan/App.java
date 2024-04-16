@@ -125,7 +125,7 @@ public class App implements WebMvcConfigurer {
 		properties.put("server.servlet.session.cookie.name", "vulcan");
 		properties.put("spring.session.store-type", "redis");
 		properties.put("spring.session.redis.flush-mode", "on_save");
-		properties.put("spring.session.redis.namespace", "java:sess");
+		properties.put("spring.session.redis.namespace", "vulcan:sess");
 		properties.put("spring.data.redis.host", redisURL);
 		properties.put("spring.data.redis.port", 6379);
 

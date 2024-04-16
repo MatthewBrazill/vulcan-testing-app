@@ -1,11 +1,21 @@
 package vulcan;
 
 import java.io.Reader;
+import java.net.URI;
 import java.net.URLDecoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpRequest.Builder;
+import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.charset.StandardCharsets;
-import java.sql.ResultSet;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -30,24 +40,39 @@ public class Helpers {
     public static String authorize(HttpServletRequest req) {
         HttpSession session = req.getSession();
         Span span = GlobalTracer.get().activeSpan();
-        ResultSet result;
+		Logger logger = LogManager.getLogger("vulcan");
 
         try {
-            if (req.getHeader("api-key") != null) {
-                result = Databases.userDatabase().executeQuery("SELECT * FROM apikeys WHERE apikey = '" + req.getHeader("api-key") + "'");
-            } else if (session.getAttribute("username") != null) {
-                result = Databases.userDatabase().executeQuery("SELECT * FROM users WHERE username = '" + session.getAttribute("username") + "'");
+            // Generate the authorization request body
+            String jsonBody = "";
+            if (req.getHeader("apiKey") != null) {
+                jsonBody = ("{\"apiKey\":\"" + req.getHeader("apiKey") + "\"}");
             } else {
-                span.setTag("auth", false);
-                return "none";
+                jsonBody = ("{\"username\":\"" + session.getAttribute("username").toString() + "\"}");
             }
 
-            if (result.first()) {
-                span.setTag("auth", true);
-                return result.getString("permissions");
-            } else {
-                span.setTag("auth", false);
-                return "none";
+            // Make authorization request to authenticator service
+            Builder builder = HttpRequest.newBuilder(new URI("http://authenticator:2884/authorize"));
+            builder.POST(BodyPublishers.ofString(jsonBody));
+
+            HttpClient client = HttpClient.newHttpClient();
+            HttpResponse<String> response = client.send(builder.build(), BodyHandlers.ofString());
+
+            // Extract response
+            Gson gson = new Gson();
+            Map<String, String> permissions = gson.fromJson(response.body(), new TypeToken<HashMap<String, String>>() {}.getType());
+
+            // Handle response
+            switch (response.statusCode()) {
+                case 200:
+                    return permissions.get("permissions");
+                case 401:
+                    logger.info("user does not have permission to access " + req.getRequestURI());
+                    return "none";
+                case 500:
+                    return "none";
+                default:
+                    throw new Exception("VulcanError: couldn't authorize request");
             }
         } catch (Exception e) {
             span.setTag(Tags.ERROR, true);
@@ -85,7 +110,7 @@ public class Helpers {
                     case "application/json":
                         Reader json = req.getReader();
                         Gson gson = new Gson();
-                        output = gson.fromJson(json, new TypeToken<HashMap<String, Object>>(){}.getType());
+                        output = gson.fromJson(json, new TypeToken<HashMap<String, Object>>() {}.getType());
                         break;
 
                     default:
