@@ -34,19 +34,12 @@ async function start() {
     const app = express()
 
     // Set up redis client
-    var redisURL
-    if (process.env.DD_ENV == "kubernetes") {
-        redisURL = "redis://host.minikube.internal:6379"
-    } else {
-        redisURL = "redis://session-store:6379"
-    }
-
-    var redisClient = redis.createClient({ url: redisURL })
+    var redisClient = redis.createClient({ url: "redis://database-proxy:6379" })
     await redisClient.connect()
 
     // Set up sessions
     app.use(session({
-        secret: process.env.VLCN_SESSION_KEY,
+        secret: "ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*",
         saveUninitialized: true,
         resave: false,
         name: "etna",
@@ -144,7 +137,7 @@ async function start() {
     https.createServer({
         key: fs.readFileSync(`${process.env.VLCN_CERT_FOLDER}/key.pem`),
         cert: fs.readFileSync(`${process.env.VLCN_CERT_FOLDER}/cert.pem`)
-    }, app).listen(443, () => {
+    }, app).listen(910, () => {
         console.log("Server started")
     })
 }

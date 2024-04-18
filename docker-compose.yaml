@@ -56,7 +56,7 @@ services:
     image: golang:latest
     container_name: god-manager
     ports:
-      - 9000:9000
+      - 900:900
     networks:
       - vulcan_app
       - datadog_bridge
@@ -94,7 +94,7 @@ services:
     image: node:18
     container_name: user-manager
     ports:
-      - 9100:9100
+      - 910:910
     networks:
       - vulcan_app
       - datadog_bridge

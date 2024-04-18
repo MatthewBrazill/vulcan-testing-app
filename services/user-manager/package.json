@@ -2,9 +2,9 @@
 	"name": "etna",
 	"version": "1.2.0",
 	"description": "A small application I used to learn JavaScript and now use to test new stuff with.",
-	"main": "./etna/app.js",
+	"main": "./user-manager/app.js",
 	"scripts": {
-		"start": "node ./etna/app.js"
+		"start": "node ./user-manager/app.js"
 	},
 	"repository": {
 		"type": "git",
