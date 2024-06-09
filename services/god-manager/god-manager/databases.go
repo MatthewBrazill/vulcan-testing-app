@@ -22,8 +22,9 @@ func GodDatabase(ctx *gin.Context) (*mongo.Database, error) {
 
 	// If client doesn't exists, connect
 	if !exists {
+		Log(ctx).Info("re-connecting to god-database")
 		tracer := mongotrace.NewMonitor(mongotrace.WithServiceName("god-database"))
-		options := options.Client().SetMonitor(tracer).ApplyURI("mongodb://god-database:27017/?connect=direct")
+		options := options.Client().SetMonitor(tracer).ApplyURI("mongodb://database-proxy:27017/?connect=direct")
 		client, err := mongo.Connect(ctx.Request.Context(), options)
 		if err != nil {
 			return nil, err
