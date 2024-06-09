@@ -1,20 +1,15 @@
 'use strict'
 
 // Imports
+const fetch = require("node-fetch")
 const helpers = require("./helpers.js")
 const logger = require("./logger.js")
-const pgdb = require("./postgres.js")
+const databases = require("./databases.js")
 
 const users = {
-    async loginPage(req, res) {
+    async createUser(req, res) {
         try {
-            // Destroy old session
-            req.session.destroy()
-
-            res.status(200).render("login", {
-                title: "Login Page",
-                language: "JS"
-            })
+            res.sendStatus(501)
         } catch (err) {
             logger.error({
                 error: err.message,
@@ -22,40 +17,18 @@ const users = {
                 endpoint: req.path,
                 message: `error with '${req.path}' endpoint`
             })
-            res.status(500).render("error", {
-                title: "Error",
-                language: "JS",
-                httpCode: "500",
-                message: "There was an issue with the Server, please try again later."
-            })
+            res.status(500).json(err)
         }
     },
 
-    async userPage(req, res) {
+    async getUser(req, res) {
         try {
-            var permissions = await helpers.authorize(req)
-            switch (permissions) {
-                case "user":
-                case "admin":
-                    var result = await pgdb.query("SELECT * FROM users WHERE username = $1::text", [req.params.username])
+            var result = await databases.userDatabase().query("SELECT * FROM users WHERE username = $1::text", [req.params.username])
 
-                    result = result.rows[0]
-                    delete result.password
+            result = result.rows[0]
+            delete result.password
 
-                    res.status(200).render("user", {
-                        title: "User",
-                        language: "JS",
-                        user: result
-                    })
-                    break
-
-                case "none":
-                    res.status(302).redirect("/login")
-                    break
-
-                default:
-                    throw new Error(`VulcanError: unsupported permission ${permissions}`)
-            }
+            res.status(200).json(result)
         } catch (err) {
             logger.error({
                 error: err.message,
@@ -63,42 +36,13 @@ const users = {
                 endpoint: req.path,
                 message: `error with '${req.path}' endpoint`
             })
-            res.status(500).render("error", {
-                title: "Error",
-                language: "JS",
-                httpCode: "500",
-                message: "There was an issue with the Server, please try again later."
-            })
+            res.status(500).json(err)
         }
     },
 
-    async loginAPI(req, res) {
+    async updateUser(req, res) {
         try {
-            // Validate request body
-            if (!await helpers.validate(req.body, [["username", "^[a-zA-Z]{1,32}$"], ["password", "^.{1,64}$"]])) {
-                res.status(400).json({
-                    message: "There was an issue with your request.",
-                })
-                return
-            }
-
-            // Get user form DB
-            var result = await pgdb.query("SELECT * FROM users WHERE username = $1::text", [req.body.username])
-            var user = result.rows[0]
-
-            // Validate user
-            if (result.rowCount > 0) if (req.body.password == user.password) {
-                req.session.permissions = user.permissions
-                req.session.authorized = true
-                req.session.username = user.username
-                res.status(200).json({
-                    "message": "Successfully logged in."
-                })
-                return
-            }
-            res.status(403).json({
-                "message": "Your login details are incorrect."
-            })
+            res.sendStatus(501)
         } catch (err) {
             logger.error({
                 error: err.message,
@@ -106,16 +50,13 @@ const users = {
                 endpoint: req.path,
                 message: `error with '${req.path}' endpoint`
             })
-            res.status(500).json({ message: "There was an issue with the Server, please try again later." })
+            res.status(500).json(err)
         }
     },
 
-    async logoutAPI(req, res) {
+    async deleteUser(req, res) {
         try {
-            req.session.destroy()
-            res.status(200).json({
-                message: "Successfully logged out."
-            })
+            res.sendStatus(501)
         } catch (err) {
             logger.error({
                 error: err.message,
@@ -123,7 +64,7 @@ const users = {
                 endpoint: req.path,
                 message: `error with '${req.path}' endpoint`
             })
-            res.status(500).json({ message: "There was an issue with the Server, please try again later." })
+            res.status(500).json(err)
         }
     }
 }
