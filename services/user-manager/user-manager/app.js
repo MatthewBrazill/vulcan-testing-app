@@ -111,32 +111,10 @@ async function start() {
     app.route("/gods/delete").post(gods.godDeleteAPI)
 
     // Users
-    app.route("/user/:username").get(users.userPage)
-
-    // Error endpoint
-    app.route("/error").get(function errorAPI(req, res) {
-        var err = new Error("deliberate error: error testing enpoint")
-        const span = tracer.scope().active()
-        span.setTag('error', err)
-        logger.error({
-            error: err.message,
-            stack: err.stack,
-            message: "Error from the error testing enpoint."
-        })
-        setTimeout(() => {
-            res.status(500).json({ message: "This is a error testing endpoint. It will always return a 500 error.", })
-        }, 500)
-    })
-
-    // 404 page
-    app.use(function notFoundPage(req, res) {
-        res.status(404).render("error", {
-            title: "Not Found",
-            language: "JS",
-            httpCode: "404",
-            message: "There was an issue with the Server, please try again later."
-        })
-    })
+    app.route("/create").post(users.createUser)
+    app.route("/get").post(users.getUser)
+    app.route("/update").post(users.updateUser)
+    app.route("/delete").post(users.deleteUser)
 
     https.createServer({
         key: fs.readFileSync(`${process.env.VLCN_CERT_FOLDER}/key.pem`),
