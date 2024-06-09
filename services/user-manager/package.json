@@ -1,7 +1,7 @@
 {
-	"name": "etna",
-	"version": "1.2.0",
-	"description": "A small application I used to learn JavaScript and now use to test new stuff with.",
+	"name": "user-manager",
+	"version": "2.1.0",
+	"description": "An application to manage the user interactions for the Vulcan application.",
 	"main": "./user-manager/app.js",
 	"scripts": {
 		"start": "node ./user-manager/app.js"
