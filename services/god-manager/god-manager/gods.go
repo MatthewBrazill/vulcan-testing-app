@@ -4,20 +4,20 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/dchest/uniuri"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func GodCreateAPI(ctx *gin.Context) {
+func CreateGod(ctx *gin.Context) {
 	// Extract body from request
 	body := make(map[string]string)
 	ctx.ShouldBind(&body)
 
 	// Build god object
 	god := bson.M{
-		"godId":    uniuri.NewLen(5),
+		"godId":    body["godId"],
 		"pantheon": body["pantheon"],
 		"name":     body["name"],
 		"domain":   body["domain"],
@@ -53,7 +53,7 @@ func GodCreateAPI(ctx *gin.Context) {
 	})
 }
 
-func GodGetAPI(ctx *gin.Context) {
+func GetGod(ctx *gin.Context) {
 	// Extract body from request
 	req := make(map[string]string)
 	ctx.ShouldBind(&req)
@@ -81,12 +81,49 @@ func GodGetAPI(ctx *gin.Context) {
 	}
 
 	// Return result
-	ctx.JSON(http.StatusOK, gin.H{
-		"god": result,
-	})
+	ctx.JSON(http.StatusOK, result)
 }
 
-func GodUpdateAPI(ctx *gin.Context) {
+func SearchGod(ctx *gin.Context) {
+	// Extract body from request
+	req := make(map[string]string)
+	ctx.ShouldBind(&req)
+
+	// Get database
+	db, err := GodDatabase(ctx)
+	if err != nil {
+		Log(ctx).WithError(err).Error(ctx.Error(err).Error())
+		ctx.JSON(http.StatusInternalServerError, err)
+		return
+	}
+
+	// Try to search for gods in database
+	var result []bson.M
+	cursor, err := db.Collection("gods").Find(ctx.Request.Context(), bson.M{"name": bson.M{"$regex": primitive.Regex{Pattern: req["query"], Options: "i"}}})
+	if err != nil {
+		if err.Error() == "mongo: no documents in result" {
+			ctx.Status(http.StatusNotFound)
+			return
+		} else {
+			Log(ctx).WithError(err).Error(ctx.Error(err).Error())
+			ctx.JSON(http.StatusInternalServerError, err)
+			return
+		}
+	}
+
+	// Try to extract the gods from cursor
+	err = cursor.All(ctx.Request.Context(), &result)
+	if err != nil {
+		Log(ctx).WithError(err).Error(ctx.Error(err).Error())
+		ctx.JSON(http.StatusInternalServerError, err)
+		return
+	}
+
+	// Return result
+	ctx.JSON(http.StatusOK, result)
+}
+
+func UpdateGod(ctx *gin.Context) {
 	// Extract body from request
 	req := make(map[string]string)
 	ctx.ShouldBind(&req)
@@ -130,7 +167,7 @@ func GodUpdateAPI(ctx *gin.Context) {
 	}
 }
 
-func GodDeleteAPI(ctx *gin.Context) {
+func DeleteGod(ctx *gin.Context) {
 	// Extract body from request
 	req := make(map[string]string)
 	ctx.ShouldBind(&req)
