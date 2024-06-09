@@ -72,4 +72,4 @@ elif [ "$kube" == 1 ]; then
     echo "  Kubernetes..."
     kubectl apply -f deployment.yaml 2> /dev/null
 fi
-echo "Finsihed deploy! You can now use the Vulcan App: https://localhost:4430/login"
+echo "Finsihed deploy! You can now use the Vulcan App: https://localhost/login"
