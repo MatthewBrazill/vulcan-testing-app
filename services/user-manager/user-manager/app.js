@@ -30,6 +30,12 @@ const storage = require("./storage.js")
 const users = require("./users.js")
 
 async function start() {
+    // Create log file if it doesn't exist
+    if (!fs.existsSync("/logs")) {
+        fs.mkdirSync("/logs");
+    }
+    fs.closeSync(fs.openSync("/logs/user-manager.log", 'w'))
+
     // Create the app
     const app = express()
 
@@ -55,12 +61,10 @@ async function start() {
     app.use(function requestLogging(req, res, next) {
         next()
         logger.info({
-            client_ip: req.ip.split(":").pop(),
             path: req.path,
             method: req.method,
             status: res.statusCode,
-            user_id: req.session.userId,
-            message: `IP ${req.ip.split(":").pop()} accessed: ${req.path}`
+            message: `user-manager accessed ${req.path}`
         })
     })
 
@@ -138,7 +142,7 @@ async function start() {
         key: fs.readFileSync(`${process.env.VLCN_CERT_FOLDER}/key.pem`),
         cert: fs.readFileSync(`${process.env.VLCN_CERT_FOLDER}/cert.pem`)
     }, app).listen(910, () => {
-        console.log("Server started")
+        logger.info("starting user-manager")
     })
 }
 
@@ -146,7 +150,7 @@ start().catch((err) => {
     logger.error({
         error: err.message,
         stack: err.stack,
-        message: `fatal error when starting server: ${err.name}`
+        message: `fatal error when starting user-manager: ${err.name}`
     })
-    console.log(`fatal error when starting server: ${err}`)
+    console.log(`fatal error when starting user-manager: ${err}`)
 })
