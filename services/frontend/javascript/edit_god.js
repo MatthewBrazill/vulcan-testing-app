@@ -5,9 +5,9 @@ $(document).ready(() => {
         method: "POST",
         data: { godId: url.searchParams.get("godId") },
         success: (res) => {
-            $("#edit-god-pantheon").val(res.god.pantheon),
-            $("#edit-god-name").val(res.god.name),
-            $("#edit-god-domain").val(res.god.domain)
+            $("#edit-god-pantheon").val(res.pantheon),
+            $("#edit-god-name").val(res.name),
+            $("#edit-god-domain").val(res.domain)
         },
         error: (res) => {
             $("#edit-god-form").attr("class", "ui error form")
