@@ -1,21 +1,30 @@
 package vulcan.controllers;
 
+import java.lang.reflect.Type;
+import java.net.URI;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
-import org.bson.Document;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.model.Filters;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import io.opentracing.Span;
+import io.opentracing.log.Fields;
+import io.opentracing.tag.Tags;
+import io.opentracing.util.GlobalTracer;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import vulcan.Databases;
 import vulcan.Helpers;
 
 @Controller
@@ -104,42 +113,78 @@ public class Storage {
     @ResponseBody
     @RequestMapping(value = "/storage/search", method = RequestMethod.POST)
     public HashMap<String, Object> storageSearchAPI(HttpServletRequest req, HttpServletResponse res) {
-        String permissions = Helpers.authorize(req);
-        String[][] params = { { "filter", "[a-zA-Z]{0,32}" } };
-        HashMap<String, Object> reqBody = Helpers.decodeBody(req);
-        HashMap<String, Object> resBody = new HashMap<String, Object>();
+        // Function variables
+        Span span = GlobalTracer.get().activeSpan();
+        HashMap<String, Object> body = Helpers.decodeBody(req);
+        HashMap<String, Object> output = new HashMap<String, Object>();
 
+        // Authorize
+        String permissions = Helpers.authorize(req);
         switch (permissions) {
             case "user":
             case "admin":
                 // Validate the user input
                 if (!Helpers.validate(body)) {
                     res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    resBody.put("message", "There was an issue with your request.");
-                    return resBody;
-                }
- 
-                ArrayList<Document> gods = new ArrayList<Document>();
-                MongoCursor<Document> result = Databases.godDatabse().find(Filters.regex("name", reqBody.get("filter").toString(), "i")).cursor();
-                for (int i = 0; result.hasNext(); i++) {
-                    Document god = result.next();
-                    god.remove("_id");
-                    gods.add(i, god);
+                    output.put("message", "There was an issue with your request.");
+                    return output;
                 }
 
-                resBody.put("message", "Successfully filtered gods.");
-                resBody.put("result", gods);
-                return resBody;
+                try {
+                    // Prep god request
+                    HashMap<String, Object> godSearch = new HashMap<String, Object>();
+                    godSearch.put("query", body.get("query"));
+
+                    // Make god request
+                    HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://god-manager:900/search"), godSearch);
+
+                    // Handle response
+                    switch (response.statusCode()) {
+                        case HttpServletResponse.SC_OK:
+                            res.setStatus(HttpServletResponse.SC_OK);
+
+                            // Extract ArrayList from JSON body
+                            Gson gson = new Gson();
+                            Type type = new TypeToken<ArrayList<HashMap<String, String>>>() {}.getType();
+                            ArrayList<HashMap<String, String>> gods = gson.fromJson(response.body(), type);
+
+                            // Clean MongoDB ID out of the response
+                            for (HashMap<String, String> god : gods) {
+                                god.remove("_id");
+                            }
+
+                            output.put("result", gods);
+                            return output;
+
+                        case HttpServletResponse.SC_NOT_FOUND:
+                            output.put("result", "[]");
+                            return output;
+
+                        case HttpServletResponse.SC_INTERNAL_SERVER_ERROR:
+                            throw new Exception("VulcanError: 500 response from god-manager");
+
+                        default:
+                            throw new Exception("VulcanError: unexpected response from god-manager");
+                    }
+                } catch (Exception e) {
+                    res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    output.put("message", "There was an issue with the Server, please try again later.");
+
+                    span.setTag(Tags.ERROR, true);
+                    span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
+
+                    return output;
+                }
 
             case "none":
                 res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                resBody.put("message", "Your credentials are invalid.");
-                return resBody;
+                output.put("message", "Your credentials are invalid.");
+                return output;
 
             default:
                 res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                resBody.put("message", "There was an issue with the Server, please try again later.");
-                return resBody;
+                output.put("message", "There was an issue with the Server, please try again later.");
+                return output;
         }
     }
 }
