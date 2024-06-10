@@ -35,6 +35,7 @@ public class Gods {
         Span span = GlobalTracer.get().activeSpan();
         HashMap<String, Object> body = Helpers.decodeBody(req);
         HashMap<String, Object> output = new HashMap<>();
+        Logger logger = LogManager.getLogger("vulcan");
 
         // Validate the user input
         if (!Helpers.validate(body)) {
@@ -53,6 +54,7 @@ public class Gods {
                 char selected = chars.charAt(rand.nextInt(62));
                 godId = godId + selected;
             }
+            logger.debug("generated god id " + godId);
 
             // Build god object
             HashMap<String, Object> god = new HashMap<>();
@@ -68,6 +70,7 @@ public class Gods {
             switch (response.statusCode()) {
                 case HttpServletResponse.SC_OK:
                     res.setStatus(HttpServletResponse.SC_OK);
+                    logger.info("created god " + godId);
                     output.put("godId", godId);
                     return output;
 
@@ -81,6 +84,7 @@ public class Gods {
             span.setTag(Tags.ERROR, true);
             span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
 
+            logger.error("vulcan encountered error during god creation: " + e.getMessage(), e);
             return output;
         }
     }
@@ -92,6 +96,7 @@ public class Gods {
         Span span = GlobalTracer.get().activeSpan();
         HashMap<String, Object> body = Helpers.decodeBody(req);
         HashMap<String, Object> output = new HashMap<>();
+        Logger logger = LogManager.getLogger("vulcan");
 
         // Validate the user input
         if (!Helpers.validate(body)) {
@@ -112,6 +117,7 @@ public class Gods {
             switch (response.statusCode()) {
                 case HttpServletResponse.SC_OK:
                     res.setStatus(HttpServletResponse.SC_OK);
+                    logger.info("got god " + body.get("godId"));
 
                     // Extract HashMap from JSON body
                     Gson gson = new Gson();
@@ -123,6 +129,7 @@ public class Gods {
 
                 case HttpServletResponse.SC_NOT_FOUND:
                     res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    logger.info("god not found for id " + body.get("godId"));
                     output.put("message", "Couldn't find a god with that ID.");
                     return output;
 
@@ -136,6 +143,7 @@ public class Gods {
             span.setTag(Tags.ERROR, true);
             span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
 
+            logger.error("vulcan encountered error during god retrieval: " + e.getMessage(), e);
             return output;
         }
     }
@@ -147,6 +155,7 @@ public class Gods {
         Span span = GlobalTracer.get().activeSpan();
         HashMap<String, Object> body = Helpers.decodeBody(req);
         HashMap<String, Object> output = new HashMap<>();
+        Logger logger = LogManager.getLogger("vulcan");
 
         // Validate the user input
         if (!Helpers.validate(body)) {
@@ -162,6 +171,7 @@ public class Gods {
             god.put("name", body.get("name"));
             god.put("pantheon", body.get("pantheon"));
             god.put("domain", body.get("domain"));
+            logger.debug("creating updated god object");
 
             // Make god request
             HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://god-manager:900/update"), god);
@@ -170,11 +180,13 @@ public class Gods {
             switch (response.statusCode()) {
                 case HttpServletResponse.SC_OK:
                     res.setStatus(HttpServletResponse.SC_OK);
+                    logger.info("updated god " + body.get("godId"));
                     output.put("message", "Successfully updated god.");
                     return output;
 
                 case HttpServletResponse.SC_NOT_FOUND:
                     res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    logger.info("god not found for id " + body.get("godId"));
                     output.put("message", "Couldn't find a god with that ID.");
                     return output;
 
@@ -188,6 +200,7 @@ public class Gods {
             span.setTag(Tags.ERROR, true);
             span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
 
+            logger.error("vulcan encountered error during god update: " + e.getMessage(), e);
             return output;
         }
     }
@@ -199,6 +212,7 @@ public class Gods {
         Span span = GlobalTracer.get().activeSpan();
         HashMap<String, Object> body = Helpers.decodeBody(req);
         HashMap<String, Object> output = new HashMap<>();
+        Logger logger = LogManager.getLogger("vulcan");
 
         // Validate the user input
         if (!Helpers.validate(body)) {
@@ -219,11 +233,13 @@ public class Gods {
             switch (response.statusCode()) {
                 case HttpServletResponse.SC_OK:
                     res.setStatus(HttpServletResponse.SC_OK);
+                    logger.info("deleted god " + body.get("godId"));
                     output.put("message", "Successfully deleted god.");
                     return output;
 
                 case HttpServletResponse.SC_NOT_FOUND:
                     res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    logger.info("god not found for id " + body.get("godId"));
                     output.put("message", "Couldn't find a god with that ID.");
                     return output;
 
@@ -237,6 +253,7 @@ public class Gods {
             span.setTag(Tags.ERROR, true);
             span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
 
+            logger.error("vulcan encountered error during god deletion: " + e.getMessage(), e);
             return output;
         }
     }

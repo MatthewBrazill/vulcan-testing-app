@@ -123,6 +123,7 @@ public class Storage {
         Span span = GlobalTracer.get().activeSpan();
         HashMap<String, Object> body = Helpers.decodeBody(req);
         HashMap<String, Object> output = new HashMap<String, Object>();
+        Logger logger = LogManager.getLogger("vulcan");
 
         // Authorize
         String permissions = Helpers.authorize(req);
@@ -148,6 +149,7 @@ public class Storage {
                     switch (response.statusCode()) {
                         case HttpServletResponse.SC_OK:
                             res.setStatus(HttpServletResponse.SC_OK);
+                            logger.info("found gods for query '" + body.get("query") + "'");
 
                             // Extract ArrayList from JSON body
                             Gson gson = new Gson();
@@ -155,6 +157,7 @@ public class Storage {
                             ArrayList<HashMap<String, String>> gods = gson.fromJson(response.body(), type);
 
                             // Clean MongoDB ID out of the response
+                            logger.debug("cleaning search gods result");
                             for (HashMap<String, String> god : gods) {
                                 god.remove("_id");
                             }
@@ -163,11 +166,9 @@ public class Storage {
                             return output;
 
                         case HttpServletResponse.SC_NOT_FOUND:
+                            logger.info("no gods found for query '" + body.get("query") + "'");
                             output.put("result", "[]");
                             return output;
-
-                        case HttpServletResponse.SC_INTERNAL_SERVER_ERROR:
-                            throw new Exception("VulcanError: 500 response from god-manager");
 
                         default:
                             throw new Exception("VulcanError: unexpected response from god-manager");
@@ -179,6 +180,7 @@ public class Storage {
                     span.setTag(Tags.ERROR, true);
                     span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
 
+                    logger.error("vulcan encountered error during search for gods: " + e.getMessage(), e);
                     return output;
                 }
 

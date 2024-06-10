@@ -10,6 +10,8 @@ import io.opentracing.log.Fields;
 import io.opentracing.tag.Tags;
 import io.opentracing.util.GlobalTracer;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +27,14 @@ public class Users {
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public String loginPage(HttpServletRequest req, Model model) {
+		// Function variables
+		Logger logger = LogManager.getLogger("vulcan");
+		HashMap<String, Object> body = Helpers.decodeBody(req);
+
+		// Log out user
 		req.getSession().invalidate();
+		logger.info(body.get("username") + "logged out");
+
 		model.addAttribute("title", "Login Page");
 		return "login";
 	}
@@ -37,6 +46,7 @@ public class Users {
 		Span span = GlobalTracer.get().activeSpan();
 		HashMap<String, Object> body = Helpers.decodeBody(req);
 		HashMap<String, Object> output = new HashMap<String, Object>();
+        Logger logger = LogManager.getLogger("vulcan");
 
 		try {
 			// Validate the user input
@@ -61,16 +71,13 @@ public class Users {
 					res.setStatus(HttpServletResponse.SC_OK);
 					req.getSession().setAttribute("username", body.get("username"));
 					output.put("message", "Successfully logged in.");
+					logger.info(body.get("username") + "logged in");
 					return output;
 
 				case HttpServletResponse.SC_UNAUTHORIZED:
 					res.setStatus(HttpServletResponse.SC_FORBIDDEN);
 					output.put("message", "Your login details are incorrect.");
-					return output;
-
-				case HttpServletResponse.SC_INTERNAL_SERVER_ERROR:
-					res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-					output.put("message", "There was an issue with the Server, please try again later.");
+					logger.info(body.get("username") + "failed to log in");
 					return output;
 
 				default:
@@ -89,7 +96,13 @@ public class Users {
 
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	public void logoutAPI(HttpServletRequest req, HttpServletResponse res) {
+		// Function variables
+		Logger logger = LogManager.getLogger("vulcan");
+		HashMap<String, Object> body = Helpers.decodeBody(req);
+
+		// Log out user
 		req.getSession().invalidate();
+		logger.info(body.get("username") + "logged out");
 		res.setStatus(HttpServletResponse.SC_OK);
 	}
 

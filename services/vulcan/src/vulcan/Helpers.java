@@ -1,5 +1,6 @@
 package vulcan;
 
+import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.net.URI;
@@ -47,7 +48,7 @@ public class Helpers {
         // Function variables
         HttpSession session = req.getSession();
         Span span = GlobalTracer.get().activeSpan();
-		Logger logger = LogManager.getLogger("vulcan");
+        Logger logger = LogManager.getLogger("vulcan");
 
         try {
             // Generate the authorization request body
@@ -87,22 +88,27 @@ public class Helpers {
             span.setTag(Tags.ERROR, true);
             span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
             span.setTag("auth", false);
+            logger.error("vulcan encountered error when authorizing: " + e.getMessage(), e);
             return "none";
         }
     }
 
     @Trace(operationName = "vulcan.helper", resourceName = "Helpers.decodeBody")
     public static HashMap<String, Object> decodeBody(HttpServletRequest req) {
+        // Function variables
         HashMap<String, Object> output = new HashMap<String, Object>();
         Span span = GlobalTracer.get().activeSpan();
+        Logger logger = LogManager.getLogger("vulcan");
 
         try {
             if (req.getReader().ready()) {
+                // Identify Content-Type of request
                 String contentType = req.getContentType().split(";")[0];
                 span.setTag("content_type", contentType);
                 switch (contentType) {
                     case "application/x-www-form-urlencoded":
                         String[] body = req.getReader().readLine().split("&");
+                        logger.info("decoding url encoded form");
                         for (int i = 0; i < body.length; i++) {
                             String[] attribute = body[i].split("=");
                             if (attribute.length == 2) {
@@ -111,7 +117,7 @@ public class Helpers {
                                 output.put(attribute[0], "");
                             } else {
                                 span.setTag(Tags.ERROR, true);
-                                span.log(Collections.singletonMap(Fields.ERROR_OBJECT, new Exception("Unexpected Attribute Length: length: " + attribute.length + "; value: " + attribute.toString())));
+                                span.log(Collections.singletonMap(Fields.ERROR_OBJECT, new Exception("VulcanError: unexpected attribute length of: " + attribute.length + "; value: " + attribute.toString())));
                             }
                         }
                         break;
@@ -119,17 +125,19 @@ public class Helpers {
                     case "application/json":
                         Reader json = req.getReader();
                         Gson gson = new Gson();
+                        logger.info("decoding json");
                         output = gson.fromJson(json, new TypeToken<HashMap<String, Object>>() {}.getType());
                         break;
 
                     default:
                         span.setTag(Tags.ERROR, true);
-                        span.log(Collections.singletonMap(Fields.ERROR_OBJECT, new Exception("Unsupported Content-Type: " + contentType)));
+                        span.log(Collections.singletonMap(Fields.ERROR_OBJECT, new Exception("VulcanError: unsupported content-type " + contentType)));
                 }
             }
         } catch (Exception e) {
             span.setTag(Tags.ERROR, true);
             span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
+            logger.error("vulcan encountered an error when decoding a request body: " + e.getMessage(), e);
         }
 
         return output;

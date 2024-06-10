@@ -24,6 +24,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 import org.springframework.lang.NonNull;
 import org.springframework.util.ResourceUtils;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -38,8 +39,8 @@ public class App implements WebMvcConfigurer {
 	@Bean
 	public Mustache.Compiler mustacheCompiler(Mustache.TemplateLoader templateLoader, Environment environment) {
 		Logger logger = LogManager.getLogger("vulcan");
-		logger.debug("Loading partials");
-		
+		logger.debug("loading partials");
+
 		templateLoader = new Mustache.TemplateLoader() {
 			public Reader getTemplate(String name) throws FileNotFoundException {
 				ArrayList<String> partials = new ArrayList<String>();
@@ -64,19 +65,25 @@ public class App implements WebMvcConfigurer {
 	@Override
 	public void addResourceHandlers(@NonNull final ResourceHandlerRegistry registry) {
 		Logger logger = LogManager.getLogger("vulcan");
-		logger.debug("Setting resource locations");
+		logger.debug("setting resource locations");
 
 		registry.addResourceHandler("/js/**").addResourceLocations("file:../frontend/statics/js/");
 		registry.addResourceHandler("/css/**").addResourceLocations("file:../frontend/statics/css/");
 		registry.addResourceHandler("/img/**").addResourceLocations("file:../frontend/statics/img/");
 	}
 
+	// Add interceptor logging
+	@Override
+	public void addInterceptors(@NonNull InterceptorRegistry registry) {
+        registry.addInterceptor(new LoggingInterceptor()).addPathPatterns("/**");
+    }
+
 	public static void main(String[] args) {
 		ConfigurationBuilder<BuiltConfiguration> builder = ConfigurationBuilderFactory.newConfigurationBuilder();
 
 		// Create file appender
 		AppenderComponentBuilder file = builder.newAppender("jsonFile", "File");
-		file.addAttribute("fileName", "/logs/java.log");
+		file.addAttribute("fileName", "/logs/vulcan.log");
 
 		// Create logger layout
 		LayoutComponentBuilder json = builder.newLayout("JsonLayout");
@@ -85,10 +92,10 @@ public class App implements WebMvcConfigurer {
 		json.addAttribute("eventEol", true);
 		file.add(json);
 
-		// Add apender to builder
+		// Add appender to builder
 		builder.add(file);
 
-		// Attach appernder to logger
+		// Attach appender to logger
 		LoggerComponentBuilder vulcanLogger = builder.newLogger("vulcan", Level.ALL);
 		vulcanLogger.add(builder.newAppenderRef("jsonFile"));
 		builder.add(vulcanLogger);
@@ -96,11 +103,11 @@ public class App implements WebMvcConfigurer {
 		// Configure logger
 		Configurator.initialize(builder.build());
 		Logger logger = LogManager.getLogger("vulcan");
-		logger.debug("Configured logging");
+		logger.debug("configured logging");
 
 		// Create the app
 		SpringApplication app = new SpringApplication(App.class);
-		logger.debug("Created spring application");
+		logger.debug("created spring application");
 
 		// Define properties
 		Properties properties = new Properties();
@@ -123,13 +130,13 @@ public class App implements WebMvcConfigurer {
 		// Configure views
 		properties.put("spring.mustache.prefix", "file:../frontend/pages/");
 		properties.put("spring.mustache.suffix", ".html");
-		logger.debug("Defined properties");
+		logger.debug("defined properties");
 
 		// Set properties
 		app.setDefaultProperties(properties);
-		logger.debug("Applied properties");
+		logger.debug("applied properties");
 
-		logger.info("Started application");
+		logger.info("starting application");
 		app.run(args);
 	}
 }
