@@ -30,13 +30,6 @@ public class Users {
 		return "login";
 	}
 
-	@RequestMapping(value = "/user", method = RequestMethod.GET)
-	public String userPage(Model model) {
-		model.addAttribute("title", "User");
-		model.addAttribute("language", "Java");
-		return "user";
-	}
-
 	@ResponseBody
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public HashMap<String, Object> loginAPI(HttpServletRequest req, HttpServletResponse res) {
@@ -98,5 +91,17 @@ public class Users {
 	public void logoutAPI(HttpServletRequest req, HttpServletResponse res) {
 		req.getSession().invalidate();
 		res.setStatus(HttpServletResponse.SC_OK);
+	}
+
+	@RequestMapping(value = "/user/{username}", method = RequestMethod.GET)
+	public String userPage(String username, Model model) {
+		model.addAttribute("title", "User");
+		return "user";
+	}
+
+	@RequestMapping(value = "/user/join", method = RequestMethod.GET)
+	public String userPage(Model model) {
+		model.addAttribute("title", "Join Vulcan");
+		return "join";
 	}
 }
