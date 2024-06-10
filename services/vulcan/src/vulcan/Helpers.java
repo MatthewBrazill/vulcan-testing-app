@@ -134,4 +134,22 @@ public class Helpers {
         return output;
     }
 
+    @Trace(operationName = "vulcan.helper", resourceName = "Helpers.httpPostRequest")
+    public static HttpResponse<String> httpPostRequest(URI uri, HashMap<String, Object> body) throws IOException, InterruptedException {
+        // Function variables
+        Gson gson = new Gson();
+        Logger logger = LogManager.getLogger("vulcan");
+        
+        // Building request
+        Builder builder = HttpRequest.newBuilder(uri);
+        builder.POST(BodyPublishers.ofString(gson.toJson(body)));
+        builder.header("Content-Type", "application/json");
+
+        // Making request
+        HttpClient client = HttpClient.newHttpClient();
+        HttpResponse<String> res = client.send(builder.build(), BodyHandlers.ofString());
+        logger.info("made request to '" + uri.toString() + "'");
+
+        return res;
+    }
 }
