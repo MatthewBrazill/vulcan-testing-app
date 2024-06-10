@@ -1,21 +1,22 @@
 package vulcan.controllers;
 
+import java.net.URI;
+import java.net.http.HttpResponse;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Random;
+import java.lang.reflect.Type;
 
-import org.bson.Document;
-import org.bson.conversions.Bson;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Updates;
-import com.mongodb.client.result.DeleteResult;
-import com.mongodb.client.result.InsertOneResult;
-import com.mongodb.client.result.UpdateResult;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import io.opentracing.Span;
 import io.opentracing.log.Fields;
@@ -23,7 +24,6 @@ import io.opentracing.tag.Tags;
 import io.opentracing.util.GlobalTracer;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import vulcan.Databases;
 import vulcan.Helpers;
 
 @Controller
@@ -31,171 +31,213 @@ public class Gods {
     @ResponseBody
     @RequestMapping(value = "/gods/create", method = RequestMethod.POST)
     public HashMap<String, Object> godCreateAPI(HttpServletRequest req, HttpServletResponse res) {
-        String[][] params = { { "pantheon", "^[a-zA-Z]{1,32}$" }, { "name", "^[a-zA-Z]{1,32}$" }, { "domain", "^[0-9a-zA-Z ]{1,32}$" } };
-        HashMap<String, Object> reqBody = Helpers.decodeBody(req);
-        HashMap<String, Object> resBody = new HashMap<String, Object>();
+        // Function variables
         Span span = GlobalTracer.get().activeSpan();
+        HashMap<String, Object> body = Helpers.decodeBody(req);
+        HashMap<String, Object> output = new HashMap<>();
 
         // Validate the user input
         if (!Helpers.validate(body)) {
             res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            resBody.put("message", "There was an issue with your request.");
-            return resBody;
+            output.put("message", "There was an issue with your request.");
+            return output;
         }
 
         try {
+            // Generate GodID
             String godId = "";
             for (int i = 0; i < 5; i++) {
-               String chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-               Random rand = new Random();
+                String chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                Random rand = new Random();
 
-               char selected = chars.charAt(rand.nextInt(62));
-               godId = godId + selected;
+                char selected = chars.charAt(rand.nextInt(62));
+                godId = godId + selected;
             }
 
-            Document god = new Document();
-            god.append("godId", godId).append("name", reqBody.get("name")).append("pantheon", reqBody.get("pantheon")).append("domain", reqBody.get("domain"));
-            InsertOneResult result = Databases.godDatabse().insertOne(god);
+            // Build god object
+            HashMap<String, Object> god = new HashMap<>();
+            god.put("godId", godId);
+            god.put("name", body.get("name"));
+            god.put("pantheon", body.get("pantheon"));
+            god.put("domain", body.get("domain"));
 
-            if (result.wasAcknowledged()) {
-                res.setStatus(HttpServletResponse.SC_OK);
-                resBody.put("message", "Successfully created god.");
-                resBody.put("godId", godId);
-                return resBody;
-            } else {
-                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                resBody.put("message", "Failed to create god. There was an issue with the Server, please try again later.");
-                return resBody;
+            // Make god request
+            HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://god-manager:900/create"), god);
+
+            // Handle god response
+            switch (response.statusCode()) {
+                case HttpServletResponse.SC_OK:
+                    res.setStatus(HttpServletResponse.SC_OK);
+                    output.put("godId", godId);
+                    return output;
+
+                default:
+                    throw new Exception("VulcanError: unexpected response from god-manager");
             }
         } catch (Exception e) {
-			res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			resBody.put("message", "There was an issue with the Server, please try again later.");
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            output.put("message", "There was an issue with the Server, please try again later.");
 
-			span.setTag(Tags.ERROR, true);
-			span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
+            span.setTag(Tags.ERROR, true);
+            span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
 
-			return resBody;
+            return output;
         }
     }
 
     @ResponseBody
     @RequestMapping(value = "/gods/get", method = RequestMethod.POST)
     public HashMap<String, Object> godGetAPI(HttpServletRequest req, HttpServletResponse res) {
-        String[][] params = { { "godId", "^[a-zA-Z0-9]{5}$" } };
-        HashMap<String, Object> reqBody = Helpers.decodeBody(req);
-        HashMap<String, Object> resBody = new HashMap<String, Object>();
+        // Function variables
         Span span = GlobalTracer.get().activeSpan();
+        HashMap<String, Object> body = Helpers.decodeBody(req);
+        HashMap<String, Object> output = new HashMap<>();
 
         // Validate the user input
         if (!Helpers.validate(body)) {
             res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            resBody.put("message", "There was an issue with your request.");
-            return resBody;
+            output.put("message", "There was an issue with your request.");
+            return output;
         }
 
         try {
-            Document result = Databases.godDatabse().find(Filters.eq("godId", reqBody.get("godId"))).first();
+            // Prep god request
+            HashMap<String, Object> godId = new HashMap<String, Object>();
+            godId.put("godId", body.get("godId"));
 
-            if (result != null) {
-                result.remove("_id");
-                res.setStatus(HttpServletResponse.SC_OK);
-                resBody.put("message", "Successfully retreived god.");
-                resBody.put("god", result);
-                return resBody;
-            } else {
-                res.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                resBody.put("message", "Couldn't find a god with that ID.");
-                return resBody;
+            // Make god request
+            HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://god-manager:900/get"), godId);
+
+            // Handle response
+            switch (response.statusCode()) {
+                case HttpServletResponse.SC_OK:
+                    res.setStatus(HttpServletResponse.SC_OK);
+
+                    // Extract HashMap from JSON body
+                    Gson gson = new Gson();
+                    Type type = new TypeToken<HashMap<String, String>>() {}.getType();
+                    HashMap<String, Object> god = gson.fromJson(response.body(), type);
+
+                    god.remove("_id");
+                    return god;
+
+                case HttpServletResponse.SC_NOT_FOUND:
+                    res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    output.put("message", "Couldn't find a god with that ID.");
+                    return output;
+
+                default:
+                    throw new Exception("VulcanError: unexpected response from god-manager");
             }
         } catch (Exception e) {
-			res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			resBody.put("message", "There was an issue with the Server, please try again later.");
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            output.put("message", "There was an issue with the Server, please try again later.");
 
-			span.setTag(Tags.ERROR, true);
-			span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
+            span.setTag(Tags.ERROR, true);
+            span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
 
-			return resBody;
+            return output;
         }
     }
 
     @ResponseBody
     @RequestMapping(value = "/gods/update", method = RequestMethod.POST)
     public HashMap<String, Object> godUpdateAPI(HttpServletRequest req, HttpServletResponse res) {
-        String[][] params = { { "godId", "^[a-zA-Z0-9]{5}$" }, { "pantheon", "^[a-zA-Z]{1,32}$" }, { "name", "^[a-zA-Z]{1,32}$" }, { "domain", "^[0-9a-zA-Z ]{1,32}$" } };
-        HashMap<String, Object> reqBody = Helpers.decodeBody(req);
-        HashMap<String, Object> resBody = new HashMap<String, Object>();
+        // Function variables
         Span span = GlobalTracer.get().activeSpan();
+        HashMap<String, Object> body = Helpers.decodeBody(req);
+        HashMap<String, Object> output = new HashMap<>();
 
         // Validate the user input
         if (!Helpers.validate(body)) {
             res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            resBody.put("message", "There was an issue with your request.");
-            return resBody;
+            output.put("message", "There was an issue with your request.");
+            return output;
         }
 
         try {
-            Bson update = Updates.combine(
-                    Updates.set("name", reqBody.get("name")),
-                    Updates.set("pantheon", reqBody.get("pantheon")),
-                    Updates.set("domain", reqBody.get("domain")));
-            UpdateResult result = Databases.godDatabse().updateOne(Filters.eq("godId", reqBody.get("godId")), update);
+            // Build god object
+            HashMap<String, Object> god = new HashMap<>();
+            god.put("godId", body.get("godId"));
+            god.put("name", body.get("name"));
+            god.put("pantheon", body.get("pantheon"));
+            god.put("domain", body.get("domain"));
 
-            if (result.getModifiedCount() > 0) {
-                res.setStatus(HttpServletResponse.SC_OK);
-                resBody.put("message", "Successfully updated god.");
-                return resBody;
-            } else {
-                res.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                resBody.put("message", "Couldn't find a god with that ID.");
-                return resBody;
+            // Make god request
+            HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://god-manager:900/update"), god);
+
+            // Handle god response
+            switch (response.statusCode()) {
+                case HttpServletResponse.SC_OK:
+                    res.setStatus(HttpServletResponse.SC_OK);
+                    output.put("message", "Successfully updated god.");
+                    return output;
+
+                case HttpServletResponse.SC_NOT_FOUND:
+                    res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    output.put("message", "Couldn't find a god with that ID.");
+                    return output;
+
+                default:
+                    throw new Exception("VulcanError: unexpected response from god-manager");
             }
         } catch (Exception e) {
-			res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			resBody.put("message", "There was an issue with the Server, please try again later.");
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            output.put("message", "There was an issue with the Server, please try again later.");
 
-			span.setTag(Tags.ERROR, true);
-			span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
+            span.setTag(Tags.ERROR, true);
+            span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
 
-			return resBody;
+            return output;
         }
     }
 
     @ResponseBody
     @RequestMapping(value = "/gods/delete", method = RequestMethod.POST)
     public HashMap<String, Object> godDeleteAPI(HttpServletRequest req, HttpServletResponse res) {
-        String[][] params = { { "godId", "^[a-zA-Z0-9]{5}$" } };
-        HashMap<String, Object> reqBody = Helpers.decodeBody(req);
-        HashMap<String, Object> resBody = new HashMap<String, Object>();
+        // Function variables
         Span span = GlobalTracer.get().activeSpan();
+        HashMap<String, Object> body = Helpers.decodeBody(req);
+        HashMap<String, Object> output = new HashMap<>();
 
         // Validate the user input
         if (!Helpers.validate(body)) {
             res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            resBody.put("message", "There was an issue with your request.");
-            return resBody;
+            output.put("message", "There was an issue with your request.");
+            return output;
         }
 
         try {
-            DeleteResult result = Databases.godDatabse().deleteOne(Filters.eq("godId", reqBody.get("godId")));
+            // Prep god request
+            HashMap<String, Object> godId = new HashMap<String, Object>();
+            godId.put("godId", body.get("godId"));
 
-            if (result.getDeletedCount() > 0) {
-                res.setStatus(HttpServletResponse.SC_OK);
-                resBody.put("message", "Successfully deleted god.");
-                resBody.put("god", result);
-                return resBody;
-            } else {
-                res.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                resBody.put("message", "Couldn't find a god with that ID.");
-                return resBody;
+            // Make authorization request to authenticator service
+            HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://god-manager:900/delete"), godId);
+
+            // Handle response
+            switch (response.statusCode()) {
+                case HttpServletResponse.SC_OK:
+                    res.setStatus(HttpServletResponse.SC_OK);
+                    output.put("message", "Successfully deleted god.");
+                    return output;
+
+                case HttpServletResponse.SC_NOT_FOUND:
+                    res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    output.put("message", "Couldn't find a god with that ID.");
+                    return output;
+
+                default:
+                    throw new Exception("VulcanError: unexpected response from god-manager");
             }
         } catch (Exception e) {
-			res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			resBody.put("message", "There was an issue with the Server, please try again later.");
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            output.put("message", "There was an issue with the Server, please try again later.");
 
-			span.setTag(Tags.ERROR, true);
-			span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
+            span.setTag(Tags.ERROR, true);
+            span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
 
-			return resBody;
+            return output;
         }
     }
 }
