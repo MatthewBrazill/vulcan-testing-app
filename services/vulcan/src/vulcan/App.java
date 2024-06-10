@@ -107,9 +107,9 @@ public class App implements WebMvcConfigurer {
 
 		// Set up SSL
 		properties.put("server.port", 443);
-		properties.put("server.ssl.certificate", "file:" + System.getenv("VLCN_CERT_FOLDER") + "/cert.pem");
-		properties.put("server.ssl.trust-certificate", "file:" + System.getenv("VLCN_CERT_FOLDER") + "/cert.pem");
-		properties.put("server.ssl.certificate-private-key", "file:" + System.getenv("VLCN_CERT_FOLDER") + "/key.pem");
+		properties.put("server.ssl.certificate", "file:" + System.getenv("CERT_FOLDER") + "/cert.pem");
+		properties.put("server.ssl.trust-certificate", "file:" + System.getenv("CERT_FOLDER") + "/cert.pem");
+		properties.put("server.ssl.certificate-private-key", "file:" + System.getenv("CERT_FOLDER") + "/key.pem");
 
 		// Configure Sessions
 		properties.put("server.servlet.session.timeout", 86400);

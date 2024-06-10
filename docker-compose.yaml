@@ -30,14 +30,16 @@ services:
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
       - DD_TRACE_CLIENT_IP_ENABLED=true
       - VLCN_SESSION_KEY=ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*
-      - VLCN_CERT_FOLDER=/vulcan/certificate
+      - CERT_FOLDER=/vulcan/certificate
       - VLCN_COMMIT_SHA=$SHA
-    working_dir: /vulcan/vulcan
+    working_dir: /vulcan
     volumes:
-      - ./services/vulcan:/vulcan/vulcan
-      - ./services/frontend:/vulcan/frontend
+      - ./services/vulcan:/vulcan
+      - ./services/frontend:/frontend
       - ./build-scripts/startup.sh:/startup.sh
-      - ./certificate:/vulcan/certificate
+      - ./services/authenticator/certificate/cert.pem:/cacerts/authenticator-cert.pem
+      - ./services/god-manager/certificate/cert.pem:/cacerts/god-manager-cert.pem
+      - ./services/user-manager/certificate/cert.pem:/cacerts/user-manager-cert.pem
       - /vulcan-data/docker/logs:/logs
       - /var/run/datadog:/var/run/datadog
     command: bash /startup.sh
@@ -69,13 +71,12 @@ services:
       # - DD_AGENT_HOST=datadog-agent
       # - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
-      - VLCN_CERT_FOLDER=/vulcan/certificate
+      - CERT_FOLDER=/god-manager/certificate
       - VLCN_COMMIT_SHA=$SHA
-    working_dir: /vulcan/god-manager
+    working_dir: /god-manager
     volumes:
-      - ./services/god-manager:/vulcan/god-manager
+      - ./services/god-manager:/god-manager
       - ./build-scripts/startup.sh:/startup.sh
-      - ./certificate:/vulcan/certificate
       - /vulcan-data/docker/logs:/logs
       - /var/run/datadog:/var/run/datadog
     command: bash /startup.sh
@@ -102,19 +103,19 @@ services:
       - DD_ENV=docker
       - DD_SERVICE=user-manager
       - DD_VERSION=1.2.0
+      - DD_APPSEC_ENABLED=true
       - DD_IAST_ENABLED=true
       # - DD_AGENT_HOST=datadog-agent
       # - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
       - DD_TRACE_CLIENT_IP_ENABLED=true
       - DD_TRACE_STARTUP_LOGS=true
-      - VLCN_CERT_FOLDER=/vulcan/certificate
+      - CERT_FOLDER=/user-manager/certificate
       - VLCN_COMMIT_SHA=$SHA
-    working_dir: /vulcan/user-manager
+    working_dir: /user-manager
     volumes:
-      - ./services/user-manager:/vulcan/user-manager
+      - ./services/user-manager:/user-manager
       - ./build-scripts/startup.sh:/startup.sh
-      - ./certificate:/vulcan/certificate
       - /vulcan-data/docker/logs:/logs
       - /var/run/datadog:/var/run/datadog
     command: bash /startup.sh
@@ -148,15 +149,17 @@ services:
       - DD_ENV=docker
       - DD_SERVICE=authenticator
       - DD_VERSION=0.1.1
+      - DD_APPSEC_ENABLED=true
+      - DD_IAST_ENABLED=true
       # - DD_AGENT_HOST=datadog-agent
       # - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
       - DD_TRACE_CLIENT_IP_ENABLED=true
-      - VLCN_CERT_FOLDER=/vulcan/certificate
+      - CERT_FOLDER=/authenticator/certificate
       - VLCN_COMMIT_SHA=$SHA
-    working_dir: /vulcan/authenticator
+    working_dir: /authenticator
     volumes:
-      - ./services/authenticator:/vulcan/authenticator
+      - ./services/authenticator:/authenticator
       - ./build-scripts/startup.sh:/startup.sh
       - /vulcan-data/docker/logs:/logs
       - /var/run/datadog:/var/run/datadog
@@ -188,11 +191,12 @@ services:
       # - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
       - DD_TRACE_CLIENT_IP_ENABLED=true
+      - CERT_FOLDER=/certificate
       - VLCN_COMMIT_SHA=$SHA
     volumes:
       - ./services/nginx-proxy:/etc/nginx
       - ./build-scripts/startup.sh:/startup.sh
-      - ./certificate:/vulcan/certificate
+      - ./services/vulcan/certificate:/certificate
       - /var/run/datadog:/var/run/datadog
     command: /startup.sh
     labels:
@@ -236,7 +240,6 @@ services:
     volumes:
       - ./services/database-proxy:/etc/nginx
       - ./build-scripts/startup.sh:/startup.sh
-      - ./certificate:/vulcan/certificate
       - /var/run/datadog:/var/run/datadog
     command: /startup.sh
     labels:

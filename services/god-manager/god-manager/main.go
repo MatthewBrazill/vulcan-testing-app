@@ -61,10 +61,9 @@ func main() {
 
 	// Start server
 	LogInitEvent().Info("starting god-manager")
-	LogInitEvent().Info("starting server")
-	certFile := fmt.Sprintf("%s/cert.pem", os.Getenv("VLCN_CERT_FOLDER"))
-	keyFile := fmt.Sprintf("%s/key.pem", os.Getenv("VLCN_CERT_FOLDER"))
-	err = app.RunTLS(":443", certFile, keyFile)
+	certFile := fmt.Sprintf("%s/cert.pem", os.Getenv("CERT_FOLDER"))
+	keyFile := fmt.Sprintf("%s/key.pem", os.Getenv("CERT_FOLDER"))
+	err = app.RunTLS(":900", certFile, keyFile)
 	if err != nil {
 		LogInitEvent().WithError(err).Error("failed to start god-manager")
 		os.Exit(1)

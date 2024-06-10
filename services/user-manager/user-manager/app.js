@@ -54,8 +54,8 @@ async function start() {
     app.route("/delete").post(users.deleteUser)
 
     https.createServer({
-        key: fs.readFileSync(`${process.env.VLCN_CERT_FOLDER}/key.pem`),
-        cert: fs.readFileSync(`${process.env.VLCN_CERT_FOLDER}/cert.pem`)
+        key: fs.readFileSync(`${process.env.CERT_FOLDER}/key.pem`),
+        cert: fs.readFileSync(`${process.env.CERT_FOLDER}/cert.pem`)
     }, app).listen(910, () => {
         logger.info("starting user-manager")
     })

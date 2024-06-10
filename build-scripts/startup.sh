@@ -14,9 +14,14 @@ fi
 
 case $DD_SERVICE in
     "vulcan")
-        wget -nc -nv -O /vulcan/dd-java-agent.jar https://dtdg.co/latest-java-tracer
+        keytool -import -noprompt -alias user-manager-cert -keystore /cacerts/keystore.jks -file /cacerts/user-manager-cert.pem -storepass changeit
+        keytool -import -noprompt -alias god-manager-cert -keystore /cacerts/keystore.jks -file /cacerts/god-manager-cert.pem -storepass changeit
+        keytool -import -noprompt -alias authenticator-cert -keystore /cacerts/keystore.jks -file /cacerts/authenticator-cert.pem -storepass changeit
+        wget -nc -nv -O /dd-java-agent.jar https://dtdg.co/latest-java-tracer
         mvn install
-        java -javaagent:/vulcan/dd-java-agent.jar \
+        java -javaagent:/dd-java-agent.jar \
+            -Djavax.net.ssl.trustStore=/cacerts/keystore.jks \
+            -Djavax.net.ssl.trustStorePassword=changeit \
             -Dvulcan.session.key=2PbmuNW_uRkaf6Kux!ByK!yT!UmMZZ9B \
             -Ddd.env=$DD_ENV \
             -Ddd.service=$DD_SERVICE \
@@ -25,6 +30,7 @@ case $DD_SERVICE in
             -Ddd.appsec.enabled=true \
             -Ddd.iast.enabled=true \
             -Ddd.dbm.propagation.mode=full \
+            -Ddd.trace.sampling.rules='[{"service":"vulcan","sample_rate":1}]' \
             -Ddd.service.mapping=redis:session-store,postgresql:user-database,mongo:god-database \
             -Ddd.tags=git.commit.sha:$(git rev-parse HEAD),git.repository_url:github.com/MatthewBrazill/vulcan-testing-app \
             -jar ./target/vulcan.jar
