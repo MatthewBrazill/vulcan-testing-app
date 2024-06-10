@@ -46,7 +46,8 @@ public class Users {
 		Span span = GlobalTracer.get().activeSpan();
 
 		try {
-			if (!Helpers.validate(req, params)) {
+			// Validate the user input
+			if (!Helpers.validate(body)) {
 				res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				body.put("message", "There was an issue with your request.");
 				return body;

@@ -32,7 +32,12 @@ import datadog.trace.api.Trace;
 public class Helpers {
 
     @Trace(operationName = "vulcan.helper", resourceName = "Helpers.validate")
-    public static Boolean validate(HttpServletRequest req, String[][] patterns) {
+    public static Boolean validate(HashMap<String, Object> body) {
+        // TODO add validation
+        // String[][] params = { { "pantheon", "^[a-zA-Z]{1,32}$" }, { "name", "^[a-zA-Z]{1,32}$" }, { "domain", "^[0-9a-zA-Z ]{1,32}$" } };
+        // String[][] params = { { "godId", "^[a-zA-Z0-9]{5}$" } };
+        // String[][] params = { { "username", "^[a-zA-Z]{1,32}$" }, { "password", "^.{1,64}$" } };
+        // String[][] params = { { "filter", "[a-zA-Z]{0,32}" } };
         return true;
     }
 

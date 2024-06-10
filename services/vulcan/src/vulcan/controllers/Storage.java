@@ -112,7 +112,8 @@ public class Storage {
         switch (permissions) {
             case "user":
             case "admin":
-                if (!Helpers.validate(req, params)) {
+                // Validate the user input
+                if (!Helpers.validate(body)) {
                     res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     resBody.put("message", "There was an issue with your request.");
                     return resBody;

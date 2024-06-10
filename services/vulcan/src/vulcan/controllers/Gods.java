@@ -36,7 +36,8 @@ public class Gods {
         HashMap<String, Object> resBody = new HashMap<String, Object>();
         Span span = GlobalTracer.get().activeSpan();
 
-        if (!Helpers.validate(req, params)) {
+        // Validate the user input
+        if (!Helpers.validate(body)) {
             res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             resBody.put("message", "There was an issue with your request.");
             return resBody;
@@ -85,7 +86,8 @@ public class Gods {
         HashMap<String, Object> resBody = new HashMap<String, Object>();
         Span span = GlobalTracer.get().activeSpan();
 
-        if (!Helpers.validate(req, params)) {
+        // Validate the user input
+        if (!Helpers.validate(body)) {
             res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             resBody.put("message", "There was an issue with your request.");
             return resBody;
@@ -124,7 +126,8 @@ public class Gods {
         HashMap<String, Object> resBody = new HashMap<String, Object>();
         Span span = GlobalTracer.get().activeSpan();
 
-        if (!Helpers.validate(req, params)) {
+        // Validate the user input
+        if (!Helpers.validate(body)) {
             res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             resBody.put("message", "There was an issue with your request.");
             return resBody;
@@ -165,7 +168,8 @@ public class Gods {
         HashMap<String, Object> resBody = new HashMap<String, Object>();
         Span span = GlobalTracer.get().activeSpan();
 
-        if (!Helpers.validate(req, params)) {
+        // Validate the user input
+        if (!Helpers.validate(body)) {
             res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             resBody.put("message", "There was an issue with your request.");
             return resBody;
