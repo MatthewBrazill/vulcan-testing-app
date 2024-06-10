@@ -31,12 +31,12 @@ import vulcan.Helpers;
 public class Storage {
     @RequestMapping(value = "/storage", method = RequestMethod.GET)
     public String storagePage(HttpServletRequest req, HttpServletResponse res, Model model) {
+        // Authorize
         String permissions = Helpers.authorize(req);
         switch (permissions) {
             case "user":
             case "admin":
                 model.addAttribute("title", "God Storage");
-                model.addAttribute("language", "Java");
                 res.setStatus(HttpServletResponse.SC_OK);
                 return "storage";
 
@@ -45,11 +45,13 @@ public class Storage {
                     res.setStatus(HttpServletResponse.SC_FOUND);
                     res.sendRedirect("/login");
                     return null;
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                    res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    return "error";
+                }
 
             default:
                 model.addAttribute("title", "Error");
-                model.addAttribute("language", "Java");
                 model.addAttribute("message", "There was an issue with the Server, please try again later.");
                 res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 return "error";
@@ -58,12 +60,12 @@ public class Storage {
 
     @RequestMapping(value = "/add", method = RequestMethod.GET)
     public String addGodPage(HttpServletRequest req, HttpServletResponse res, Model model) {
+        // Authorize
         String permissions = Helpers.authorize(req);
         switch (permissions) {
             case "user":
             case "admin":
                 model.addAttribute("title", "Add God");
-                model.addAttribute("language", "Java");
                 res.setStatus(HttpServletResponse.SC_OK);
                 return "add_god";
 
@@ -72,11 +74,13 @@ public class Storage {
                     res.setStatus(HttpServletResponse.SC_FOUND);
                     res.sendRedirect("/login");
                     return null;
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                    res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    return "error";
+                }
 
             default:
                 model.addAttribute("title", "Error");
-                model.addAttribute("language", "Java");
                 model.addAttribute("message", "There was an issue with the Server, please try again later.");
                 res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 return "error";
@@ -85,12 +89,12 @@ public class Storage {
 
     @RequestMapping(value = "/edit", method = RequestMethod.GET)
     public String editGodPage(HttpServletRequest req, HttpServletResponse res, Model model) {
+        // Authorize
         String permissions = Helpers.authorize(req);
         switch (permissions) {
             case "user":
             case "admin":
                 model.addAttribute("title", "Edit God");
-                model.addAttribute("language", "Java");
                 res.setStatus(HttpServletResponse.SC_OK);
                 return "edit_god";
 
@@ -99,11 +103,13 @@ public class Storage {
                     res.setStatus(HttpServletResponse.SC_FOUND);
                     res.sendRedirect("/login");
                     return null;
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                    res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    return "error";
+                }
 
             default:
                 model.addAttribute("title", "Error");
-                model.addAttribute("language", "Java");
                 model.addAttribute("message", "There was an issue with the Server, please try again later.");
                 res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 return "error";
