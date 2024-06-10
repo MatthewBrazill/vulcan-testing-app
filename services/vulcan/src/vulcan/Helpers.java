@@ -43,39 +43,42 @@ public class Helpers {
 
     @Trace(operationName = "vulcan.helper", resourceName = "Helpers.authorize")
     public static String authorize(HttpServletRequest req) {
+        // Function variables
         HttpSession session = req.getSession();
         Span span = GlobalTracer.get().activeSpan();
 		Logger logger = LogManager.getLogger("vulcan");
 
         try {
             // Generate the authorization request body
-            String jsonBody = "";
-            if (req.getHeader("apiKey") != null) {
-                jsonBody = ("{\"apiKey\":\"" + req.getHeader("apiKey") + "\"}");
+            HashMap<String, Object> body = new HashMap<String, Object>();
+            if (req.getHeader("api-key") != null) {
+                logger.debug("attempting to authorize user using api key");
+                body.put("apiKey", req.getHeader("api-key"));
             } else {
-                jsonBody = ("{\"username\":\"" + session.getAttribute("username").toString() + "\"}");
+                logger.debug("attempting to authorize user using username");
+                body.put("username", session.getAttribute("username"));
             }
 
             // Make authorization request to authenticator service
-            Builder builder = HttpRequest.newBuilder(new URI("http://authenticator:2884/authorize"));
-            builder.POST(BodyPublishers.ofString(jsonBody));
-
-            HttpClient client = HttpClient.newHttpClient();
-            HttpResponse<String> response = client.send(builder.build(), BodyHandlers.ofString());
-
-            // Extract response
-            Gson gson = new Gson();
-            Map<String, String> permissions = gson.fromJson(response.body(), new TypeToken<HashMap<String, String>>() {}.getType());
+            HttpResponse<String> res = Helpers.httpPostRequest(new URI("https://authenticator:2884/authorize"), body);
 
             // Handle response
-            switch (response.statusCode()) {
-                case 200:
-                    return permissions.get("permissions");
-                case 401:
-                    logger.info("user does not have permission to access " + req.getRequestURI());
+            switch (res.statusCode()) {
+                case HttpServletResponse.SC_OK:
+                    // Extract HashMap from JSON body
+                    Gson gson = new Gson();
+                    Type type = new TypeToken<HashMap<String, String>>() {}.getType();
+                    HashMap<String, String> auth = gson.fromJson(res.body(), type);
+
+                    span.setTag("auth", true);
+                    logger.info("user authorized as '" + auth.get("permissions") + "'");
+                    return auth.get("permissions");
+
+                case HttpServletResponse.SC_UNAUTHORIZED:
+                    span.setTag("auth", false);
+                    logger.info("user is not have authorized to access " + req.getRequestURI());
                     return "none";
-                case 500:
-                    return "none";
+
                 default:
                     throw new Exception("VulcanError: couldn't authorize request");
             }
