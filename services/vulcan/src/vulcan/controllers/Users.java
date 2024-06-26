@@ -33,7 +33,7 @@ public class Users {
 
 		// Log out user
 		req.getSession().invalidate();
-		logger.info(body.get("username") + "logged out");
+		logger.info(body.get("username") + " logged out");
 
 		model.addAttribute("title", "Login Page");
 		return "login";
@@ -71,13 +71,13 @@ public class Users {
 					res.setStatus(HttpServletResponse.SC_OK);
 					req.getSession().setAttribute("username", body.get("username"));
 					output.put("message", "Successfully logged in.");
-					logger.info(body.get("username") + "logged in");
+					logger.info(body.get("username") + " logged in");
 					return output;
 
 				case HttpServletResponse.SC_UNAUTHORIZED:
 					res.setStatus(HttpServletResponse.SC_FORBIDDEN);
 					output.put("message", "Your login details are incorrect.");
-					logger.info(body.get("username") + "failed to log in");
+					logger.info(body.get("username") + " failed to log in");
 					return output;
 
 				default:
@@ -102,7 +102,7 @@ public class Users {
 
 		// Log out user
 		req.getSession().invalidate();
-		logger.info(body.get("username") + "logged out");
+		logger.info(body.get("username") + " logged out");
 		res.setStatus(HttpServletResponse.SC_OK);
 	}
 
