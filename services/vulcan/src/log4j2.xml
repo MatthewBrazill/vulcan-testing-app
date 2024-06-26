@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>
+        <File name="jsonFile" fileName="/logs/vulcan.log">
+            <JsonLayout complete="false" compact="true" eventEol="true" properties="true" stacktraceAsString="true" />
+        </File>
+    </Appenders>
+    <Loggers>
+        <Logger name="vulcan" level="ALL">
+            <AppenderRef ref="jsonFile" />
+        </Logger>
+    </Loggers>
+</Configuration>

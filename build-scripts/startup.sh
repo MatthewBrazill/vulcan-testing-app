@@ -22,18 +22,21 @@ case $DD_SERVICE in
         java -javaagent:/dd-java-agent.jar \
             -Djavax.net.ssl.trustStore=/cacerts/keystore.jks \
             -Djavax.net.ssl.trustStorePassword=changeit \
+            -Dlog4j2.configurationFile=/vulcan/src/log4j2.xml \
             -Dvulcan.session.key=2PbmuNW_uRkaf6Kux!ByK!yT!UmMZZ9B \
             -Ddd.env=$DD_ENV \
             -Ddd.service=$DD_SERVICE \
             -Ddd.version=$DD_VERSION \
             -Ddd.profiling.enabled=true \
+            -Ddd.logs.injection=true \
             -Ddd.appsec.enabled=true \
             -Ddd.iast.enabled=true \
             -Ddd.dbm.propagation.mode=full \
             -Ddd.trace.sampling.rules='[{"service":"vulcan","sample_rate":1}]' \
             -Ddd.service.mapping=redis:session-store,postgresql:user-database,mongo:god-database \
             -Ddd.tags=git.commit.sha:$(git rev-parse HEAD),git.repository_url:github.com/MatthewBrazill/vulcan-testing-app \
-            -jar ./target/vulcan.jar
+            -jar ./target/vulcan.jar \
+            --logging.config=/vulcan/src/log4j2.xml
         ;;
 
     "god-manager")

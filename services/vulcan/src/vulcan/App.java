@@ -6,14 +6,6 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Properties;
 
-import org.apache.logging.log4j.core.config.Configurator;
-import org.apache.logging.log4j.core.config.builder.api.AppenderComponentBuilder;
-import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilder;
-import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilderFactory;
-import org.apache.logging.log4j.core.config.builder.api.LayoutComponentBuilder;
-import org.apache.logging.log4j.core.config.builder.api.LoggerComponentBuilder;
-import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.SpringApplication;
@@ -79,29 +71,6 @@ public class App implements WebMvcConfigurer {
     }
 
 	public static void main(String[] args) {
-		ConfigurationBuilder<BuiltConfiguration> builder = ConfigurationBuilderFactory.newConfigurationBuilder();
-
-		// Create file appender
-		AppenderComponentBuilder file = builder.newAppender("jsonFile", "File");
-		file.addAttribute("fileName", "/logs/vulcan.log");
-
-		// Create logger layout
-		LayoutComponentBuilder json = builder.newLayout("JsonLayout");
-		json.addAttribute("complete", false);
-		json.addAttribute("compact", true);
-		json.addAttribute("eventEol", true);
-		file.add(json);
-
-		// Add appender to builder
-		builder.add(file);
-
-		// Attach appender to logger
-		LoggerComponentBuilder vulcanLogger = builder.newLogger("vulcan", Level.ALL);
-		vulcanLogger.add(builder.newAppenderRef("jsonFile"));
-		builder.add(vulcanLogger);
-
-		// Configure logger
-		Configurator.initialize(builder.build());
 		Logger logger = LogManager.getLogger("vulcan");
 		logger.debug("configured logging");
 
