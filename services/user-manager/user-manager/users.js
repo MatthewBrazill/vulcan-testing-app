@@ -40,20 +40,6 @@ const users = {
         }
     },
 
-    async updateUser(req, res) {
-        try {
-            res.sendStatus(501)
-        } catch (err) {
-            logger.error({
-                error: err.message,
-                stack: err.stack,
-                endpoint: req.path,
-                message: `error with '${req.path}' endpoint`
-            })
-            res.status(500).json(err)
-        }
-    },
-
     async deleteUser(req, res) {
         try {
             res.sendStatus(501)
