@@ -4,8 +4,9 @@ $(window).on("popstate", (e) => {
         url: "/storage/search",
         method: "POST",
         data: {
-            filter: e.state.search
+            query: e.state.search
         },
+        beforeSend: searchWait,
         success: searchSuccess,
         error: searchError
     })
@@ -16,11 +17,12 @@ $(document).ready(() => {
         url: "/storage/search",
         method: "POST",
         data: {
-            filter: url.searchParams.get("search")
+            query: url.searchParams.get("search")
         },
+        beforeSend: searchWait,
         success: searchSuccess,
         error: searchError
-    })
+    }).then()
 
 
 
@@ -33,8 +35,9 @@ $(document).ready(() => {
                 url: "/storage/search",
                 method: "POST",
                 data: {
-                    filter: $("#god-search-bar").val()
+                    query: $("#god-search-bar").val()
                 },
+                beforeSend: searchWait,
                 success: searchSuccess,
                 error: searchError
             })
@@ -86,11 +89,21 @@ $(document).ready(() => {
 })
 
 
-function searchSuccess(res) {
+function searchWait(req) {
     // Update content
     while ($("#god-list").children().length > 1) {
         $("#god-list").children().last().remove()
     }
+
+    // Make style adjustments
+    $("#god-list").attr("class", "")
+    $("#god-list-loader").attr("class", "ui active text loader")
+    $("#god-list-error").attr('class', 'ui hidden error message')
+}
+
+
+function searchSuccess(res) {
+    // Update content
     if (res.result.length > 0) {
 
         for (var god of res.result) {
@@ -112,6 +125,7 @@ function searchSuccess(res) {
 
     // Make style adjustments
     $("#god-list").attr("class", "")
+    $("#god-list-loader").attr("class", "ui hidden text loader")
     $("#god-list-error").attr('class', 'ui hidden error message')
 }
 
@@ -122,5 +136,6 @@ function searchError(res) {
 
     // Make style adjustments
     $("#god-list").attr("class", "")
+    $("#god-list-loader").attr("class", "ui hidden text loader")
     $("#god-list-error").attr('class', 'ui error message')
 }
