@@ -25,10 +25,32 @@ import vulcan.Helpers;
 public class Users {
 
 	@RequestMapping(value = "/user/{username}", method = RequestMethod.GET)
-	public String userPage(String username, Model model) {
-		model.addAttribute("title", "User: " + username);
-		model.addAttribute("username", username);
-		return "user";
+	public String userPage(HttpServletRequest req, HttpServletResponse res, String username, Model model) {
+		// Authorize
+		String permissions = Helpers.authorize(req);
+		switch (permissions) {
+			case "admin":
+				model.addAttribute("title", "User: " + username);
+				res.setStatus(HttpServletResponse.SC_OK);
+				return "user";
+
+			case "user":
+			case "none":
+				try {
+					res.setStatus(HttpServletResponse.SC_FOUND);
+					res.sendRedirect("/login");
+					return null;
+				} catch (Exception e) {
+					res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+					return "error";
+				}
+
+			default:
+				model.addAttribute("title", "Error");
+				model.addAttribute("message", "There was an issue with the Server, please try again later.");
+				res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				return "error";
+		}
 	}
 
 	@RequestMapping(value = "/user/join", method = RequestMethod.GET)
