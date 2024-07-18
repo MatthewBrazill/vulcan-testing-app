@@ -1,5 +1,5 @@
 # Binaries and Executables
-build-scripts/js-mapper.jar
+build-scripts/closure-compiler.jar
 
 # Packages
 node_modules
