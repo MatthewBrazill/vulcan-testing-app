@@ -10,7 +10,15 @@ const databases = require("./databases.js")
 const users = {
     async createUser(req, res) {
         try {
-            res.sendStatus(501)
+            logger.debug("creating user: " + req.body.username)
+            const db = await databases.userDatabase()
+            await db.query("INSET INTO users VALUES $1, $2, $3", [
+                req.body.username,
+                req.body.pwhash,
+                req.body.permissions
+            ])
+
+            res.sendStatus(200)
         } catch (err) {
             const span = tracer.scope().active()
             span.setTag('error', err)
