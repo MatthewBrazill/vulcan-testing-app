@@ -47,7 +47,11 @@ const users = {
 
     async deleteUser(req, res) {
         try {
-            res.sendStatus(501)
+            logger.debug("deleting user: " + req.body.username)
+            const db = await databases.userDatabase()
+            await db.query("DELETE FROM users WHERE username = $1", [req.body.username])
+
+            res.sendStatus(200)
         } catch (err) {
             const span = tracer.scope().active()
             span.setTag('error', err)
