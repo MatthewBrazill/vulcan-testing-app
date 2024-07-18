@@ -108,7 +108,7 @@ public class Helpers {
                 switch (contentType) {
                     case "application/x-www-form-urlencoded":
                         String[] body = req.getReader().readLine().split("&");
-                        logger.info("decoding url encoded form");
+                        logger.debug("decoding url encoded form");
                         for (int i = 0; i < body.length; i++) {
                             String[] attribute = body[i].split("=");
                             if (attribute.length == 2) {
@@ -125,7 +125,7 @@ public class Helpers {
                     case "application/json":
                         Reader json = req.getReader();
                         Gson gson = new Gson();
-                        logger.info("decoding json");
+                        logger.debug("decoding json");
                         output = gson.fromJson(json, new TypeToken<HashMap<String, Object>>() {}.getType());
                         break;
 
@@ -152,12 +152,13 @@ public class Helpers {
         // Building request
         Builder builder = HttpRequest.newBuilder(uri);
         builder.POST(BodyPublishers.ofString(gson.toJson(body)));
+        System.out.println(gson.toJson(body));
         builder.header("Content-Type", "application/json");
 
         // Making request
         HttpClient client = HttpClient.newHttpClient();
         HttpResponse<String> res = client.send(builder.build(), BodyHandlers.ofString());
-        logger.info("made request to '" + uri.toString() + "'");
+        logger.debug("made request to '" + uri.toString() + "'");
 
         return res;
     }
