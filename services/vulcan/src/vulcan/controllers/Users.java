@@ -30,14 +30,68 @@ import vulcan.Helpers;
 public class Users {
 
 	@RequestMapping(value = "/user/{username}", method = RequestMethod.GET)
-	public String userPage(HttpServletRequest req, HttpServletResponse res, String username, Model model) {
+	public String userPage(HttpServletRequest req, HttpServletResponse res, @PathVariable String username, Model model) {
+		// Function variables
+		Span span = GlobalTracer.get().activeSpan();
+		HashMap<String, Object> body = Helpers.decodeBody(req);
+		Logger logger = LogManager.getLogger("vulcan");
+		model.addAttribute("title", "User: '" + username + "'");
+		
 		// Authorize
 		String permissions = Helpers.authorize(req);
 		switch (permissions) {
 			case "admin":
-				model.addAttribute("title", "User: " + username);
-				res.setStatus(HttpServletResponse.SC_OK);
-				return "user";
+
+				// Validate the user input
+				if (!Helpers.validate(body)) {
+					res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+					model.addAttribute("message", "There was an issue with your request.");
+					return "error";
+				}
+
+				try {
+					// Prep user request
+					HashMap<String, Object> userRequest = new HashMap<String, Object>();
+					userRequest.put("username", username);
+
+					// Make user request
+					HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://user-manager:910/get"), userRequest);
+
+					// Handle response
+					switch (response.statusCode()) {
+						case HttpServletResponse.SC_OK:
+							res.setStatus(HttpServletResponse.SC_OK);
+							logger.info("got user " + username);
+
+							// Extract HashMap from JSON body
+							Gson gson = new Gson();
+							Type type = new TypeToken<HashMap<String, String>>() {
+							}.getType();
+							HashMap<String, Object> user = gson.fromJson(response.body(), type);
+
+							model.addAttribute("username", user.get("username"));
+							model.addAttribute("permissions", user.get("permissions"));
+							return "user";
+
+						case HttpServletResponse.SC_NOT_FOUND:
+							res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+							logger.info("user not found for username " + body.get("username"));
+							model.addAttribute("message", "Couldn't find a user with that username.");
+							return "error";
+
+						default:
+							throw new Exception("VulcanError: unexpected response from user-manager");
+					}
+				} catch (Exception e) {
+					res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					model.addAttribute("message", "There was an issue with the Server, please try again later.");
+
+					span.setTag(Tags.ERROR, true);
+					span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
+
+					logger.error("vulcan encountered error during user retrieval: " + e.getMessage(), e);
+					return "error";
+				}
 
 			case "user":
 			case "none":
