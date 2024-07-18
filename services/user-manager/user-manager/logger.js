@@ -8,13 +8,13 @@ const fs = require("fs")
 if (!fs.existsSync("/logs")){
     fs.mkdirSync("/logs");
 }
-fs.closeSync(fs.openSync("/logs/node.log", 'w'))
+fs.closeSync(fs.openSync("/logs/user-manager.log", 'w'))
 
 // Create the Logger
 const logger = winston.createLogger({
     transports: [
         new winston.transports.File({
-            filename: "/logs/node.log",
+            filename: "/logs/user-manager.log",
             level: "debug",
             format: winston.format.combine(
                 winston.format.timestamp(),
