@@ -45,6 +45,11 @@ for jsFile in services/frontend/javascript/*.js; do
 done
 echo "Done minifying JS maps!"
 
+# Upload Maps to Datadog
+echo "Uploading JS Maps to Datadog..."
+datadog-ci sourcemaps upload services/frontend/statics/js --service vulcan-app --release-version 1.6 --minified-path-prefix /js/
+echo "Done uploading JS maps!"
+
 export SHA=$(git rev-parse HEAD)
 
 # Taredown
