@@ -3,6 +3,7 @@
 // Imports
 const fetch = require("node-fetch")
 const helpers = require("./helpers.js")
+const tracer = require("dd-trace").tracer
 const logger = require("./logger.js")
 const databases = require("./databases.js")
 
@@ -11,6 +12,8 @@ const users = {
         try {
             res.sendStatus(501)
         } catch (err) {
+            const span = tracer.scope().active()
+            span.setTag('error', err)
             logger.error({
                 error: err.message,
                 stack: err.stack,
@@ -30,6 +33,8 @@ const users = {
 
             res.status(200).json(result)
         } catch (err) {
+            const span = tracer.scope().active()
+            span.setTag('error', err)
             logger.error({
                 error: err.message,
                 stack: err.stack,
@@ -44,6 +49,8 @@ const users = {
         try {
             res.sendStatus(501)
         } catch (err) {
+            const span = tracer.scope().active()
+            span.setTag('error', err)
             logger.error({
                 error: err.message,
                 stack: err.stack,
