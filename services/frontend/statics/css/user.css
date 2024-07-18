@@ -6,3 +6,12 @@
     margin-top: 100px;
     text-align: justify;
 }
+
+p {
+    margin-bottom: 0px;
+    width: 50%;
+}
+
+ul {
+    margin: 0px;
+}

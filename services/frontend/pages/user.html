@@ -14,8 +14,12 @@
 
     <div id="content">
         <div id="user-box">
-            <p><b>Username:</b> {{user.username}}</p>
-            <p><b>Permissions:</b> {{user.permissions}}</p>
+            <p style="float: left;text-align: left;"><b>Username:</b></p> <p style="float: right;text-align: right;">{{username}}</p>
+            <p style="float: left;text-align: left;"><b>Permissions:</b></p> <p style="float: right;text-align: right;">{{permissions}}</p>
+
+            <p style="float: left;text-align: left;margin-top: 14px;"><b>Notes:</b></p> <p id="no-user-notes" style="float: right;text-align: right;margin-top: 14px;">None</p>
+            <ul id="user-notes">
+            </ul>
         </div>
     </div>
 
