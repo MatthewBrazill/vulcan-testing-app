@@ -28,8 +28,16 @@ fi
 
 # Build JS Files and Maps
 echo "Miniying JS maps..."
+
+if which wget >/dev/null ; then
+    wget -nc -nv -O build-scripts/closure-compiler.jar https://repo1.maven.org/maven2/com/google/javascript/closure-compiler/v20240317/closure-compiler-v20240317.jar
+elif which curl >/dev/null ; then
+    curl -s -o build-scripts/closure-compiler.jar https://repo1.maven.org/maven2/com/google/javascript/closure-compiler/v20240317/closure-compiler-v20240317.jar
+fi
+
 for jsFile in services/frontend/javascript/*.js; do
-    java -jar ~/Playground/closure-compiler-v20231112.jar \
+    echo "  Minifying $(basename $jsFile)"
+    java -jar build-scripts/closure-compiler.jar \
     --js $jsFile \
     --js_output_file services/frontend/statics/js/$(basename $jsFile .js).min.js \
     --create_source_map services/frontend/statics/js/$(basename $jsFile .js).min.js.map \
