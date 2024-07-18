@@ -1,6 +1,7 @@
 #! bin/sh
 #
-# A startup script for each of the different sandbox envs available here!
+# Startup script that runs the nececary code to build and start the application
+# for each of the needed services.
 
 if [ $DD_ENV = "kubernetes" ]
 then
