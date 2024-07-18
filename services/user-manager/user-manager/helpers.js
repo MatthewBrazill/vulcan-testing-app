@@ -6,7 +6,7 @@ const logger = require("./logger.js")
 
 const helpers = {
     async validate(params, tests) {
-        return await tracer.trace("etna.helper", { resource: "validate" }, async () => {
+        return await tracer.trace("user-manager.helper", { resource: "validate" }, async () => {
             const span = tracer.scope().active()
             try {
                 for (var test of tests) {
