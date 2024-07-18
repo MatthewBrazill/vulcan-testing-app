@@ -12,6 +12,7 @@ tracer.init({
         "git.repository_url": "https://github.com/MatthewBrazill/vulcan-testing-app"
     }
 })
+tracer.use("dns", { enabled: false })
 tracer.use("redis", { service: "session-store" })
 tracer.use("pg", { dbmPropagationMode: 'full', service: "user-database" })
 tracer.use("mongodb-core", { service: "god-database" })
