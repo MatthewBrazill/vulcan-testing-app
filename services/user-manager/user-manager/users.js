@@ -1,7 +1,6 @@
 'use strict'
 
 // Imports
-const fetch = require("node-fetch")
 const helpers = require("./helpers.js")
 const tracer = require("dd-trace").tracer
 const logger = require("./logger.js")
@@ -34,12 +33,18 @@ const users = {
 
     async getUser(req, res) {
         try {
-            var result = await databases.userDatabase().query("SELECT * FROM users WHERE username = $1::text", [req.params.username])
+            logger.debug("getting user: " + req.body.username)
+            const db = await databases.userDatabase()
+            var result = await db.query("SELECT username, permissions FROM users WHERE username = $1", [req.body.username])
 
             result = result.rows[0]
-            delete result.password
 
-            res.status(200).json(result)
+            if (result === undefined) {
+                logger.info("user '" + req.body.username + "' not found")
+                res.sendStatus(404)
+            } else {
+                res.status(200).json(result)
+            }
         } catch (err) {
             const span = tracer.scope().active()
             span.setTag('error', err)
