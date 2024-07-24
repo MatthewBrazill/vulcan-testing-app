@@ -44,7 +44,7 @@ services:
       - /var/run/datadog:/var/run/datadog
     command: bash /startup.sh
     labels:
-      com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan","path":"/vulcan-data/docker/logs/vulcan.log"}]'
+      com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan","service":"vulcan","path":"/vulcan-data/docker/logs/vulcan.log"}]'
       com.datadoghq.ad.tags: '["env:docker","service:vulcan"]'
     deploy:
       resources:
@@ -81,7 +81,7 @@ services:
       - /var/run/datadog:/var/run/datadog
     command: bash /startup.sh
     labels:
-      com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"god-manager","path":"/vulcan-data/docker/logs/god-manager.log"}]'
+      com.datadoghq.ad.logs: '[{"type":"file","source":"god-manager","service":"god-manager","path":"/vulcan-data/docker/logs/god-manager.log"}]'
       com.datadoghq.ad.tags: '["env:docker","service:god-manager"]'
     deploy:
       resources:
@@ -120,7 +120,7 @@ services:
       - /var/run/datadog:/var/run/datadog
     command: bash /startup.sh
     labels:
-      com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"user-manager","path":"/vulcan-data/docker/logs/user-manager.log"}]'
+      com.datadoghq.ad.logs: '[{"type":"file","source":"user-manager","service":"user-manager","path":"/vulcan-data/docker/logs/user-manager.log"}]'
       com.datadoghq.ad.tags: '["env:docker","service:user-manager"]'
     deploy:
       resources:
@@ -165,7 +165,7 @@ services:
       - /var/run/datadog:/var/run/datadog
     command: bash /startup.sh
     labels:
-      com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan-app","service":"authenticator","path":"/vulcan-data/docker/logs/auth.log"}]'
+      com.datadoghq.ad.logs: '[{"type":"file","source":"authenticator","service":"authenticator","path":"/vulcan-data/docker/logs/auth.log"}]'
       com.datadoghq.ad.tags: '["env:docker","service:authenticator"]'
     deploy:
       resources:
