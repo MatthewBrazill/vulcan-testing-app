@@ -75,7 +75,7 @@ public class Authenticate {
                     return output;
 
                 case HttpServletResponse.SC_UNAUTHORIZED:
-                    res.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     output.put("message", "Your login details are incorrect.");
                     logger.info(body.get("username") + " failed to log in");
                     return output;
