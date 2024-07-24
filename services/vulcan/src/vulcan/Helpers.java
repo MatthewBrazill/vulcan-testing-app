@@ -152,7 +152,6 @@ public class Helpers {
         // Building request
         Builder builder = HttpRequest.newBuilder(uri);
         builder.POST(BodyPublishers.ofString(gson.toJson(body)));
-        System.out.println(gson.toJson(body));
         builder.header("Content-Type", "application/json");
 
         // Making request
