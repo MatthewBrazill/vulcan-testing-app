@@ -1,6 +1,10 @@
 # Binaries and Executables
 build-scripts/closure-compiler.jar
 
+# Secrets
+secrets.env
+worker-config-*
+
 # Packages
 node_modules
 target
@@ -14,4 +18,3 @@ services/databases/*/data
 
 # Other
 .DS_Store
-envvars.env
