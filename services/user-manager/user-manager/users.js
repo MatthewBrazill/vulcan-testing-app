@@ -11,7 +11,7 @@ const users = {
         try {
             logger.debug("creating user: " + req.body.username)
             const db = await databases.userDatabase()
-            await db.query("INSET INTO users VALUES $1, $2, $3", [
+            await db.query("INSERT INTO users (username, pwhash, permissions) VALUES ($1, $2, $3)", [
                 req.body.username,
                 req.body.pwhash,
                 req.body.permissions

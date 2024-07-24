@@ -59,8 +59,7 @@ public class Authenticate {
             // Generate the authorization request body
             HashMap<String, Object> auth = new HashMap<String, Object>();
             auth.put("username", body.get("username"));
-            // auth.put("pwHash", DigestUtils.sha256Hex(body.get("password").toString()));
-            auth.put("pwHash", body.get("password"));
+            auth.put("password", body.get("password"));
 
             // Make authentication request to authenticator service
             HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://authenticator:2884/authenticate"), auth);

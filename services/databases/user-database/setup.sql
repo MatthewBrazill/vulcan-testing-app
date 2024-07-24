@@ -6,13 +6,15 @@ CREATE DATABASE vulcan_users;
 -- Add the user and API key data to the database
 CREATE TABLE users (
     username varchar(32),
-    password varchar(64),
-    permissions varchar(32)
+    pwhash varchar(64),
+    permissions varchar(32),
+    PRIMARY KEY (username)
 );
 
 CREATE TABLE apikeys (
     apikey char(32),
-    permissions varchar(32)
+    permissions varchar(32),
+    PRIMARY KEY (apikey)
 );
 
 INSERT INTO users VALUES ('matthew', 'testingpassword', 'admin');
@@ -30,7 +32,7 @@ GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO vulcan;
 
 
 
--- Set up the nececary schemas for Datadog
+-- Set up the necessary schemas for Datadog
 CREATE SCHEMA datadog;
 GRANT USAGE ON SCHEMA datadog TO datadog;
 GRANT USAGE ON SCHEMA public TO datadog;
@@ -40,7 +42,7 @@ CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
 
 
 
--- Create function to collect the explainplans
+-- Create function to collect the explain plans
 CREATE OR REPLACE FUNCTION datadog.explain_statement(
    l_query TEXT,
    OUT explain JSON

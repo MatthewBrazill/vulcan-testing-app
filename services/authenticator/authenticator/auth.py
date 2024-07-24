@@ -7,6 +7,7 @@ from fastapi import Request, FastAPI
 from fastapi.responses import JSONResponse
 from ddtrace import tracer
 import traceback
+import bcrypt
 import structlog
 
 # Configs
@@ -18,13 +19,15 @@ logger = structlog.get_logger()
 async def authenticate(request: Request) -> JSONResponse:
     try:
         body = await request.json()
-        if await validate(body, [["username", r"^[a-zA-Z]{1,32}$"], ["pwhash", r"^.{1,64}$"]]) == False:
+        if await validate(body, [["username", r"^[a-zA-Z]{1,32}$"], ["password", r"^.{1,64}$"]]) == False:
             return JSONResponse(content={"authenticated": False}, status_code=400)
 
         database = await userDatabase()
-        user = await database.fetch("SELECT password FROM users WHERE username = $1", body["username"])
+        user = await database.fetch("SELECT pwhash FROM users WHERE username = $1", body["username"])
         if len(user) == 1:
-            if body["password"] == user[0].get("pwHash"):
+            pwBytes = ("2p805t" + body["password"]).encode("utf-8")
+            hashBytes = user[0].get("pwhash").encode("utf-8")
+            if bcrypt.checkpw(password=pwBytes, hashed_password=hashBytes):
                 logger.debug("authenticated user '" + body["username"] + "'", username=body["username"])
                 return JSONResponse(content={"authenticated": True}, status_code=200)
 

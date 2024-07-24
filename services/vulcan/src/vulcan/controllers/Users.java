@@ -22,6 +22,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.password4j.BcryptFunction;
+import com.password4j.Password;
+import com.password4j.types.Bcrypt;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -196,10 +199,15 @@ public class Users {
         }
 
         try {
+			// Hash password
+			BcryptFunction bcrypt = BcryptFunction.getInstance(Bcrypt.B, 16);
+			String pwhash = Password.hash(body.get("password").toString()).addPepper("2p805t").with(bcrypt).getResult();
+
             // Build user object
             HashMap<String, Object> user = new HashMap<>();
 			user.put("username", body.get("username"));
-            user.put("pwhash", body.get("username"));
+			user.put("permissions", "user");
+            user.put("pwhash", pwhash);
 
             // Make user request
             HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://user-manager:910/create"), user);
@@ -208,9 +216,15 @@ public class Users {
             switch (response.statusCode()) {
                 case HttpServletResponse.SC_OK:
                     res.setStatus(HttpServletResponse.SC_OK);
-                    logger.info("created user " + body.get("username"));
+                    logger.info("created user: " + body.get("username"));
                     output.put("username", body.get("username"));
                     return output;
+
+				case HttpServletResponse.SC_CONFLICT:
+					res.setStatus(HttpServletResponse.SC_CONFLICT);
+					logger.info("user already exists: " + body.get("username"));
+					output.put("message", "This username is already taken. Please choose a different one.");
+					return output;
 
                 default:
                     throw new Exception("VulcanError: unexpected response from user-manager");
