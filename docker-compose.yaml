@@ -29,7 +29,8 @@ services:
       # - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
       - DD_TRACE_CLIENT_IP_ENABLED=true
-      - VLCN_SESSION_KEY=ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*
+      - VLCN_SESSION_KEY=$SESSION_KEY
+      - VLCN_PASSWORD_PEPPER=$PASSWORD_PEPPER
       - CERT_FOLDER=/vulcan/certificate
       - VLCN_COMMIT_SHA=$SHA
     working_dir: /vulcan
