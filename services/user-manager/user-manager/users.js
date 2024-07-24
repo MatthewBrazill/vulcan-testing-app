@@ -16,6 +16,7 @@ const users = {
                 req.body.pwhash,
                 req.body.permissions
             ])
+            db.end()
 
             res.sendStatus(200)
         } catch (err) {
@@ -36,6 +37,7 @@ const users = {
             logger.debug("getting user: " + req.body.username)
             const db = await databases.userDatabase()
             var result = await db.query("SELECT username, permissions FROM users WHERE username = $1", [req.body.username])
+            db.end()
 
             result = result.rows[0]
 
@@ -63,6 +65,7 @@ const users = {
             logger.debug("deleting user: " + req.body.username)
             const db = await databases.userDatabase()
             await db.query("DELETE FROM users WHERE username = $1", [req.body.username])
+            db.end()
 
             res.sendStatus(200)
         } catch (err) {
