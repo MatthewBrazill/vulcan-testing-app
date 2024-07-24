@@ -1,5 +1,5 @@
 /* Login Page */
-#login-box {
+#sign-up-box {
     width: 300px;
     display: block;
     margin: auto;
@@ -7,6 +7,6 @@
     text-align: center;
 }
 
-#login-submit {
+#sign-up-submit {
     margin-bottom: 14px;
 }
