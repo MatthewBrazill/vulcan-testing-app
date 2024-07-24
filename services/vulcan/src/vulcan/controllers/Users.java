@@ -200,8 +200,8 @@ public class Users {
 
         try {
 			// Hash password
-			BcryptFunction bcrypt = BcryptFunction.getInstance(Bcrypt.B, 16);
-			String pwhash = Password.hash(body.get("password").toString()).addPepper("2p805t").with(bcrypt).getResult();
+			BcryptFunction bcrypt = BcryptFunction.getInstance(Bcrypt.B, 14);
+			String pwhash = Password.hash(body.get("password").toString()).addPepper(System.getenv("PW_PEPPER")).with(bcrypt).getResult();
 
             // Build user object
             HashMap<String, Object> user = new HashMap<>();
