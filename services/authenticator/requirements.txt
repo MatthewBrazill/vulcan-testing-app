@@ -2,3 +2,4 @@ fastapi==0.110.0
 uvicorn==0.28.0
 asyncpg==0.29.0
 ddtrace==2.7.4
+structlog==24.4.0
