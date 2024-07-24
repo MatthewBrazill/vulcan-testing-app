@@ -18,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -112,6 +113,7 @@ public class Users {
 		}
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/user/{username}/notes", method = RequestMethod.POST)
 	public HashMap<String, Object> userGetAPI(HttpServletRequest req, HttpServletResponse res, @PathVariable String username) {
 		// Function variables
@@ -177,6 +179,7 @@ public class Users {
 		return "join";
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/user/create", method = RequestMethod.POST)
 	public HashMap<String, Object> userCreateAPI(HttpServletRequest req, HttpServletResponse res) {
         // Function variables
@@ -224,6 +227,7 @@ public class Users {
         }
 	}
 
+    @ResponseBody
 	@RequestMapping(value = "/user/delete", method = RequestMethod.POST)
 	public HashMap<String, Object> userDeleteAPI(HttpServletRequest req, HttpServletResponse res) {
         // Function variables
