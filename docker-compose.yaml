@@ -24,7 +24,7 @@ services:
     environment:
       - DD_ENV=docker
       - DD_SERVICE=vulcan
-      - DD_VERSION=1.2.1
+      - DD_VERSION=1.3.0
       # - DD_AGENT_HOST=datadog-agent
       # - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
@@ -103,7 +103,7 @@ services:
     environment:
       - DD_ENV=docker
       - DD_SERVICE=user-manager
-      - DD_VERSION=1.2.0
+      - DD_VERSION=1.3.0
       - DD_APPSEC_ENABLED=true
       - DD_IAST_ENABLED=true
       # - DD_AGENT_HOST=datadog-agent
@@ -149,7 +149,7 @@ services:
     environment:
       - DD_ENV=docker
       - DD_SERVICE=authenticator
-      - DD_VERSION=0.1.1
+      - DD_VERSION=0.2.0
       - DD_APPSEC_ENABLED=true
       - DD_IAST_ENABLED=true
       # - DD_AGENT_HOST=datadog-agent
@@ -187,7 +187,7 @@ services:
     environment:
       - DD_ENV=docker
       - DD_SERVICE=nginx-proxy
-      - DD_VERSION=0.1.1
+      - DD_VERSION=0.1.2
       # - DD_AGENT_HOST=datadog-agent
       # - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
