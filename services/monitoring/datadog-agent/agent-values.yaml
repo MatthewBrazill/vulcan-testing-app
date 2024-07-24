@@ -1,0 +1,75 @@
+targetSystem: "linux"
+commonLabels:
+  tags.datadoghq.com/env: kubernetes
+datadog:
+  kubelet:
+    tlsVerify: false
+
+  kubeStateMetricsEnabled: false
+  kubeStateMetricsCore:
+    enabled: true
+
+  namespaceLabelsAsTags:
+    team: team
+    tags.datadoghq.com/env: env
+  nodeLabelsAsTags:
+    team: team
+    tags.datadoghq.com/env: env
+  podLabelsAsTags:
+    team: team
+    tags.datadoghq.com/env: env
+
+  orchestratorExplorer:
+    enabled: true
+
+  apiKey:
+    valueFrom:
+      secretKeyRef: DD_API_KEY
+  appKey:
+    valueFrom:
+      secretKeyRef: DD_APP_KEY
+  clusterName: pupmac-cluster
+
+  networkMonitoring:
+    enabled: true
+
+  logs:
+    enabled: true
+
+  apm:
+    portEnabled: false
+    socketEnabled: true
+
+  serviceMonitoring:
+    enabled: true
+
+  processAgent:
+    enabled: false
+    processCollection: false
+
+  clusterChecks:
+    enabled: true
+
+  ignoreAutoConfig:
+    - etcd
+    - kube_controller_manager
+    - kube_scheduler
+
+  containerExclude: "kube_namespace:kube_system"
+
+clusterAgent:
+  enabled: true
+  admissionController:
+    enabled: false
+
+agents:
+  annotations:
+    ad.datadoghq.com/agent.logs: '[{"source":"datadog-agent","service":"datadog-agent"}]'
+  volumes:
+    - hostPath:
+        path: /vulcan-data/kubernetes/logs/
+      name: vulcan-logs
+  volumeMounts:
+    - name: vulcan-logs
+      mountPath: /vulcan-data/kubernetes/logs/
+      readOnly: true'
