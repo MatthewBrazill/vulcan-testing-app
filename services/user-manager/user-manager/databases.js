@@ -6,7 +6,13 @@ const logger = require("./logger")
 
 const databases = {
     async userDatabase() {
-        const pgdb = new postgresql.Client({ connectionString: "postgresql://vulcan:yKCstvg4hrB9pmDP@database-proxy:5432/vulcan_users" })
+        const pgdb = new postgresql.Client({
+            user: "vulcan",
+            password: "yKCstvg4hrB9pmDP",
+            host: "database-proxy",
+            port: "5432",
+            database: "vulcan_users"
+        })
         pgdb.connect()
 
         pgdb.on("error", (err) => {
