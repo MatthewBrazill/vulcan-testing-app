@@ -15,7 +15,7 @@ logger = structlog.get_logger()
 
 # Routes
 @app.post("/authenticate")
-async def auth(request: Request) -> JSONResponse:
+async def authenticate(request: Request) -> JSONResponse:
     try:
         body = await request.json()
         if await validate(body, [["username", r"^[a-zA-Z]{1,32}$"], ["pwhash", r"^.{1,64}$"]]) == False:
@@ -40,6 +40,7 @@ async def auth(request: Request) -> JSONResponse:
 
 
 @app.post("/authorize")
+async def authorize(request: Request) -> JSONResponse:
     span = tracer.current_span()
     try:
         body = await request.json()
