@@ -59,12 +59,14 @@ if [ "$taredown" == 1 ]; then
         echo "  Docker..."
         docker-compose down 2> /dev/null
         echo "  Kubernetes..."
+        kubectl delete secret vulcan-secrets
         kubectl delete -f deployment.yaml 2> /dev/null
     elif [ "$docker" == 1 ]; then
         echo "  Docker..."
         docker-compose down 2> /dev/null
     elif [ "$kube" == 1 ]; then
         echo "  Kubernetes..."
+        kubectl delete secret vulcan-secrets
         kubectl delete -f deployment.yaml 2> /dev/null
     fi
     echo "Finished taredown!"
@@ -75,14 +77,16 @@ echo "Deploying..."
 export SHA=$(git rev-parse HEAD)
 if [ "$docker" == 0 ] && [ "$kube" == 0 ]; then
     echo "  Docker..."
-    docker-compose up -d 2> /dev/null
+    docker-compose --env-file ./secrets.env up -d 2> /dev/null
     echo "  Kubernetes..."
+    kubectl create secret generic vulcan-secrets --from-env-file secrets.env
     kubectl apply -f deployment.yaml 2> /dev/null
 elif [ "$docker" == 1 ]; then
     echo "  Docker..."
-    docker-compose up -d 2> /dev/null
+    docker-compose --env-file ./secrets.env up -d 2> /dev/null
 elif [ "$kube" == 1 ]; then
     echo "  Kubernetes..."
+    kubectl create secret generic vulcan-secrets --from-env-file secrets.env
     kubectl apply -f deployment.yaml 2> /dev/null
 fi
 echo "Finsihed deploy! You can now use the Vulcan App: https://localhost/login"
