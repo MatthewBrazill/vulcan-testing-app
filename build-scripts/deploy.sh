@@ -46,11 +46,13 @@ done
 echo "Done minifying JS maps!"
 
 # Upload Maps to Datadog
-echo "Uploading JS Maps to Datadog..."
-datadog-ci sourcemaps upload services/frontend/statics/js --service vulcan-app --release-version 1.6 --minified-path-prefix /js/
-echo "Done uploading JS maps!"
-
-export SHA=$(git rev-parse HEAD)
+if which datadog-ci >/dev/null ; then
+    echo "Uploading JS Maps to Datadog..."
+    datadog-ci sourcemaps upload services/frontend/statics/js --service vulcan-app --release-version 1.6 --minified-path-prefix /js/
+    echo "Done uploading JS maps!"
+else
+    echo "Missing Datadog CI tool; skipping JS Map upload."
+fi
 
 # Taredown
 if [ "$taredown" == 1 ]; then
