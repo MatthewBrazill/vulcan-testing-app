@@ -40,7 +40,7 @@ public class Users {
 		HashMap<String, Object> body = Helpers.decodeBody(req);
 		Logger logger = LogManager.getLogger("vulcan");
 		model.addAttribute("title", "User: '" + username + "'");
-		
+
 		// Authorize
 		String permissions = Helpers.authorize(req);
 		switch (permissions) {
@@ -73,15 +73,16 @@ public class Users {
 							}.getType();
 							HashMap<String, Object> user = gson.fromJson(response.body(), type);
 
+							model.addAttribute("user", true);
 							model.addAttribute("username", user.get("username"));
 							model.addAttribute("permissions", user.get("permissions"));
 							return "user";
 
 						case HttpServletResponse.SC_NOT_FOUND:
 							res.setStatus(HttpServletResponse.SC_NOT_FOUND);
-							logger.info("user not found for username " + body.get("username"));
-							model.addAttribute("message", "Couldn't find a user with that username.");
-							return "error";
+							logger.info("user not found for username '" + body.get("username") + "'");
+							model.addAttribute("user", false);
+							return "user";
 
 						default:
 							throw new Exception("VulcanError: unexpected response from user-manager");
