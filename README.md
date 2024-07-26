@@ -3,7 +3,7 @@
 ## Summary
 This small application was originally used by me to learn golang, but has since expanded into a single repo containing several services, databases and backends for the same webapp - the `vulcan-testing-app`.
 
-The application is just a basic application that allows some CRUD actions for god's of several ancient pantheons (though this might change in the future). Written in several languages, the application is deliberatly overcomplicated to allow me to try out different languages, technologies, development concepts, as well as learn about systems archetecture in a environment that is familiar to me and I know inside out.
+The application is just a basic application that allows some CRUD actions for god's of several ancient pantheons (though this might change in the future). Written in several languages, the application is deliberately overcomplicated to allow me to try out different languages, technologies, development concepts, as well as learn about systems architecture in a environment that is familiar to me and I know inside out.
 
 ## Technologies
 The following isa non-exhaustive list of the technologies that have been used in this repository:
@@ -16,10 +16,14 @@ The following isa non-exhaustive list of the technologies that have been used in
     - PostgreSQL
     - MongoDB
     - Redis
-- Contianerisation with Kubernetes and Docker
-- Microservices Archetecture
-- Good Seciriuty Concepts:
-    - Secure Password Handleing
+- Containerization with Kubernetes and Docker
+- Microservices Architecture
+- Application and System Monitoring using Datadog and OpenTelemetry
+    - APM and Profiling on Every Service
+    - Real User Monitoring
+    - Log Collection
+- Good Security Concepts:
+    - Secure Password Handling - Including Salt and Pepper
     - Application Internal HTTPS
     - Input Sanitation
 
