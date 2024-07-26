@@ -161,4 +161,21 @@ public class Helpers {
 
         return res;
     }
+
+    @Trace(operationName = "vulcan.helper", resourceName = "Helpers.httpGetRequest")
+    public static HttpResponse<String> httpGetRequest(URI uri) throws IOException, InterruptedException {
+        // Function variables
+        Logger logger = LogManager.getLogger("vulcan");
+
+        // Building request
+        Builder builder = HttpRequest.newBuilder(uri);
+        builder.GET();
+
+        // Making request
+        HttpClient client = HttpClient.newHttpClient();
+        HttpResponse<String> res = client.send(builder.build(), BodyHandlers.ofString());
+        logger.debug("made request to '" + uri.toString() + "'");
+
+        return res;
+    }
 }

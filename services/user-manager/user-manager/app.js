@@ -52,6 +52,7 @@ async function start() {
     // Users
     app.route("/create").post(users.createUser)
     app.route("/get").post(users.getUser)
+    app.route("/all").get(users.getAllUsers)
     app.route("/delete").post(users.deleteUser)
 
     https.createServer({

@@ -5,6 +5,7 @@ import java.net.URI;
 import java.net.http.HttpResponse;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import io.opentracing.Span;
 import io.opentracing.log.Fields;
@@ -114,6 +115,62 @@ public class Users {
 				model.addAttribute("message", "There was an issue with the Server, please try again later.");
 				res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				return "error";
+		}
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/users/all", method = RequestMethod.GET)
+	public HashMap<String, Object> getAllUserAPI(HttpServletRequest req, HttpServletResponse res) {
+		// Function variables
+		Span span = GlobalTracer.get().activeSpan();
+		HashMap<String, Object> body = Helpers.decodeBody(req);
+		HashMap<String, Object> output = new HashMap<>();
+		Logger logger = LogManager.getLogger("vulcan");
+
+		// Validate the user input
+		if (!Helpers.validate(body)) {
+			res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			output.put("message", "There was an issue with your request.");
+			return output;
+		}
+
+		try {
+			// Make user request
+			HttpResponse<String> response = Helpers.httpGetRequest(new URI("https://user-manager:910/all"));
+
+			// Handle response
+			switch (response.statusCode()) {
+				case HttpServletResponse.SC_OK:
+					res.setStatus(HttpServletResponse.SC_OK);
+					logger.info("got all users");
+
+					// Extract HashMap from JSON body
+					Gson gson = new Gson();
+					Type type = new TypeToken<List<HashMap<String, String>>>() {
+					}.getType();
+					List<HashMap<String, String>> users = gson.fromJson(response.body(), type);
+
+					output.put("users", users);
+					return output;
+
+				case HttpServletResponse.SC_NOT_FOUND:
+					res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+					logger.info("");
+					output.put("message", "Couldn't find a user with that username.");
+					return output;
+
+				default:
+					throw new Exception("VulcanError: unexpected response from user-manager");
+			}
+		} catch (Exception e) {
+			res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			output.put("message", "There was an issue with the Server, please try again later.");
+
+			span.setTag(Tags.ERROR, true);
+			span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
+
+			logger.error("vulcan encountered error during user retrieval: " + e.getMessage(), e);
+			return output;
 		}
 	}
 

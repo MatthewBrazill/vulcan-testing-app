@@ -60,6 +60,34 @@ const users = {
         }
     },
 
+    async getAllUsers(req, res) {
+        try {
+            logger.debug("getting all users")
+            const db = await databases.userDatabase()
+            var result = await db.query("SELECT username, permissions FROM users")
+            db.end()
+
+            result = result.rows
+
+            if (result === undefined) {
+                logger.info("no users found")
+                res.sendStatus(404)
+            } else {
+                res.status(200).json(result)
+            }
+        } catch (err) {
+            const span = tracer.scope().active()
+            span.setTag('error', err)
+            logger.error({
+                error: err.message,
+                stack: err.stack,
+                endpoint: req.path,
+                message: `error with '${req.path}' endpoint`
+            })
+            res.status(500).json(err)
+        }
+    },
+
     async deleteUser(req, res) {
         try {
             logger.debug("deleting user: " + req.body.username)

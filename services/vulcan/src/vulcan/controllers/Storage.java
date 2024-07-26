@@ -25,6 +25,7 @@ import io.opentracing.tag.Tags;
 import io.opentracing.util.GlobalTracer;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import vulcan.Helpers;
 
 @Controller
@@ -36,6 +37,8 @@ public class Storage {
         switch (permissions) {
             case "user":
             case "admin":
+                HttpSession session = req.getSession();
+                model.addAttribute("username", session.getAttribute("username").toString());
                 model.addAttribute("title", "God Storage");
                 res.setStatus(HttpServletResponse.SC_OK);
                 return "storage";
