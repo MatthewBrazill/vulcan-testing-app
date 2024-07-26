@@ -14,12 +14,34 @@
 
     <div id="content">
         <div id="user-box">
-            <p style="float: left;text-align: left;"><b>Username:</b></p> <p style="float: right;text-align: right;">{{username}}</p>
-            <p style="float: left;text-align: left;"><b>Permissions:</b></p> <p style="float: right;text-align: right;">{{permissions}}</p>
+            {{#user}}
+            <div id="selected-user">
+                <!-- So, the reason is dumb, but the username value needs to be above the username label. This is so
+                    that when it gets floated to the end, the label can slide up into its place. Could probably fix it other was too, but this works and I don't want to figet around with it any more.-->
+                <p id="selected-user-name" style="float: inline-end;text-align: right;">{{username}}</p>
+                <p ><b>Username:</b></p>
 
-            <p style="float: left;text-align: left;margin-top: 14px;"><b>Notes:</b></p> <p id="no-user-notes" style="float: right;text-align: right;margin-top: 14px;">None</p>
-            <ul id="user-notes">
-            </ul>
+                <p id="selected-user-permissions" style="float: inline-end;text-align: right;">{{permissions}}</p>
+                <p ><b>Permissions:</b></p>
+
+                <p id="no-user-notes" style="float: inline-end;text-align: right;margin-top: 14px;">None</p>
+                <p style="margin-top: 14px;"><b>Notes:</b></p>
+                <ul id="selected-user-notes">
+                </ul>
+            </div>
+            <br>
+            {{/user}}
+
+            <div>
+                <h4>Full User List:</h4>
+                <div id="user-list" class="ui segemnt">
+                    <div id="user-list-loader" class="ui hidden text loader">Loading Users</div>
+                    <div id="user-list-error" class="ui hidden error message">
+                        <div id="user-list-error-head" class="header">Failed to retrieve list of users!</div>
+                        <p id="user-list-error-message">There was an issue getting to the server.</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

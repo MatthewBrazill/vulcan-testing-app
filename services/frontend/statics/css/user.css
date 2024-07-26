@@ -1,10 +1,30 @@
 /* Storage Page */
-#user-box {
+#selected-user {
     width: 300px;
+    margin: auto;
+    text-align: justify;
+}
+
+#user-box {
+    width: 800px;
     display: block;
     margin: auto;
-    margin-top: 100px;
-    text-align: justify;
+    margin-top: 20px;
+}
+
+.user-item {
+    padding: 10px 20px;
+    margin-bottom: 10px;
+    border: 1px solid #000000;
+    border-radius: 5px;
+}
+
+#selected-user {
+    padding: 10px 20px;
+    margin-bottom: 10px;
+    border: 1px solid #000000;
+    border-radius: 5px;
+    background-color: lightgray;
 }
 
 p {
