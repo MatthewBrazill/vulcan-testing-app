@@ -69,7 +69,8 @@ public class Helpers {
                 case HttpServletResponse.SC_OK:
                     // Extract HashMap from JSON body
                     Gson gson = new Gson();
-                    Type type = new TypeToken<HashMap<String, String>>() {}.getType();
+                    Type type = new TypeToken<HashMap<String, String>>() {
+                    }.getType();
                     HashMap<String, String> auth = gson.fromJson(res.body(), type);
 
                     span.setTag("auth", true);
@@ -148,7 +149,7 @@ public class Helpers {
         // Function variables
         Gson gson = new Gson();
         Logger logger = LogManager.getLogger("vulcan");
-        
+
         // Building request
         Builder builder = HttpRequest.newBuilder(uri);
         builder.POST(BodyPublishers.ofString(gson.toJson(body)));

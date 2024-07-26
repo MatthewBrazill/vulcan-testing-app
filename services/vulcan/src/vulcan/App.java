@@ -67,8 +67,8 @@ public class App implements WebMvcConfigurer {
 	// Add interceptor logging
 	@Override
 	public void addInterceptors(@NonNull InterceptorRegistry registry) {
-        registry.addInterceptor(new LoggingInterceptor()).addPathPatterns("/**");
-    }
+		registry.addInterceptor(new LoggingInterceptor()).addPathPatterns("/**");
+	}
 
 	public static void main(String[] args) {
 		Logger logger = LogManager.getLogger("vulcan");

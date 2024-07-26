@@ -16,7 +16,7 @@ public class LoggingInterceptor implements HandlerInterceptor {
     @Override
     public void postHandle(@NonNull HttpServletRequest req, @NonNull HttpServletResponse res, @NonNull Object handler, @Nullable ModelAndView modelAndView) {
         // Function imports
-		Logger logger = LogManager.getLogger("vulcan");
+        Logger logger = LogManager.getLogger("vulcan");
 
         ThreadContext.put("path", req.getServletPath());
         ThreadContext.put("method", req.getMethod());
