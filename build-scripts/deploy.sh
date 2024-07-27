@@ -13,12 +13,14 @@
 taredown=0
 docker=0
 kube=0
-while getopts "tdk" flag
+monitoring=0
+while getopts "tdkm" flag
 do
     case $flag in
         "t") taredown=1;;
         "d") docker=1;;
         "k") kube=1;;
+        "m") monitoring=1;;
     esac
 done
 
@@ -91,4 +93,19 @@ elif [ "$kube" == 1 ]; then
     kubectl create secret generic vulcan-secrets --from-env-file secrets.env
     kubectl apply -f deployment.yaml 2> /dev/null
 fi
-echo "Finsihed deploy! You can now use the Vulcan App: https://localhost/login"
+
+# Monitoring
+if [ "$monitoring" == 1 ]; then
+    echo "Adding Monitoring Resources..."
+    if [ "$docker" == 0 ] && [ "$kube" == 0 ]; then
+        echo "  Docker..."
+        docker-compose --env-file ./secrets.env --file ./services/monitoring/docker-compose.yaml up -d 2> /dev/null
+        echo "  Kubernetes..."
+    elif [ "$docker" == 1 ]; then
+        echo "  Docker..."
+        docker-compose --env-file ./secrets.env --file ./services/monitoring/docker-compose.yaml up -d 2> /dev/null
+    elif [ "$kube" == 1 ]; then
+        echo "  Kubernetes..."
+    fi
+    echo "Done!"
+fi
