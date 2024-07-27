@@ -45,20 +45,20 @@ for jsFile in services/frontend/javascript/*.js; do
     --create_source_map services/frontend/statics/js/$(basename $jsFile .js).min.js.map \
     --source_map_include_content true
 done
-echo "Done minifying JS maps!"
+echo "Done minifying JS maps!\n"
 
 # Upload Maps to Datadog
 if which datadog-ci >/dev/null ; then
     echo "Uploading JS Maps to Datadog..."
-    datadog-ci sourcemaps upload services/frontend/statics/js --service vulcan-app --release-version 1.6 --minified-path-prefix /js/
-    echo "Done uploading JS maps!"
+    datadog-ci sourcemaps upload services/frontend/statics/js --service vulcan-app --release-version 1.6 --minified-path-prefix /js/ | grep --line-buffered "^Uploading sourcemap*" | sed 's/^/  /'
+    echo "Done uploading JS maps!\n"
 else
-    echo "Missing Datadog CI tool; skipping JS Map upload."
+    echo "Missing Datadog CI tool; skipping JS Map upload.\n"
 fi
 
 # Taredown
 if [ "$taredown" == 1 ]; then
-    echo "Taredown..."
+    echo "Vulcan Application Taredown..."
     if [ "$docker" == 0 ] && [ "$kube" == 0 ]; then
         echo "  Docker..."
         docker-compose down 2> /dev/null
@@ -73,11 +73,11 @@ if [ "$taredown" == 1 ]; then
         kubectl delete secret vulcan-secrets
         kubectl delete -f deployment.yaml 2> /dev/null
     fi
-    echo "Finished taredown!"
+    echo "Finished taredown!\n"
 fi
 
 # Build
-echo "Deploying..."
+echo "Deploying Vulcan Application..."
 export SHA=$(git rev-parse HEAD)
 if [ "$docker" == 0 ] && [ "$kube" == 0 ]; then
     echo "  Docker..."
@@ -93,6 +93,7 @@ elif [ "$kube" == 1 ]; then
     kubectl create secret generic vulcan-secrets --from-env-file secrets.env
     kubectl apply -f deployment.yaml 2> /dev/null
 fi
+echo "Finsihed deploying! You can now use the Vulcan App: https://localhost/login\n"
 
 # Monitoring
 if [ "$monitoring" == 1 ]; then
