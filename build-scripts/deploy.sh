@@ -29,7 +29,7 @@ if [ $(basename ${PWD}) == "build-scripts" ]; then
 fi
 
 # Build JS Files and Maps
-echo "Miniying JS maps..."
+printf "Miniying JS maps...\n"
 
 if which wget >/dev/null ; then
     wget -nc -nv -O build-scripts/closure-compiler.jar https://repo1.maven.org/maven2/com/google/javascript/closure-compiler/v20240317/closure-compiler-v20240317.jar
@@ -38,75 +38,75 @@ elif which curl >/dev/null ; then
 fi
 
 for jsFile in services/frontend/javascript/*.js; do
-    echo "  Minifying $(basename $jsFile)"
+    printf "  Minifying $(basename $jsFile)\n"
     java -jar build-scripts/closure-compiler.jar \
     --js $jsFile \
     --js_output_file services/frontend/statics/js/$(basename $jsFile .js).min.js \
     --create_source_map services/frontend/statics/js/$(basename $jsFile .js).min.js.map \
     --source_map_include_content true
 done
-echo "Done minifying JS maps!\n"
+printf "Done minifying JS maps!\n\n"
 
 # Upload Maps to Datadog
 if which datadog-ci >/dev/null ; then
-    echo "Uploading JS Maps to Datadog..."
+    printf "Uploading JS Maps to Datadog...\n"
     datadog-ci sourcemaps upload services/frontend/statics/js --service vulcan-app --release-version 1.6 --minified-path-prefix /js/ | grep --line-buffered "^Uploading sourcemap*" | sed 's/^/  /'
-    echo "Done uploading JS maps!\n"
+    printf "Done uploading JS maps!\n\n"
 else
-    echo "Missing Datadog CI tool; skipping JS Map upload.\n"
+    printf "Missing Datadog CI tool; skipping JS Map upload.\n\n"
 fi
 
 # Taredown
 if [ "$taredown" == 1 ]; then
-    echo "Vulcan Application Taredown..."
+    printf "Vulcan Application Taredown...\n"
     if [ "$docker" == 0 ] && [ "$kube" == 0 ]; then
-        echo "  Docker..."
+        printf "  Docker...\n"
         docker-compose down 2> /dev/null
-        echo "  Kubernetes..."
+        printf "  Kubernetes...\n"
         kubectl delete secret vulcan-secrets
         kubectl delete -f deployment.yaml 2> /dev/null
     elif [ "$docker" == 1 ]; then
-        echo "  Docker..."
+        printf "  Docker...\n"
         docker-compose down 2> /dev/null
     elif [ "$kube" == 1 ]; then
-        echo "  Kubernetes..."
+        printf "  Kubernetes...\n"
         kubectl delete secret vulcan-secrets
         kubectl delete -f deployment.yaml 2> /dev/null
     fi
-    echo "Finished taredown!\n"
+    printf "Finished taredown!\n\n"
 fi
 
 # Build
-echo "Deploying Vulcan Application..."
+printf "Deploying Vulcan Application...\n"
 export SHA=$(git rev-parse HEAD)
 if [ "$docker" == 0 ] && [ "$kube" == 0 ]; then
-    echo "  Docker..."
+    printf "  Docker...\n"
     docker-compose --env-file ./secrets.env up -d 2> /dev/null
-    echo "  Kubernetes..."
+    printf "  Kubernetes...\n"
     kubectl create secret generic vulcan-secrets --from-env-file secrets.env
     kubectl apply -f deployment.yaml 2> /dev/null
 elif [ "$docker" == 1 ]; then
-    echo "  Docker..."
+    printf "  Docker...\n"
     docker-compose --env-file ./secrets.env up -d 2> /dev/null
 elif [ "$kube" == 1 ]; then
-    echo "  Kubernetes..."
+    printf "  Kubernetes...\n"
     kubectl create secret generic vulcan-secrets --from-env-file secrets.env
     kubectl apply -f deployment.yaml 2> /dev/null
 fi
-echo "Finsihed deploying! You can now use the Vulcan App: https://localhost/login\n"
+printf "Finsihed deploying! You can now use the Vulcan App: https://localhost/login\n\n"
 
 # Monitoring
 if [ "$monitoring" == 1 ]; then
-    echo "Adding Monitoring Resources..."
+    printf "Adding Monitoring Resources...\n"
     if [ "$docker" == 0 ] && [ "$kube" == 0 ]; then
-        echo "  Docker..."
+        printf "  Docker...\n"
         docker-compose --env-file ./secrets.env --file ./services/monitoring/docker-compose.yaml up -d 2> /dev/null
-        echo "  Kubernetes..."
+        printf "  Kubernetes...\n"
     elif [ "$docker" == 1 ]; then
-        echo "  Docker..."
+        printf "  Docker...\n"
         docker-compose --env-file ./secrets.env --file ./services/monitoring/docker-compose.yaml up -d 2> /dev/null
     elif [ "$kube" == 1 ]; then
-        echo "  Kubernetes..."
+        printf "  Kubernetes...\n"
     fi
-    echo "Done!"
+    printf "Done!\n"
 fi
