@@ -32,7 +32,7 @@ async function start() {
     // Setting up Kafka Queues
     const queue = new kafka.Kafka({
         clientId: "docker-scribe",
-        brokers: ["notes-kafka:9092"],
+        brokers: ["notes-queue:9092"],
     })
 
     // Kafka Queue Configurations
