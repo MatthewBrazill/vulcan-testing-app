@@ -67,4 +67,9 @@ case $DD_SERVICE in
         tar -xzf /usr/nginx-datadog-module.so.tgz -C /usr/lib/nginx/modules
         nginx -g "daemon off;"
         ;;
+
+    "scribe")
+        npm install .
+        npm start
+        ;;
 esac

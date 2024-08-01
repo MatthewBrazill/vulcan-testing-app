@@ -130,6 +130,45 @@ services:
           memory: 512M
 
 
+  # Scribe
+  scribe:
+    image: node:18
+    container_name: scribe
+    ports:
+      - 920:920
+    networks:
+      - vulcan_app
+      - datadog_bridge
+    environment:
+      - DD_ENV=docker
+      - DD_SERVICE=scribe
+      - DD_VERSION=0.1.0
+      - DD_APPSEC_ENABLED=true
+      - DD_IAST_ENABLED=true
+      # - DD_AGENT_HOST=datadog-agent
+      # - DD_TRACE_AGENT_PORT=8126
+      - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
+      - DD_TRACE_CLIENT_IP_ENABLED=true
+      - DD_TRACE_STARTUP_LOGS=true
+      - CERT_FOLDER=/scribe/certificate
+      - VLCN_COMMIT_SHA=$SHA
+    working_dir: /scribe
+    volumes:
+      - ./services/scribe:/scribe
+      - ./build-scripts/startup.sh:/startup.sh
+      - /vulcan-data/docker/logs:/logs
+      - /var/run/datadog:/var/run/datadog
+    command: bash /startup.sh
+    labels:
+      com.datadoghq.ad.logs: '[{"type":"file","source":"scribe","service":"scribe","path":"/vulcan-data/docker/logs/scribe.log"}]'
+      com.datadoghq.ad.tags: '["env:docker","service:scribe"]'
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 512M
+
+
 
 
 
