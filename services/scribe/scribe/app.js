@@ -33,6 +33,22 @@ async function start() {
     const queue = new kafka.Kafka({
         clientId: "docker-scribe",
         brokers: ["notes-queue:9092"],
+        logCreator: (level) => {
+            // Define the custom logger to use Winston
+            return (log) => {
+                switch (level) {
+                    case kafka.logLevel.ERROR:
+                    case kafka.logLevel.NOTHING:
+                        return logger.error(log.log)
+                    case kafka.logLevel.WARN:
+                        return logger.warn(log.log)
+                    case kafka.logLevel.INFO:
+                        return logger.info(log.log)
+                    case kafka.logLevel.DEBUG:
+                        return logger.debug(log.log)
+                }
+            }
+        }
     })
 
     // Kafka Queue Configurations
