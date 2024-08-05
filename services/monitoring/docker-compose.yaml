@@ -68,6 +68,8 @@ services:
     container_name: otel-collector
     networks:
       - datadog_bridge
+    environment:
+      - DD_API_KEY=$DD_API_KEY
     volumes:
       - ./otel-collector/otel-collector.yaml:/etc/otelcol-contrib/config.yaml
 
