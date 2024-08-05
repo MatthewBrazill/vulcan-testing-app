@@ -176,7 +176,7 @@ public class Users {
 
 	@ResponseBody
 	@RequestMapping(value = "/user/{username}/notes", method = RequestMethod.POST)
-	public HashMap<String, Object> userGetAPI(HttpServletRequest req, HttpServletResponse res, @PathVariable String username) {
+	public HashMap<String, Object> userGetNotesAPI(HttpServletRequest req, HttpServletResponse res, @PathVariable String username) {
 		// Function variables
 		Span span = GlobalTracer.get().activeSpan();
 		HashMap<String, Object> body = Helpers.decodeBody(req);
