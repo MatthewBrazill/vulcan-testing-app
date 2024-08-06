@@ -24,13 +24,11 @@ const handlers = require("./handlers.js")
 
 async function start() {
     // Create log file if it doesn't exist
-    if (!fs.existsSync("/logs")) {
-        fs.mkdirSync("/logs");
-    }
+    if (!fs.existsSync("/logs")) { fs.mkdirSync("/logs") }
     fs.closeSync(fs.openSync("/logs/scribe.log", 'w'))
 
-    // Setting up Kafka Queues
-    const queue = new kafka.Kafka({
+    // Setting up Kafka Client
+    const client = new kafka.Kafka({
         clientId: "docker-scribe",
         brokers: ["notes-queue:9092"],
         logCreator: (level) => {
@@ -51,8 +49,18 @@ async function start() {
         }
     })
 
-    // Kafka Queue Configurations
-    const consumer = queue.consumer({ groupId: "scribe-group" })
+    // Create topics if they don't already exist
+    const admin = client.admin()
+    await admin.connect()
+    await admin.createTopics({
+        topics: [
+            { topic: "user-notes" },
+            { topic: "god-notes" }
+        ]
+    })
+
+    // Kafka Consumer Configurations
+    const consumer = client.consumer({ groupId: "scribe-group" })
 
     await consumer.connect()
     await consumer.subscribe({ topics: ["user-notes", "god-notes"] })
