@@ -31,7 +31,7 @@ case $DD_SERVICE in
             -Ddd.iast.enabled=true \
             -Ddd.dbm.propagation.mode=full \
             -Ddd.trace.sampling.rules='[{"service":"vulcan","sample_rate":1}]' \
-            -Ddd.service.mapping=redis:session-store,postgresql:user-database,mongo:god-database \
+            -Ddd.service.mapping=redis:session-store,postgresql:user-database,mongo:god-database,kafka:notes-queue \
             -jar ./target/vulcan.jar \
             --logging.config=/vulcan/src/log4j2.xml
         ;;

@@ -8,8 +8,7 @@ tracer.init({
     profiling: true,
     appsec: true
 })
-tracer.use("dns", { enabled: false })
-tracer.use("net", { enabled: false })
+tracer.use("kafkajs", { service: "notes-queue" })
 tracer.use("pg", { dbmPropagationMode: 'full', service: "user-database" })
 tracer.use("mongodb-core", { service: "god-database" })
 
