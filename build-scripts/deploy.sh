@@ -78,7 +78,8 @@ fi
 
 # Build
 printf "Deploying Vulcan Application...\n"
-export SHA=$(git rev-parse HEAD)
+export DD_GIT_COMMIT_SHA=$(git rev-parse HEAD)
+export DD_GIT_REPOSITORY_URL="https://github.com/MatthewBrazill/vulcan-testing-app"
 if [ "$docker" == 0 ] && [ "$kube" == 0 ]; then
     printf "  Docker...\n"
     docker-compose --env-file ./secrets.env up -d 2> /dev/null

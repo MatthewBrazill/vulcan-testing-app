@@ -25,6 +25,8 @@ services:
       - DD_ENV=docker
       - DD_SERVICE=vulcan
       - DD_VERSION=1.3.0
+      - DD_GIT_COMMIT_SHA=$DD_GIT_COMMIT_SHA
+      - DD_GIT_REPOSITORY_URL=$DD_GIT_REPOSITORY_URL
       # - DD_AGENT_HOST=datadog-agent
       # - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
@@ -32,7 +34,6 @@ services:
       - CERT_FOLDER=/vulcan/certificate
       - VLCN_SESSION_KEY=$SESSION_KEY
       - VLCN_PASSWORD_PEPPER=$PASSWORD_PEPPER
-      - VLCN_COMMIT_SHA=$SHA
     working_dir: /vulcan
     volumes:
       - ./services/vulcan:/vulcan
@@ -67,13 +68,15 @@ services:
       - DD_ENV=docker
       - DD_SERVICE=god-manager
       - DD_VERSION=1.0.0
+      - DD_GIT_COMMIT_SHA=$DD_GIT_COMMIT_SHA
+      - DD_GIT_REPOSITORY_URL=$DD_GIT_REPOSITORY_URL
       - DD_APPSEC_ENABLED=true
       - DD_IAST_ENABLED=true
       # - DD_AGENT_HOST=datadog-agent
       # - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
+      - DD_PROFILING_EXECUTION_TRACE_ENABLED=true
       - CERT_FOLDER=/god-manager/certificate
-      - VLCN_COMMIT_SHA=$SHA
     working_dir: /god-manager
     volumes:
       - ./services/god-manager:/god-manager
@@ -104,6 +107,8 @@ services:
       - DD_ENV=docker
       - DD_SERVICE=user-manager
       - DD_VERSION=1.3.0
+      - DD_GIT_COMMIT_SHA=$DD_GIT_COMMIT_SHA
+      - DD_GIT_REPOSITORY_URL=$DD_GIT_REPOSITORY_URL
       - DD_APPSEC_ENABLED=true
       - DD_IAST_ENABLED=true
       # - DD_AGENT_HOST=datadog-agent
@@ -112,7 +117,6 @@ services:
       - DD_TRACE_CLIENT_IP_ENABLED=true
       - DD_TRACE_STARTUP_LOGS=true
       - CERT_FOLDER=/user-manager/certificate
-      - VLCN_COMMIT_SHA=$SHA
     working_dir: /user-manager
     volumes:
       - ./services/user-manager:/user-manager
@@ -143,6 +147,8 @@ services:
       - DD_ENV=docker
       - DD_SERVICE=scribe
       - DD_VERSION=0.1.0
+      - DD_GIT_COMMIT_SHA=$DD_GIT_COMMIT_SHA
+      - DD_GIT_REPOSITORY_URL=$DD_GIT_REPOSITORY_URL
       - DD_APPSEC_ENABLED=true
       - DD_IAST_ENABLED=true
       # - DD_AGENT_HOST=datadog-agent
@@ -151,7 +157,6 @@ services:
       - DD_TRACE_CLIENT_IP_ENABLED=true
       - DD_TRACE_STARTUP_LOGS=true
       - CERT_FOLDER=/scribe/certificate
-      - VLCN_COMMIT_SHA=$SHA
     working_dir: /scribe
     volumes:
       - ./services/scribe:/scribe
@@ -189,6 +194,8 @@ services:
       - DD_ENV=docker
       - DD_SERVICE=authenticator
       - DD_VERSION=0.2.0
+      - DD_GIT_COMMIT_SHA=$DD_GIT_COMMIT_SHA
+      - DD_GIT_REPOSITORY_URL=$DD_GIT_REPOSITORY_URL
       - DD_APPSEC_ENABLED=true
       - DD_IAST_ENABLED=true
       # - DD_AGENT_HOST=datadog-agent
@@ -197,7 +204,6 @@ services:
       - DD_TRACE_CLIENT_IP_ENABLED=true
       - CERT_FOLDER=/authenticator/certificate
       - VLCN_PASSWORD_PEPPER=$PASSWORD_PEPPER
-      - VLCN_COMMIT_SHA=$SHA
     working_dir: /authenticator
     volumes:
       - ./services/authenticator:/authenticator
@@ -228,12 +234,13 @@ services:
       - DD_ENV=docker
       - DD_SERVICE=nginx-proxy
       - DD_VERSION=0.1.2
+      - DD_GIT_COMMIT_SHA=$DD_GIT_COMMIT_SHA
+      - DD_GIT_REPOSITORY_URL=$DD_GIT_REPOSITORY_URL
       # - DD_AGENT_HOST=datadog-agent
       # - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
       - DD_TRACE_CLIENT_IP_ENABLED=true
       - CERT_FOLDER=/certificate
-      - VLCN_COMMIT_SHA=$SHA
     volumes:
       - ./services/nginx-proxy:/etc/nginx
       - ./build-scripts/startup.sh:/startup.sh
@@ -299,11 +306,12 @@ services:
       - DD_ENV=docker
       - DD_SERVICE=database-proxy
       - DD_VERSION=0.1.0
+      - DD_GIT_COMMIT_SHA=$DD_GIT_COMMIT_SHA
+      - DD_GIT_REPOSITORY_URL=$DD_GIT_REPOSITORY_URL
       # - DD_AGENT_HOST=datadog-agent
       # - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
       - DD_TRACE_CLIENT_IP_ENABLED=true
-      - VLCN_COMMIT_SHA=$SHA
     volumes:
       - ./services/database-proxy:/etc/nginx
       - ./build-scripts/startup.sh:/startup.sh

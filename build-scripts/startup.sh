@@ -7,9 +7,6 @@ if [ $DD_ENV = "kubernetes" ]
 then
     rm -rf /vulcan
     git clone https://github.com/MatthewBrazill/vulcan-testing-app.git /vulcan
-    
-    cd /vulcan
-    export VLCN_COMMIT_SHA=$(git rev-parse HEAD)
     cd /vulcan/services/$DD_SERVICE
 fi
 
@@ -35,7 +32,6 @@ case $DD_SERVICE in
             -Ddd.dbm.propagation.mode=full \
             -Ddd.trace.sampling.rules='[{"service":"vulcan","sample_rate":1}]' \
             -Ddd.service.mapping=redis:session-store,postgresql:user-database,mongo:god-database \
-            -Ddd.tags=git.commit.sha:$(git rev-parse HEAD),git.repository_url:github.com/MatthewBrazill/vulcan-testing-app \
             -jar ./target/vulcan.jar \
             --logging.config=/vulcan/src/log4j2.xml
         ;;

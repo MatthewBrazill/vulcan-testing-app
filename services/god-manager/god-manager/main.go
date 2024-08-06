@@ -26,8 +26,6 @@ func main() {
 		tracer.WithService(service),
 		tracer.WithServiceVersion(version),
 		tracer.WithRuntimeMetrics(),
-		tracer.WithGlobalTag("git.commit.sha", os.Getenv("VLCN_COMMIT_SHA")),
-		tracer.WithGlobalTag("git.repository_url", "https://github.com/MatthewBrazill/vulcan-testing-app"),
 	)
 	defer tracer.Stop()
 

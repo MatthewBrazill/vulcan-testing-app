@@ -6,11 +6,7 @@ tracer.init({
     logInjection: true,
     runtimeMetrics: true,
     profiling: true,
-    appsec: true,
-    tags: {
-        "git.commit.sha": process.env.VLCN_COMMIT_SHA,
-        "git.repository_url": "https://github.com/MatthewBrazill/vulcan-testing-app"
-    }
+    appsec: true
 })
 tracer.use("dns", { enabled: false })
 tracer.use("net", { enabled: false })
