@@ -60,6 +60,7 @@ async function start() {
 
     // Create function to connect, subscribe and run the consumer
     const connectToKafka = async () => {
+        logger.info("connecting to kafka queue")
         await consumer.connect()
         await consumer.subscribe({ topics: ["user-notes", "god-notes"] })
         await consumer.run({
@@ -80,13 +81,30 @@ async function start() {
         })
     }
 
-    consumer.on(consumer.events.CRASH, async (error, groupId) => {
+    consumer.on(consumer.events.CRASH, async (error, groupId, _) => {
         try {
             logger.warn(`kafka group '${groupId}' encountered error '${error.name}'`, error)
             await consumer.disconnect()
-            connectToKafka()
         } catch (err) {
             logger.error(`kafka couldn't recover from error because of '${err.name}'`, err)
+        }
+    })
+
+    consumer.on(consumer.events.STOP, async () => {
+        try {
+            logger.warn(`kafka consumer stopped, trying to restart`)
+            await consumer.disconnect()
+        } catch (err) {
+            logger.error(`kafka couldn't recover from stopped consumer because of '${err.name}'`, err)
+        }
+    })
+
+    consumer.on(consumer.events.DISCONNECT, async (error, groupId) => {
+        try {
+            logger.warn(`kafka consumer disconnected, trying to restart`)
+            connectToKafka()
+        } catch (err) {
+            logger.error(`kafka couldn't recover from disconnection because of '${err.name}'`, err)
         }
     })
 }
