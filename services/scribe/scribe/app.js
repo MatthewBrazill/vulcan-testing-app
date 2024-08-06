@@ -62,21 +62,33 @@ async function start() {
     // Kafka Consumer Configurations
     const consumer = client.consumer({ groupId: "scribe-group" })
 
-    await consumer.connect()
-    await consumer.subscribe({ topics: ["user-notes", "god-notes"] })
-    await consumer.run({ eachMessage: async (payload) => {
-        switch (payload.topic) {
-            case "user-notes":
-                handlers.userNotesHandler(payload)
-                break
-            
-            case "god-notes":
-                handlers.godNotesHandler(payload)
-                break
+    // Create function to connect, subscribe and run the consumer
+    const connectToKafka = async () => {
+        await consumer.connect()
+        await consumer.subscribe({ topics: ["user-notes", "god-notes"] })
+        await consumer.run({
+            eachMessage: async (payload) => {
+                switch (payload.topic) {
+                    case "user-notes":
+                        handlers.userNotesHandler(payload)
+                        break
+                    case "god-notes":
+                        handlers.godNotesHandler(payload)
+                        break
+                }
+            }
+        })
+    }
 
-            default:
+    consumer.on(consumer.events.CRASH, async (error, groupId) => {
+        try {
+            logger.warn(`kafka group '${groupId}' encountered error '${error.name}'`, error)
+            await consumer.disconnect()
+            connectToKafka()
+        } catch (err) {
+            logger.error(`kafka couldn't recover from error because of '${err.name}'`, err)
         }
-    }})
+    })
 }
 
 start().catch((err) => {
