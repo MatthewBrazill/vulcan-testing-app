@@ -52,7 +52,6 @@ public class Users {
 		String permissions = Helpers.authorize(req);
 		switch (permissions) {
 			case "admin":
-
 				// Validate the user input
 				if (!Helpers.validate(body)) {
 					res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -205,54 +204,70 @@ public class Users {
 		HashMap<String, Object> output = new HashMap<>();
 		Logger logger = LogManager.getLogger("vulcan");
 
-		// Validate the user input
-		if (!Helpers.validate(body)) {
-			res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			output.put("message", "There was an issue with your request.");
-			return output;
-		}
-
-		try {
-			// Run kafka message prep, creation and send in new thread
-			new Thread(null, null, "Kafka-Producer") {
-				@Trace(operationName = "vulcan.kafka", resourceName = "Users.sendKafkaMessage")
-				public void run() {
-					// Prep note object
-					HashMap<String, Object> note = new HashMap<String, Object>();
-					note.put("username", username);
-					note.put("note", body.get("note").toString().trim());
-
-					// Create kafka producer
-					Properties props = new Properties();
-					props.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "notes-queue:9092");
-					props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-					props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-					KafkaProducer<String, String> kafka = new KafkaProducer<>(props);
-
-					// Create kafka message
-					Gson gson = new Gson();
-					ProducerRecord<String, String> message = new ProducerRecord<String, String>("user-notes", gson.toJson(note));
-
-					// Send, flush and close kafka
-					kafka.send(message);
-					kafka.flush();
-					kafka.close();
+		// Authorize
+		String permissions = Helpers.authorize(req);
+		switch (permissions) {
+			case "admin":
+				// Validate the user input
+				if (!Helpers.validate(body)) {
+					res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+					output.put("message", "There was an issue with your request.");
+					return output;
 				}
-			}.start();
 
-			// Return accepted status
-			res.setStatus(HttpServletResponse.SC_ACCEPTED);
-			output.put("message", "Accepted note request.");
-			return output;
-		} catch (Exception e) {
-			res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			output.put("message", "There was an issue with the Server, please try again later.");
+				try {
+					// Run kafka message prep, creation and send in new thread
+					new Thread(null, null, "Kafka-Producer") {
+						@Trace(operationName = "vulcan.kafka", resourceName = "Users.sendKafkaMessage")
+						public void run() {
+							// Prep note object
+							HashMap<String, Object> note = new HashMap<String, Object>();
+							note.put("username", username);
+							note.put("note", body.get("note").toString().trim());
 
-			span.setTag(Tags.ERROR, true);
-			span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
+							// Create kafka producer
+							Properties props = new Properties();
+							props.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "notes-queue:9092");
+							props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+							props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+							KafkaProducer<String, String> kafka = new KafkaProducer<>(props);
 
-			logger.error("vulcan encountered error during user retrieval: " + e.getMessage(), e);
-			return output;
+							// Create kafka message
+							Gson gson = new Gson();
+							ProducerRecord<String, String> message = new ProducerRecord<String, String>("user-notes", gson.toJson(note));
+
+							// Send, flush and close kafka
+							kafka.send(message);
+							kafka.flush();
+							kafka.close();
+						}
+					}.start();
+
+					// Return accepted status
+					res.setStatus(HttpServletResponse.SC_ACCEPTED);
+					output.put("message", "Accepted note request.");
+					return output;
+				} catch (Exception e) {
+					res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					output.put("message", "There was an issue with the Server, please try again later.");
+
+					span.setTag(Tags.ERROR, true);
+					span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
+
+					logger.error("vulcan encountered error during user retrieval: " + e.getMessage(), e);
+					return output;
+				}
+
+			case "user":
+			case "none":
+				res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				output.put("message", "Your credentials are invalid.");
+				return output;
+
+			default:
+				res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				output.put("message", "There was an issue with the Server, please try again later.");
+				return output;
 		}
 	}
 
