@@ -138,8 +138,6 @@ services:
   scribe:
     image: node:18
     container_name: scribe
-    ports:
-      - 920:920
     networks:
       - vulcan_app
       - datadog_bridge
