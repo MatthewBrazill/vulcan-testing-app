@@ -54,6 +54,7 @@ async function start() {
         ]
     })) logger.debug("created kafka topics")
     else logger.debug("kafka topics already exist")
+    await admin.disconnect()
 
     // Kafka Consumer Configurations
     const consumer = client.consumer({ groupId: "scribe-group" })
@@ -80,6 +81,7 @@ async function start() {
             }
         })
     }
+    connectToKafka()
 
     consumer.on(consumer.events.CRASH, async (error, groupId, _) => {
         try {
