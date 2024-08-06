@@ -48,19 +48,20 @@ async function start() {
     // Create topics if they don't already exist
     const admin = client.admin()
     await admin.connect()
-    await admin.createTopics({
+    if (await admin.createTopics({
         topics: [
             { topic: "user-notes" },
             { topic: "god-notes" }
         ]
-    })
+    })) logger.debug("created kafka topics")
+    else logger.debug("kafka topics already exist")
 
     // Kafka Consumer Configurations
     const consumer = client.consumer({ groupId: "scribe-group" })
 
     // Create function to connect, subscribe and run the consumer
     const connectToKafka = async () => {
-        logger.info("connecting to kafka queue")
+        logger.info("connecting to kafka broker")
         await consumer.connect()
         await consumer.subscribe({ topics: ["user-notes", "god-notes"] })
         await consumer.run({
@@ -101,7 +102,7 @@ async function start() {
 
     consumer.on(consumer.events.DISCONNECT, async (error, groupId) => {
         try {
-            logger.warn(`kafka consumer disconnected, trying to restart`)
+            logger.debug(`kafka consumer disconnected, trying to restart`)
             connectToKafka()
         } catch (err) {
             logger.error(`kafka couldn't recover from disconnection because of '${err.name}'`, err)
