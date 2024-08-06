@@ -280,54 +280,70 @@ public class Users {
 		HashMap<String, Object> output = new HashMap<>();
 		Logger logger = LogManager.getLogger("vulcan");
 
-		// Validate the user input
-		if (!Helpers.validate(body)) {
-			res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			output.put("message", "There was an issue with your request.");
-			return output;
-		}
-
-		try {
-			// Prep user request
-			HashMap<String, Object> user = new HashMap<String, Object>();
-			user.put("username", username);
-
-			// Make user request
-			HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://user-manager:910/get"), user);
-
-			// Handle response
-			switch (response.statusCode()) {
-				case HttpServletResponse.SC_OK:
-					res.setStatus(HttpServletResponse.SC_OK);
-					logger.info("got notes for user " + username);
-
-					// Extract HashMap from JSON body
-					Gson gson = new Gson();
-					Type type = new TypeToken<HashMap<String, String>>() {
-					}.getType();
-					HashMap<String, Object> notes = gson.fromJson(response.body(), type);
-
-					output.put("notes", notes.get("notes"));
+		// Authorize
+		String permissions = Helpers.authorize(req);
+		switch (permissions) {
+			case "admin":
+				// Validate the user input
+				if (!Helpers.validate(body)) {
+					res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+					output.put("message", "There was an issue with your request.");
 					return output;
+				}
 
-				case HttpServletResponse.SC_NOT_FOUND:
-					res.setStatus(HttpServletResponse.SC_NOT_FOUND);
-					logger.info("user not found for username " + body.get("username"));
-					output.put("message", "Couldn't find a user with that username.");
+				try {
+					// Prep user request
+					HashMap<String, Object> user = new HashMap<String, Object>();
+					user.put("username", username);
+
+					// Make user request
+					HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://user-manager:910/get"), user);
+
+					// Handle response
+					switch (response.statusCode()) {
+						case HttpServletResponse.SC_OK:
+							res.setStatus(HttpServletResponse.SC_OK);
+							logger.info("got notes for user " + username);
+
+							// Extract HashMap from JSON body
+							Gson gson = new Gson();
+							Type type = new TypeToken<HashMap<String, String>>() {
+							}.getType();
+							HashMap<String, Object> notes = gson.fromJson(response.body(), type);
+
+							output.put("notes", notes.get("notes"));
+							return output;
+
+						case HttpServletResponse.SC_NOT_FOUND:
+							res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+							logger.info("user not found for username " + body.get("username"));
+							output.put("message", "Couldn't find a user with that username.");
+							return output;
+
+						default:
+							throw new Exception("VulcanError: unexpected response from user-manager");
+					}
+				} catch (Exception e) {
+					res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					output.put("message", "There was an issue with the Server, please try again later.");
+
+					span.setTag(Tags.ERROR, true);
+					span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
+
+					logger.error("vulcan encountered error during user retrieval: " + e.getMessage(), e);
 					return output;
+				}
 
-				default:
-					throw new Exception("VulcanError: unexpected response from user-manager");
-			}
-		} catch (Exception e) {
-			res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			output.put("message", "There was an issue with the Server, please try again later.");
+			case "user":
+			case "none":
+				res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				output.put("message", "Your credentials are invalid.");
+				return output;
 
-			span.setTag(Tags.ERROR, true);
-			span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
-
-			logger.error("vulcan encountered error during user retrieval: " + e.getMessage(), e);
-			return output;
+			default:
+				res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				output.put("message", "There was an issue with the Server, please try again later.");
+				return output;
 		}
 	}
 
@@ -405,47 +421,63 @@ public class Users {
 		HashMap<String, Object> output = new HashMap<>();
 		Logger logger = LogManager.getLogger("vulcan");
 
-		// Validate the user input
-		if (!Helpers.validate(body)) {
-			res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			output.put("message", "There was an issue with your request.");
-			return output;
-		}
-
-		try {
-			// Prep user request
-			HashMap<String, Object> username = new HashMap<String, Object>();
-			username.put("username", body.get("username"));
-
-			// Make authorization request to authenticator service
-			HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://user-manager:910/delete"), username);
-
-			// Handle response
-			switch (response.statusCode()) {
-				case HttpServletResponse.SC_OK:
-					res.setStatus(HttpServletResponse.SC_OK);
-					logger.info("deleted user " + body.get("username"));
-					output.put("message", "Successfully deleted user.");
+		// Authorize
+		String permissions = Helpers.authorize(req);
+		switch (permissions) {
+			case "admin":
+				// Validate the user input
+				if (!Helpers.validate(body)) {
+					res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+					output.put("message", "There was an issue with your request.");
 					return output;
+				}
 
-				case HttpServletResponse.SC_NOT_FOUND:
-					res.setStatus(HttpServletResponse.SC_NOT_FOUND);
-					logger.info("user not found for username " + body.get("username"));
-					output.put("message", "Couldn't find a user with that username.");
+				try {
+					// Prep user request
+					HashMap<String, Object> username = new HashMap<String, Object>();
+					username.put("username", body.get("username"));
+
+					// Make authorization request to authenticator service
+					HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://user-manager:910/delete"), username);
+
+					// Handle response
+					switch (response.statusCode()) {
+						case HttpServletResponse.SC_OK:
+							res.setStatus(HttpServletResponse.SC_OK);
+							logger.info("deleted user " + body.get("username"));
+							output.put("message", "Successfully deleted user.");
+							return output;
+
+						case HttpServletResponse.SC_NOT_FOUND:
+							res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+							logger.info("user not found for username " + body.get("username"));
+							output.put("message", "Couldn't find a user with that username.");
+							return output;
+
+						default:
+							throw new Exception("VulcanError: unexpected response from user-manager");
+					}
+				} catch (Exception e) {
+					res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					output.put("message", "There was an issue with the Server, please try again later.");
+
+					span.setTag(Tags.ERROR, true);
+					span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
+
+					logger.error("vulcan encountered error during user deletion: " + e.getMessage(), e);
 					return output;
+				}
 
-				default:
-					throw new Exception("VulcanError: unexpected response from user-manager");
-			}
-		} catch (Exception e) {
-			res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			output.put("message", "There was an issue with the Server, please try again later.");
+			case "user":
+			case "none":
+				res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				output.put("message", "Your credentials are invalid.");
+				return output;
 
-			span.setTag(Tags.ERROR, true);
-			span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
-
-			logger.error("vulcan encountered error during user deletion: " + e.getMessage(), e);
-			return output;
+			default:
+				res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				output.put("message", "There was an issue with the Server, please try again later.");
+				return output;
 		}
 	}
 }
