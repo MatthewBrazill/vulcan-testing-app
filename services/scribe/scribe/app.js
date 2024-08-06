@@ -64,6 +64,10 @@ async function start() {
         await consumer.subscribe({ topics: ["user-notes", "god-notes"] })
         await consumer.run({
             eachMessage: async (payload) => {
+                logger.info({
+                    topic: payload.topic,
+                    message: `scribe received message for topic ${payload.topic}`
+                })
                 switch (payload.topic) {
                     case "user-notes":
                         handlers.userNotesHandler(payload)
