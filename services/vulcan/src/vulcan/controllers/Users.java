@@ -6,12 +6,17 @@ import java.net.http.HttpResponse;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 
 import io.opentracing.Span;
 import io.opentracing.log.Fields;
 import io.opentracing.tag.Tags;
 import io.opentracing.util.GlobalTracer;
 
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -27,6 +32,7 @@ import com.password4j.BcryptFunction;
 import com.password4j.Password;
 import com.password4j.types.Bcrypt;
 
+import datadog.trace.api.Trace;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import vulcan.Helpers;
@@ -189,6 +195,55 @@ public class Users {
 				return output;
 		}
 	}
+
+	@ResponseBody
+	@RequestMapping(value = "/user/{username}/note/create", method = RequestMethod.POST)
+	public HashMap<String, Object> userAddNoteAPI(HttpServletRequest req, HttpServletResponse res, @PathVariable String username) {
+		// Function variables
+		Span span = GlobalTracer.get().activeSpan();
+		HashMap<String, Object> body = Helpers.decodeBody(req);
+		HashMap<String, Object> output = new HashMap<>();
+		Logger logger = LogManager.getLogger("vulcan");
+
+		// Validate the user input
+		if (!Helpers.validate(body)) {
+			res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			output.put("message", "There was an issue with your request.");
+			return output;
+		}
+
+		try {
+			// Run kafka message prep, creation and send in new thread
+			new Thread(null, null, "Kafka-Producer") {
+				@Trace(operationName = "vulcan.thread", resourceName = "Users.sendKafkaMessage")
+				public void run() {
+					// Prep note object
+					HashMap<String, Object> note = new HashMap<String, Object>();
+					note.put("username", username);
+					note.put("note", body.get("note").toString().trim());
+
+					// Create kafka producer
+					Properties props = new Properties();
+					props.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "notes-queue:9092");
+					props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+					props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+					KafkaProducer<String, String> kafka = new KafkaProducer<>(props);
+
+					// Create kafka message
+					Gson gson = new Gson();
+					ProducerRecord<String, String> message = new ProducerRecord<String, String>("user-notes", gson.toJson(note));
+
+					// Send, flush and close kafka
+					kafka.send(message);
+					kafka.flush();
+					kafka.close();
+				}
+			}.start();
+
+			// Return accepted status
+			res.setStatus(HttpServletResponse.SC_ACCEPTED);
+			output.put("message", "Accepted note request.");
+			return output;
 		} catch (Exception e) {
 			res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			output.put("message", "There was an issue with the Server, please try again later.");
