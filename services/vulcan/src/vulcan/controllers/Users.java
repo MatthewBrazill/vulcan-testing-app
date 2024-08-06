@@ -215,7 +215,7 @@ public class Users {
 		try {
 			// Run kafka message prep, creation and send in new thread
 			new Thread(null, null, "Kafka-Producer") {
-				@Trace(operationName = "vulcan.thread", resourceName = "Users.sendKafkaMessage")
+				@Trace(operationName = "vulcan.kafka", resourceName = "Users.sendKafkaMessage")
 				public void run() {
 					// Prep note object
 					HashMap<String, Object> note = new HashMap<String, Object>();
