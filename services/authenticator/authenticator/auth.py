@@ -26,7 +26,7 @@ async def authenticate(request: Request) -> JSONResponse:
         database = await userDatabase()
         user = await database.fetch("SELECT pwhash FROM users WHERE username = $1", body["username"])
         if len(user) == 1:
-            pwBytes = (os.environ["VLCN_PASSWORD_PEPPER"] + body["password"]).encode("utf-8")
+            pwBytes = (os.environ["PW_PEPPER"] + body["password"]).encode("utf-8")
             hashBytes = user[0].get("pwhash").encode("utf-8")
             if bcrypt.checkpw(password=pwBytes, hashed_password=hashBytes):
                 logger.debug("authenticated user '" + body["username"] + "'", username=body["username"])

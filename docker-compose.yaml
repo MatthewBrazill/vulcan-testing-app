@@ -33,7 +33,7 @@ services:
       - DD_TRACE_CLIENT_IP_ENABLED=true
       - CERT_FOLDER=/vulcan/certificate
       - VLCN_SESSION_KEY=$SESSION_KEY
-      - VLCN_PASSWORD_PEPPER=$PASSWORD_PEPPER
+      - PW_PEPPER=$PASSWORD_PEPPER
     working_dir: /vulcan
     volumes:
       - ./services/vulcan:/vulcan
@@ -201,7 +201,7 @@ services:
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
       - DD_TRACE_CLIENT_IP_ENABLED=true
       - CERT_FOLDER=/authenticator/certificate
-      - VLCN_PASSWORD_PEPPER=$PASSWORD_PEPPER
+      - PW_PEPPER=$PASSWORD_PEPPER
     working_dir: /authenticator
     volumes:
       - ./services/authenticator:/authenticator
