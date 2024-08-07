@@ -20,7 +20,7 @@ logger = structlog.get_logger()
 async def authenticate(request: Request) -> JSONResponse:
     try:
         body = await request.json()
-        if await validate(body, [["username", r"^[a-zA-Z]{1,32}$"], ["password", r"^.{1,64}$"]]) == False:
+        if await validate(body, [["username", r"^[a-zA-Z0-9-]{1,32}$"], ["password", r"^.{1,64}$"]]) == False:
             return JSONResponse(content={"authenticated": False}, status_code=400)
 
         database = await userDatabase()
@@ -51,7 +51,7 @@ async def authorize(request: Request) -> JSONResponse:
         database = await userDatabase()
         if "apiKey" in body.keys():
             span.set_tag("authorized_using", "apikey")
-            if await validate(body, [["apiKey", "^[a-f0-9]{32}$"]]) == False:
+            if await validate(body, [["apiKey", r"^[a-f0-9]{32}$"]]) == False:
                 return JSONResponse(content={"permissions": "none"}, status_code=400)
             
             logger.debug("authorizing using api key")
@@ -62,7 +62,7 @@ async def authorize(request: Request) -> JSONResponse:
 
         if "username" in body.keys():
             span.set_tag("authorized_using", "username")
-            if await validate(body, [["username", "^[a-zA-Z]{1,32}$"]]) == False:
+            if await validate(body, [["username", r"^[a-zA-Z0-9-]{1,32}$"]]) == False:
                 return JSONResponse(content={"permissions": "none"}, status_code=400)
             
             logger.debug("authorizing using username")
