@@ -22,6 +22,11 @@
                 <div class="field">
                     <input id="sign-up-password" class="ui input" type="password" autocomplete="password" placeholder="Password">
                 </div>
+                
+                <div id="sign-up-wait" class="ui hidden message">
+                    <div id="sign-up-wait-head" class="header">Signing Up...</div>
+                    <div id="sign-up-wait-loader" class="ui inline active loader" style="margin-top: 16px;"></div>
+                </div>
 
                 <div class="ui error message">
                     <div id="sign-up-error-head" class="header">Sign Up Failed!</div>
@@ -30,7 +35,8 @@
                 
                 <div class="ui success message">
                     <div id="sign-up-success-head" class="header">Sign Up Succeeded!</div>
-                    <p id="sign-up-success-message">You have successfully signed up! Redirecting you to the login page.</p>
+                    <p id="sign-up-success-message">You have successfully signed up! Logging you in...</p>
+                    <div id="sign-up-success-loader" class="ui inline active loader"></div>
                 </div>
 
                 <button id="sign-up-submit" class="ui fluid positive button">Sign Up</button>

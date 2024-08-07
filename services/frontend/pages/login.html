@@ -23,6 +23,11 @@
                     <input id="login-password" class="ui input" type="password" autocomplete="current-password" placeholder="Password">
                 </div>
 
+                <div id="login-wait" class="ui hidden message">
+                    <div id="login-wait-head" class="header" style="margin-bottom: 16px;">Logging In...</div>
+                    <div id="login-wait-message" class="ui inline active loader"></div>
+                </div>
+
                 <div class="ui error message">
                     <div id="login-error-head" class="header">Login Failed!</div>
                     <p id="login-error-message">There was an error.</p>
