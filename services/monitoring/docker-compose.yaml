@@ -4,6 +4,7 @@ services:
   datadog-agent:
     image: gcr.io/datadoghq/agent:latest
     container_name: datadog-agent
+    cgroup: host
     ports:
       - 8126:8126
       - 8125:8125
