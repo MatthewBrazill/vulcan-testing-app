@@ -6,6 +6,10 @@ repos:
   - name: Source Code
     provider: GitHub
     url: https://github.com/MatthewBrazill/vulcan-testing-app
+docs:
+  - name: Vulcan Docs
+    provider: github
+    url: https://github.com/MatthewBrazill/vulcan-testing-app/blob/main/README.md
 contacts:
   - type: email
     contact: matthew.brazill@datadoghq.com
@@ -19,6 +23,10 @@ repos:
   - name: Source Code
     provider: GitHub
     url: https://github.com/MatthewBrazill/vulcan-testing-app
+docs:
+  - name: Vulcan Docs
+    provider: github
+    url: https://github.com/MatthewBrazill/vulcan-testing-app/blob/main/README.md
 contacts:
   - type: email
     contact: matthew.brazill@datadoghq.com
@@ -32,6 +40,10 @@ repos:
   - name: Source Code
     provider: GitHub
     url: https://github.com/MatthewBrazill/vulcan-testing-app
+docs:
+  - name: Vulcan Docs
+    provider: github
+    url: https://github.com/MatthewBrazill/vulcan-testing-app/blob/main/README.md
 contacts:
   - type: email
     contact: matthew.brazill@datadoghq.com
@@ -45,6 +57,10 @@ repos:
   - name: Source Code
     provider: GitHub
     url: https://github.com/MatthewBrazill/vulcan-testing-app
+docs:
+  - name: Vulcan Docs
+    provider: github
+    url: https://github.com/MatthewBrazill/vulcan-testing-app/blob/main/README.md
 contacts:
   - type: email
     contact: matthew.brazill@datadoghq.com
@@ -75,6 +91,10 @@ repos:
   - name: Source Code
     provider: GitHub
     url: https://github.com/MatthewBrazill/vulcan-testing-app
+docs:
+  - name: Vulcan Docs
+    provider: github
+    url: https://github.com/MatthewBrazill/vulcan-testing-app/blob/main/README.md
 contacts:
   - type: email
     contact: matthew.brazill@datadoghq.com
