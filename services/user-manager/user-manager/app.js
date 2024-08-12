@@ -10,9 +10,7 @@ tracer.init({
 })
 tracer.use("dns", { enabled: false })
 tracer.use("net", { enabled: false })
-tracer.use("redis", { service: "session-store" })
 tracer.use("pg", { dbmPropagationMode: 'full', service: "user-database" })
-tracer.use("mongodb-core", { service: "god-database" })
 
 const express = require("express")
 const https = require("https")
