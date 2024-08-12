@@ -39,8 +39,8 @@ case $DD_SERVICE in
 
     "god-manager")
         go mod download && go mod verify
-        go build -o /usr/local/bin/god-manager -tags appsec ./god-manager/...
-        god-manager
+        go build -o ./build/god-manager -tags appsec ./god-manager/...
+        ./build/god-manager
         ;;
 
     "user-manager")
