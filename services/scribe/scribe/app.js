@@ -10,7 +10,7 @@ tracer.init({
 })
 tracer.use("kafkajs", { service: "notes-queue" })
 tracer.use("pg", { dbmPropagationMode: 'full', service: "user-database" })
-tracer.use("mongodb-core", { service: "god-database" })
+tracer.use("mongodb-core", { service: "notes-database" })
 
 const fs = require("fs")
 const kafka = require("kafkajs")
