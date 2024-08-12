@@ -353,6 +353,26 @@ services:
           memory: 1G
 
 
+  # Notes Database
+  notes-database:
+    image: mongo:latest
+    container_name: notes-database
+    networks:
+      - vulcan_app
+      - datadog_bridge
+    volumes:
+      - ./services/databases/notes-database/data:/data/db
+    labels:
+      com.datadoghq.ad.checks: '{"mongo":{"instances":[{"hosts":["notes-database:27017"],"username":"datadog","password":"5aae8c35f7e16245","database":"notes"}]}}'
+      com.datadoghq.ad.logs: '[{"source":"mongodb","service":"notes-database"}]'
+      com.datadoghq.ad.tags: '["env:docker","service:notes-database"]'
+    deploy:
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: 1G
+
+
   # User Database
   user-database:
     image: postgres:15
