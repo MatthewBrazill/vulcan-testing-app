@@ -53,7 +53,7 @@ services:
       resources:
         limits:
           cpus: "1"
-          memory: 512M
+          memory: 1G
 
 
   # God Manager
@@ -92,8 +92,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "1"
-          memory: 512M
+          cpus: "0.8"
+          memory: 1G
 
 
   # User Manager
@@ -133,8 +133,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "1"
-          memory: 512M
+          cpus: "0.4"
+          memory: 1G
 
 
   # Scribe
@@ -172,8 +172,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "1"
-          memory: 512M
+          cpus: "0.4"
+          memory: 1G
 
 
 
@@ -221,7 +221,7 @@ services:
       resources:
         limits:
           cpus: "1"
-          memory: 512M
+          memory: 1G
 
 
   # Application Proxy
@@ -258,8 +258,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "1"
-          memory: 512M
+          cpus: "0.4"
+          memory: 1G
 
 
   # Kafka Queue
@@ -284,8 +284,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "1"
-          memory: 512M
+          cpus: "0.4"
+          memory: 1G
 
 
 
@@ -329,8 +329,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "1"
-          memory: 512M
+          cpus: "0.4"
+          memory: 1G
 
 
   # God Database
@@ -349,8 +349,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.5"
-          memory: 512M
+          cpus: "0.2"
+          memory: 1G
 
 
   # User Database
@@ -371,8 +371,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.5"
-          memory: 512M
+          cpus: "0.2"
+          memory: 1G
 
 
   # Session Store
@@ -391,5 +391,5 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.5"
-          memory: 512M
+          cpus: "0.2"
+          memory: 1G
