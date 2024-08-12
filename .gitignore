@@ -8,6 +8,7 @@ worker-config-*
 # Packages
 node_modules
 target
+build
 __pycache__
 
 # Log files/folder
