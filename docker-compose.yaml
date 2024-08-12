@@ -30,6 +30,7 @@ services:
       # - DD_AGENT_HOST=datadog-agent
       # - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
+      - DD_DOGSTATSD_URL=unix:///var/run/datadog/dsd.socket
       - DD_TRACE_CLIENT_IP_ENABLED=true
       - CERT_FOLDER=/vulcan/certificate
       - VLCN_SESSION_KEY=$SESSION_KEY
@@ -75,6 +76,7 @@ services:
       # - DD_AGENT_HOST=datadog-agent
       # - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
+      - DD_DOGSTATSD_URL=unix:///var/run/datadog/dsd.socket
       - DD_PROFILING_EXECUTION_TRACE_ENABLED=true
       - CERT_FOLDER=/god-manager/certificate
     working_dir: /god-manager
@@ -114,6 +116,7 @@ services:
       # - DD_AGENT_HOST=datadog-agent
       # - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
+      - DD_DOGSTATSD_URL=unix:///var/run/datadog/dsd.socket
       - DD_TRACE_CLIENT_IP_ENABLED=true
       - DD_TRACE_STARTUP_LOGS=true
       - CERT_FOLDER=/user-manager/certificate
@@ -152,6 +155,7 @@ services:
       # - DD_AGENT_HOST=datadog-agent
       # - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
+      - DD_DOGSTATSD_URL=unix:///var/run/datadog/dsd.socket
       - DD_TRACE_CLIENT_IP_ENABLED=true
       - DD_TRACE_STARTUP_LOGS=true
       - CERT_FOLDER=/scribe/certificate
@@ -199,6 +203,7 @@ services:
       # - DD_AGENT_HOST=datadog-agent
       # - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
+      - DD_DOGSTATSD_URL=unix:///var/run/datadog/dsd.socket
       - DD_TRACE_CLIENT_IP_ENABLED=true
       - CERT_FOLDER=/authenticator/certificate
       - PW_PEPPER=$PASSWORD_PEPPER
@@ -237,6 +242,7 @@ services:
       # - DD_AGENT_HOST=datadog-agent
       # - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
+      - DD_DOGSTATSD_URL=unix:///var/run/datadog/dsd.socket
       - DD_TRACE_CLIENT_IP_ENABLED=true
       - CERT_FOLDER=/certificate
     volumes:
@@ -309,6 +315,7 @@ services:
       # - DD_AGENT_HOST=datadog-agent
       # - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
+      - DD_DOGSTATSD_URL=unix:///var/run/datadog/dsd.socket
       - DD_TRACE_CLIENT_IP_ENABLED=true
     volumes:
       - ./services/database-proxy:/etc/nginx

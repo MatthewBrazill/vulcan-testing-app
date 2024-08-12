@@ -21,7 +21,8 @@ case $DD_SERVICE in
             -Djavax.net.ssl.trustStore=/cacerts/keystore.jks \
             -Djavax.net.ssl.trustStorePassword=changeit \
             -Dlog4j2.configurationFile=/vulcan/src/log4j2.xml \
-            -Dvulcan.session.key=2PbmuNW_uRkaf6Kux!ByK!yT!UmMZZ9B \
+            -Dvulcan.session.key=$VLCN_SESSION_KEY \
+            -Ddd.trace.agent.url=$DD_TRACE_AGENT_URL \
             -Ddd.env=$DD_ENV \
             -Ddd.service=$DD_SERVICE \
             -Ddd.version=$DD_VERSION \

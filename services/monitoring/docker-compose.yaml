@@ -15,19 +15,16 @@ services:
       - DD_ENV=docker
       - DD_CONTAINER_EXCLUDE=name:minikube
       - DD_HOSTNAME=pupmac
-#      - DD_APM_ENABLED=true
+      - DD_DOGSTATSD_SOCKET=/var/run/datadog/dsd.socket
       - DD_APM_RECEIVER_SOCKET=/var/run/datadog/apm.socket
       - DD_APM_NON_LOCAL_TRAFFIC=true
       - DD_APM_IGNORE_RESOURCES="^ismaster admin\.\$cmd$","^hello admin\.\$cmd$","^REDIGO\.CONN\.FLUSH$"
-#      - DD_SYSTEM_PROBE_SERVICE_MONITORING_ENABLED=true
-#      - DD_SERVICE_MONITORING_CONFIG_ENABLE_HTTP2_MONITORING=true
-#      - DD_SYSTEM_PROBE_NETWORK_ENABLED=true
-      - HOST_ROOT='/host/root'
       - DD_LOGS_ENABLED=true
       - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=false
       - DD_PROCESS_AGENT_ENABLED=true
       - DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
       - DD_INVENTORIES_CONFIGURATION_ENABLED=true
+      - HOST_ROOT='/host/root'
     volumes:
       - /var/run/datadog:/var/run/datadog
       - /var/run/docker.sock:/var/run/docker.sock:ro
