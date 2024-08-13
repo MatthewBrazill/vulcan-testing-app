@@ -3,8 +3,6 @@ import re
 import asyncpg
 from ddtrace import tracer
 
-# Variables
-database = None
 
 @tracer.wrap(name="authenticator.helper", resource="validate")
 async def validate(params, tests):
@@ -17,9 +15,5 @@ async def validate(params, tests):
 
 @tracer.wrap(name="authenticator.database", resource="userDatabase")
 async def userDatabase():
-    global database
-    if database == None:
-        database = await asyncpg.connect(host="database-proxy", port="5432", user="vulcan", password="yKCstvg4hrB9pmDP", database="vulcan_users")
-    elif database.is_closed():
-        database = await asyncpg.connect(host="database-proxy", port="5432", user="vulcan", password="yKCstvg4hrB9pmDP", database="vulcan_users")
+    database = await asyncpg.connect(host="database-proxy", port="5432", user="vulcan", password="yKCstvg4hrB9pmDP", database="vulcan_users")
     return database

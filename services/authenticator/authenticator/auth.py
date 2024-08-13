@@ -32,10 +32,13 @@ async def authenticate(request: Request) -> JSONResponse:
                 logger.debug("authenticated user '" + body["username"] + "'", username=body["username"])
                 return JSONResponse(content={"authenticated": True}, status_code=200)
 
+        database.close()
         logger.warn("authentication failed for '" + body["username"] + "'", username=body["username"])
         return JSONResponse(content={"authenticated": False}, status_code=401)
     
     except Exception as err:
+        if database != None:
+            database.close()
         logger.error("authenticator encountered an error trying to authenticate '" + body["username"] + "'", username=body["username"], error=err)
         span = tracer.current_span()
         span.set_tag("error.message", err)
@@ -71,9 +74,12 @@ async def authorize(request: Request) -> JSONResponse:
                 return JSONResponse(content={"permissions": user[0].get("permissions")}, status_code=200)
             logger.warn("authorization failed for '" + body["username"] + "'", username=body["username"])
 
+        database.close()
         return JSONResponse(content={"permissions": "none"}, status_code=403)
     
     except Exception as err:
+        if database != None:
+            database.close()
         span.set_tag("error.message", err)
         span.set_tag("error.stack", traceback.format_exc())
         if "apiKey" in body.keys():
