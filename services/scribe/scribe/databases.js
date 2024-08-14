@@ -24,7 +24,7 @@ const databases = {
     },
 
     async notesDatabase() {
-        const mngdb = new mongodb.MongoClient("mongodb://database-proxy:27018/?connect=direct")
+        const mngdb = new mongodb.MongoClient("mongodb://database-proxy:27018/")
         const notesDb = mngdb.db("notes")
 
         return notesDb
