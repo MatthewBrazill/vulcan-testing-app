@@ -6,34 +6,40 @@ const databases = require("./databases")
 
 const handlers = {
     async userNotesHandler(payload) {
+        // Extract JSON message to object
+        var message = JSON.parse(payload.message.value.toString())
+
         // Update/create user notes
         var userNotes = (await databases.notesDatabase()).collection("userNotes")
         var result = await userNotes.updateOne({
-            username: payload.username
+            username: message.username
         }, {
             $push: {
-                notes: payload.note
+                notes: message.note
             }
         }, {
             upsert: true
         })
         
+        // Handle mongo result
         if (result.acknowledged) {
             // Update user as having notes once acknowledged
             var userDb = await databases.userDatabase()
-            userDb.query("SELECT hasNotes FROM users WHERE username = $1", payload.username).then((result) => {
-                if (!result.rows[0].hasNotes) {
-                    logger.debug(`updating user '${payload.username}' as having notes`)
-                    userDb.query("UPDATE hasNotes SET hasNotes = 'true' WHERE username = $1", payload.username)
+            userDb.query("SELECT hasnotes FROM users WHERE username = $1", [ message.username ]).then((result) => {
+                if (!result.rows[0].hasnotes) {
+                    logger.debug(`updating user '${message.username}' as having notes`)
+                    userDb.query("UPDATE users SET hasnotes = 'true' WHERE username = $1", [ message.username ])
                 } else {
-                    logger.debug(`user '${payload.username}' already has notes`)
+                    logger.debug(`user '${message.username}' already has notes`)
                 }
-            })
+            }).catch((err) => { throw err })
 
             // Log note creation
-            if (result.modifiedCount > 0) logger.info(`updated notes for user '${payload.username}'`)
-            if (result.upsertedCount > 0) logger.info(`created notes for user '${payload.username}'`)
-        } else logger.error("notes-database failed to acknowledge or didn't perform any notes update", payload)
+            if (result.modifiedCount > 0) logger.info(`updated notes for user '${message.username}'`)
+            if (result.upsertedCount > 0) logger.info(`created notes for user '${message.username}'`)
+        } else {
+            logger.error("notes-database failed to acknowledge or didn't perform any notes update", message)
+        }
     },
 
     async godNotesHandler(payload) {
