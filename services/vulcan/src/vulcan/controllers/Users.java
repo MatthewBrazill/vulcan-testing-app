@@ -300,7 +300,6 @@ public class Users {
 
 							// Extract JSON body
 							Gson gson = new Gson();
-							System.out.println(response.body());
 							JsonObject notesJson = gson.fromJson(response.body(), JsonElement.class).getAsJsonObject();
 
 							ArrayList<String> notesArray = new ArrayList<>();
