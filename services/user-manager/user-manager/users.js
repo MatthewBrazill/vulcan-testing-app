@@ -79,7 +79,7 @@ const users = {
         try {
             logger.debug("getting all users")
             const db = await databases.userDatabase()
-            var result = await db.query("SELECT username, permissions FROM users")
+            var result = await db.query("SELECT username FROM users")
             db.end()
 
             result = result.rows
