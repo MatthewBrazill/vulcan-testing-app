@@ -8,14 +8,19 @@ tracer.init({
     profiling: true,
     appsec: true
 })
+tracer.use("dns", { enabled: false })
+tracer.use("net", { enabled: false })
 tracer.use("kafkajs", { service: "notes-queue" })
 tracer.use("pg", { dbmPropagationMode: 'full', service: "user-database" })
 tracer.use("mongodb-core", { service: "notes-database" })
 
+const express = require("express")
+const https = require("https")
 const fs = require("fs")
 const kafka = require("kafkajs")
 const logger = require("./logger.js")
 const handlers = require("./handlers.js")
+const notes = require("./notes.js")
 
 async function start() {
     // Create log file if it doesn't exist
@@ -43,6 +48,27 @@ async function start() {
             }
         }
     })
+
+    // Create express app
+    const app = express()
+
+    // Set up middleware logging
+    app.use(function requestLogging(req, res, next) {
+        next()
+        logger.info({
+            path: req.path,
+            method: req.method,
+            status: res.statusCode,
+            message: `scribe accessed ${req.path}`
+        })
+    })
+
+    // Remaining WebApp settings
+    app.use(express.json())
+    app.use(express.urlencoded({ extended: true }))
+
+    // Users
+    app.route("/user/notes/get").post(notes.get)
 
     // Create topics if they don't already exist
     const admin = client.admin()
@@ -108,6 +134,13 @@ async function start() {
         } catch (err) {
             logger.error(`kafka couldn't recover from disconnection because of '${err.name}'`, err)
         }
+    })
+
+    https.createServer({
+        key: fs.readFileSync(`${process.env.CERT_FOLDER}/key.pem`),
+        cert: fs.readFileSync(`${process.env.CERT_FOLDER}/cert.pem`)
+    }, app).listen(920, () => {
+        logger.info("starting scribe")
     })
 }
 
