@@ -7,6 +7,7 @@ CREATE DATABASE vulcan_users;
 CREATE TABLE users (
     username varchar(32),
     pwhash varchar(64),
+    hasnotes boolean not null default 0,
     permissions varchar(32),
     PRIMARY KEY (username)
 );
@@ -17,8 +18,8 @@ CREATE TABLE apikeys (
     PRIMARY KEY (apikey)
 );
 
-INSERT INTO users VALUES ('matthew', '$2b$14$zEc656bg.Dng7DLnL8Z4X.0TAknyXtTlFSW0xtHhAEOZ3DZbeVe9i', 'admin'); -- Password is testingpassword
-INSERT INTO users VALUES ('synthetics', '$2b$14$LVrBrvXH2EJGsp8ExyYDHeFBG/AEXXQjfq1NU5WEkcekt/ZNVn8Sa', 'user'); -- Password is 3J^eZ%u[D+
+INSERT INTO users (username, pwhash, permissions) VALUES ('matthew', '$2b$14$iGWLWUUk22JJISIQcmxHI.stMRCGzbSNdo64B3m/Socz3F9ZeGe5i', 'admin'); -- Password is testingpassword
+INSERT INTO users (username, pwhash, permissions) VALUES ('synthetics', '$2b$14$CFs4E2M8hALhNG6IRaQI0e4isN/.cUlWbbUxGOekwpsHVS5TaqEeW', 'admin'); -- Password is 3J^eZ%u[D+
 
 INSERT INTO apikeys VALUES ('f9fbde272f294dd3a2039e1f78f5262c', 'admin');
 
