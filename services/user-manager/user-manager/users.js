@@ -1,8 +1,8 @@
 'use strict'
 
 // Imports
-const helpers = require("./helpers.js")
 const tracer = require("dd-trace").tracer
+const https = require("https")
 const logger = require("./logger.js")
 const databases = require("./databases.js")
 
@@ -36,7 +36,7 @@ const users = {
         try {
             logger.debug("getting user: " + req.body.username)
             const db = await databases.userDatabase()
-            var result = await db.query("SELECT username, permissions FROM users WHERE username = $1", [req.body.username])
+            var result = await db.query("SELECT username, hasnotes, permissions FROM users WHERE username = $1", [req.body.username])
             db.end()
 
             result = result.rows[0]
@@ -44,9 +44,24 @@ const users = {
             if (result === undefined) {
                 logger.info("user '" + req.body.username + "' not found")
                 res.sendStatus(404)
-            } else {
-                res.status(200).json(result)
+                return
             }
+            
+            if (result.hasnotes) {
+                var notes = await fetch("https://scribe:920/user/notes/get", {
+                    method: "POST",
+                    body: JSON.stringify({ username: req.body.username }),
+                    headers: { "Content-Type": "application/json" },
+                    agent: new https.Agent({
+                        requestCert: true,
+                        rejectUnauthorized: false
+                    })
+                })
+                notes = await notes.json()
+                result.notes = notes.notes
+            }
+
+            res.status(200).json(result)
         } catch (err) {
             const span = tracer.scope().active()
             span.setTag('error', err)
