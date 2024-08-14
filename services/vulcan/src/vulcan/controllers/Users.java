@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Properties;
 
 import io.opentracing.Span;
+import io.opentracing.Tracer;
 import io.opentracing.log.Fields;
 import io.opentracing.tag.Tags;
 import io.opentracing.util.GlobalTracer;
@@ -35,7 +36,7 @@ import com.password4j.BcryptFunction;
 import com.password4j.Password;
 import com.password4j.types.Bcrypt;
 
-import datadog.trace.api.Trace;
+import datadog.trace.api.DDTags;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import vulcan.Helpers;
@@ -219,8 +220,14 @@ public class Users {
 				try {
 					// Run kafka message prep, creation and send in new thread
 					new Thread(null, null, "Kafka-Producer") {
-						@Trace(operationName = "vulcan.kafka", resourceName = "Users.sendKafkaMessage")
 						public void run() {
+							Tracer tracer = GlobalTracer.get();
+							Span kafkaSpan = tracer.buildSpan("vulcan.kafka")
+								.withTag(DDTags.RESOURCE_NAME, "Users.sendKafkaMessage")
+								.asChildOf(span)
+								.start();
+							tracer.activateSpan(kafkaSpan);
+
 							// Prep note object
 							HashMap<String, Object> note = new HashMap<String, Object>();
 							note.put("username", username);
@@ -241,6 +248,8 @@ public class Users {
 							kafka.send(message);
 							kafka.flush();
 							kafka.close();
+
+							kafkaSpan.finish();
 						}
 					}.start();
 
