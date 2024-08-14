@@ -76,15 +76,13 @@ public class Users {
 							res.setStatus(HttpServletResponse.SC_OK);
 							logger.info("got user " + username);
 
-							// Extract HashMap from JSON body
+							// Extract JSON body
 							Gson gson = new Gson();
-							Type type = new TypeToken<HashMap<String, String>>() {
-							}.getType();
-							HashMap<String, Object> user = gson.fromJson(response.body(), type);
+							JsonObject user = gson.fromJson(response.body(), JsonElement.class).getAsJsonObject();
 
 							model.addAttribute("user", true);
-							model.addAttribute("username", user.get("username"));
-							model.addAttribute("permissions", user.get("permissions"));
+							model.addAttribute("username", user.get("username").getAsString());
+							model.addAttribute("permissions", user.get("permissions").getAsString());
 							return "user";
 
 						case HttpServletResponse.SC_NOT_FOUND:
