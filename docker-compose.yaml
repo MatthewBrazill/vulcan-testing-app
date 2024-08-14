@@ -141,6 +141,8 @@ services:
   scribe:
     image: node:18
     container_name: scribe
+    ports:
+      - 920:920
     networks:
       - vulcan_app
       - datadog_bridge
@@ -278,7 +280,6 @@ services:
       - ./services/message-queues/kafka/kafka.properties:/etc/kafka/docker/server.properties
       - ./services/message-queues/kafka/certificate:/certificate
     labels:
-      com.datadoghq.ad.checks: '{"kafka":{"":{},"instances":[{"nginx_status_url":"http://%%host%%:81/nginx_status/"}]}}'
       com.datadoghq.ad.logs: '[{"source":"kafka","service":"notes-queue","log_processing_rules":[{"type":"multi_line","name":"log_date_start","pattern":"\\[\\d{4}-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01]) (0?[1-9]|1[012]):([012345]?[1-9]):([012345]?[1-9]),\\d{3}\\]"}]}]'
       com.datadoghq.ad.tags: '["env:docker","service:notes-queue"]'
     deploy:
