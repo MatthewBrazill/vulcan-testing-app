@@ -3,6 +3,7 @@ package vulcan.controllers;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.password4j.BcryptFunction;
 import com.password4j.Password;
@@ -297,13 +300,15 @@ public class Users {
 							res.setStatus(HttpServletResponse.SC_OK);
 							logger.info("got notes for user " + username);
 
-							// Extract HashMap from JSON body
+							// Extract JSON body
 							Gson gson = new Gson();
-							Type type = new TypeToken<HashMap<String, String>>() {
-							}.getType();
-							HashMap<String, Object> notes = gson.fromJson(response.body(), type);
+							System.out.println(response.body());
+							JsonObject notesJson = gson.fromJson(response.body(), JsonElement.class).getAsJsonObject();
 
-							output.put("notes", notes.get("notes"));
+							ArrayList<String> notesArray = new ArrayList<>();
+							notesJson.getAsJsonArray("notes").asList().forEach(note -> notesArray.add(note.getAsString()));
+
+							output.put("notes", notesArray);
 							return output;
 
 						case HttpServletResponse.SC_NOT_FOUND:
