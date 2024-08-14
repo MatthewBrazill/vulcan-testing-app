@@ -22,9 +22,14 @@ openssl req -x509 -newkey rsa:4096 -keyout services/vulcan/certificate/key.pem -
     -subj "/C=NL/CN=vulcan" \
     -addext "subjectAltName = DNS:localhost, DNS:vulcan"
 
-# notes-queue
+# Notes-Queue
 openssl req -x509 -newkey rsa:4096 -keyout services/message-queues/kafka/certificate/key.pem -out services/message-queues/kafka/certificate/cert.pem -sha256 -days 365 -nodes \
     -subj "/C=NL/CN=notes-queue" \
     -addext "subjectAltName = DNS:localhost, DNS:notes-queue"
+
+# Scribe
+openssl req -x509 -newkey rsa:4096 -keyout services/scribe/certificate/key.pem -out services/scribe/certificate/cert.pem -sha256 -days 365 -nodes \
+    -subj "/C=NL/CN=scribe" \
+    -addext "subjectAltName = DNS:localhost, DNS:scribe"
 
 echo "Generated new certificates for services."
