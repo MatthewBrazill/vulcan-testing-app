@@ -46,5 +46,20 @@ $(document).ready(() => {
             $("#user-list-loader").attr("class", "ui hidden text loader")
             $("#user-list-error").attr('class', 'ui error message')
         }
-    }).then()
+    })
+
+    $.ajax({
+        url: `${window.location.pathname}/notes`,
+        method: "GET",
+        beforeSend: () => { },
+        success: (res) => {
+            // Update content
+            if (res.notes.length > 0) {
+                $("#no-user-notes").hide()
+                for (var note of res.notes) {
+                    $("#selected-user-notes").append(`<li>${note}</li>`)
+                }
+            }
+        }
+    })
 })

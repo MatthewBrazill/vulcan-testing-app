@@ -2,7 +2,6 @@
 #selected-user {
     width: 300px;
     margin: auto;
-    text-align: justify;
 }
 
 #user-box {
@@ -25,6 +24,10 @@
     border: 1px solid #000000;
     border-radius: 5px;
     background-color: lightgray;
+}
+
+#selected-user-notes {
+    padding-left: 25px;
 }
 
 p {
