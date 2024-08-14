@@ -272,11 +272,10 @@ public class Users {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/user/{username}/notes", method = RequestMethod.POST)
+	@RequestMapping(value = "/user/{username}/notes", method = RequestMethod.GET)
 	public HashMap<String, Object> userGetNotesAPI(HttpServletRequest req, HttpServletResponse res, @PathVariable String username) {
 		// Function variables
 		Span span = GlobalTracer.get().activeSpan();
-		HashMap<String, Object> body = Helpers.decodeBody(req);
 		HashMap<String, Object> output = new HashMap<>();
 		Logger logger = LogManager.getLogger("vulcan");
 
@@ -284,13 +283,6 @@ public class Users {
 		String permissions = Helpers.authorize(req);
 		switch (permissions) {
 			case "admin":
-				// Validate the user input
-				if (!Helpers.validate(body)) {
-					res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-					output.put("message", "There was an issue with your request.");
-					return output;
-				}
-
 				try {
 					// Prep user request
 					HashMap<String, Object> user = new HashMap<String, Object>();
@@ -316,7 +308,7 @@ public class Users {
 
 						case HttpServletResponse.SC_NOT_FOUND:
 							res.setStatus(HttpServletResponse.SC_NOT_FOUND);
-							logger.info("user not found for username " + body.get("username"));
+							logger.info("user not found for username " + username);
 							output.put("message", "Couldn't find a user with that username.");
 							return output;
 
