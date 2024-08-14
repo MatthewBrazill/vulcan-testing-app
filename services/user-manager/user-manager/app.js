@@ -49,6 +49,9 @@ async function start() {
     app.route("/all").get(users.getAllUsers)
     app.route("/delete").post(users.deleteUser)
 
+    // Allow insecure connections
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
+
     https.createServer({
         key: fs.readFileSync(`${process.env.CERT_FOLDER}/key.pem`),
         cert: fs.readFileSync(`${process.env.CERT_FOLDER}/cert.pem`)
