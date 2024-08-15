@@ -16,7 +16,7 @@ const handlers = {
             var result = await userNotes.updateOne({
                 username: message.username
             }, {
-                $push: {
+                $addToSet: {
                     notes: message.note
                 }
             }, {
