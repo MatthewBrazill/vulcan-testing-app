@@ -129,7 +129,7 @@ async function start() {
         }
     })
 
-    consumer.on(consumer.events.DISCONNECT, async (error, groupId) => {
+    consumer.on(consumer.events.DISCONNECT, async () => {
         try {
             logger.debug(`kafka consumer disconnected, trying to restart`)
             connectToKafka()
