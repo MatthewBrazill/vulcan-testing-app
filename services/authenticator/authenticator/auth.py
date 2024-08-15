@@ -13,11 +13,12 @@ import os
 
 # Configs
 app = FastAPI()
-logger = structlog.get_logger()
 
 # Routes
 @app.post("/authenticate")
 async def authenticate(request: Request) -> JSONResponse:
+    span = tracer.current_span()
+    logger = structlog.get_logger("auth")
     try:
         body = await request.json()
         if await validate(body, [["username", r"^[a-zA-Z0-9-]{1,32}$"], ["password", r"^.{1,64}$"]]) == False:
@@ -29,7 +30,7 @@ async def authenticate(request: Request) -> JSONResponse:
             pwBytes = (os.environ["PW_PEPPER"] + body["password"]).encode("utf-8")
             hashBytes = user[0].get("pwhash").encode("utf-8")
             if bcrypt.checkpw(password=pwBytes, hashed_password=hashBytes):
-                logger.debug("authenticated user '" + body["username"] + "'", username=body["username"])
+                logger.info("authenticated user '" + body["username"] + "'", username=body["username"])
                 return JSONResponse(content={"authenticated": True}, status_code=200)
 
         database.close()
@@ -49,6 +50,7 @@ async def authenticate(request: Request) -> JSONResponse:
 @app.post("/authorize")
 async def authorize(request: Request) -> JSONResponse:
     span = tracer.current_span()
+    logger = structlog.get_logger("auth")
     try:
         body = await request.json()
         database = await userDatabase()
@@ -60,6 +62,7 @@ async def authorize(request: Request) -> JSONResponse:
             logger.debug("authorizing using api key")
             user = await database.fetch("SELECT permissions FROM apikeys WHERE apikey = $1", body["apiKey"])
             if len(user) == 1:
+                logger.info("authorized '" + body["apiKey"] + "'", api_key="****" + body["apiKey"][-4:])
                 return JSONResponse(content={"permissions": user[0].get("permissions")}, status_code=200)
             logger.warn("authorization failed for key '" + "****" + body["apiKey"][-4:] + "'", api_key="****" + body["apiKey"][-4:])
 
@@ -71,6 +74,7 @@ async def authorize(request: Request) -> JSONResponse:
             logger.debug("authorizing using username")
             user = await database.fetch("SELECT permissions FROM users WHERE username = $1", body["username"])
             if len(user) == 1:
+                logger.info("authorized '" + body["username"] + "'", username=body["username"])
                 return JSONResponse(content={"permissions": user[0].get("permissions")}, status_code=200)
             logger.warn("authorization failed for '" + body["username"] + "'", username=body["username"])
 

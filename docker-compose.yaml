@@ -204,6 +204,7 @@ services:
       - DD_GIT_REPOSITORY_URL=$DD_GIT_REPOSITORY_URL
       - DD_APPSEC_ENABLED=true
       - DD_IAST_ENABLED=true
+      - DD_LOGS_INJECTION=true
       # - DD_AGENT_HOST=datadog-agent
       # - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
@@ -243,6 +244,7 @@ services:
       - DD_VERSION=0.1.2
       - DD_GIT_COMMIT_SHA=$DD_GIT_COMMIT_SHA
       - DD_GIT_REPOSITORY_URL=$DD_GIT_REPOSITORY_URL
+      - DD_LOGS_INJECTION=true
       # - DD_AGENT_HOST=datadog-agent
       # - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket

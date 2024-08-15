@@ -11,6 +11,7 @@ logging.basicConfig(
     filename='/logs/auth.log',
     encoding='utf-8'
 )
+logging.getLogger("auth").setLevel(logging.DEBUG)
 structlog.configure(
     processors=[
         structlog.processors.add_log_level,
