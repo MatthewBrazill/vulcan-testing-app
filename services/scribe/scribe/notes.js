@@ -1,6 +1,7 @@
 'use strict'
 
 // Imports
+const tracer = require("dd-trace")
 const logger = require("./logger.js")
 const databases = require("./databases.js")
 
