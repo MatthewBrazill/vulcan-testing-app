@@ -85,32 +85,7 @@ async function start() {
     // Kafka Consumer Configurations
     const consumer = client.consumer({ groupId: "scribe-group" })
 
-    // Create function to connect, subscribe and run the consumer
-    const connectToKafka = async () => {
-        logger.info("connecting to kafka broker")
-        await consumer.connect()
-        await consumer.subscribe({ topics: ["user-notes", "god-notes"] })
-        await consumer.run({
-            eachMessage: async (payload) => {
-                return await tracer.trace("scribe.route", async function routeKafkaQueue() {
-                    logger.info({
-                        topic: payload.topic,
-                        message: `scribe received message for topic ${payload.topic}`
-                    })
-                    switch (payload.topic) {
-                        case "user-notes":
-                            handlers.userNotesHandler(payload)
-                            break
-                        case "god-notes":
-                            handlers.godNotesHandler(payload)
-                            break
-                    }
-                })
-            }
-        })
-    }
-    connectToKafka()
-
+    // Kafka Listeners
     consumer.on(consumer.events.CRASH, async (error, groupId, _) => {
         try {
             logger.warn(`kafka group '${groupId}' encountered error '${error.name}'`, error)
@@ -132,18 +107,45 @@ async function start() {
     consumer.on(consumer.events.DISCONNECT, async () => {
         try {
             logger.debug(`kafka consumer disconnected, trying to restart`)
-            connectToKafka()
+            connectToKafkaConsumer(consumer)
         } catch (err) {
             logger.error(`kafka couldn't recover from disconnection because of '${err.name}'`, err)
         }
     })
 
+    connectToKafkaConsumer(consumer)
     https.createServer({
         key: fs.readFileSync(`${process.env.CERT_FOLDER}/key.pem`),
         cert: fs.readFileSync(`${process.env.CERT_FOLDER}/cert.pem`)
     }, app).listen(920, () => {
         logger.info("starting scribe")
     })
+}
+
+// Move connection to a separate function to allow reconnection in consumer listeners
+async function connectToKafkaConsumer(consumer) {
+    logger.info("connecting to kafka broker")
+    await consumer.connect()
+    await consumer.subscribe({ topics: ["user-notes", "god-notes"] })
+    await consumer.run({
+        eachMessage: async (payload) => {
+            return await tracer.trace("scribe.route", async function routeKafkaQueue() {
+                logger.info({
+                    topic: payload.topic,
+                    message: `scribe received message for topic ${payload.topic}`
+                })
+                switch (payload.topic) {
+                    case "user-notes":
+                        handlers.userNotesHandler(payload)
+                        break
+                    case "god-notes":
+                        handlers.godNotesHandler(payload)
+                        break
+                }
+            })
+        }
+    })
+    return consumer
 }
 
 start().catch((err) => {
