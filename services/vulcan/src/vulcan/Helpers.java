@@ -14,9 +14,11 @@ import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -35,11 +37,48 @@ public class Helpers {
 
     @Trace(operationName = "vulcan.helper", resourceName = "Helpers.validate")
     public static Boolean validate(HashMap<String, Object> body) {
-        // TODO add validation
-        // String[][] params = { { "pantheon", "^[a-zA-Z]{1,32}$" }, { "name", "^[a-zA-Z]{1,32}$" }, { "domain", "^[0-9a-zA-Z ]{1,32}$" } };
-        // String[][] params = { { "godId", "^[a-zA-Z0-9]{5}$" } };
-        // String[][] params = { { "username", "^[a-zA-Z]{1,32}$" }, { "password", "^.{1,64}$" } };
-        // String[][] params = { { "filter", "[a-zA-Z]{0,32}" } };
+        // Add logger
+        Logger logger = LogManager.getLogger("vulcan");
+
+        // Map of all the acceptable body values with hard coded patterns
+        HashMap<String, Pattern> patterns = new HashMap<>();
+        patterns.put("godId", Pattern.compile("^[a-zA-Z0-9]{5}$", Pattern.CASE_INSENSITIVE));
+        patterns.put("pantheon", Pattern.compile("^[a-zA-Z\s]{1,32}$", Pattern.CASE_INSENSITIVE));
+        patterns.put("name", Pattern.compile("^[a-zA-Z\s]{1,32}$", Pattern.CASE_INSENSITIVE));
+        patterns.put("domain", Pattern.compile("^[a-zA-Z\s]{1,32}$", Pattern.CASE_INSENSITIVE));
+        patterns.put("query", Pattern.compile("^[a-zA-Z:\\-\s]{0,64}$", Pattern.CASE_INSENSITIVE));
+        patterns.put("username", Pattern.compile("^[a-zA-Z0-9\\-]{1,32}$", Pattern.CASE_INSENSITIVE));
+        patterns.put("password", Pattern.compile("^.{1,64}$", Pattern.CASE_INSENSITIVE));
+        patterns.put("note", Pattern.compile("^[a-zA-Z0-9-\s]{1,64}$", Pattern.CASE_INSENSITIVE));
+
+        // Check body
+        for (String key : body.keySet()) {
+            // Get value for key
+            String value = body.get(key).toString();
+            ThreadContext.put("key", key);
+            ThreadContext.put("value", value);
+            
+            // Fail validation if the body contains a key that isn't expected
+            logger.debug("validating key '" + key + "'");
+            if (!patterns.containsKey(key)) {
+                logger.warn("found unexpected key '" + key + "' in message body");
+                return false;
+            }
+
+            Pattern pattern = patterns.get(key);
+            ThreadContext.put("pattern", pattern.toString());
+            if (!pattern.matcher(value).find()) {
+                logger.warn("value '" + value + "' for key '" + key + "' doesn't match given pattern '" + pattern.toString() + "'");
+                return false;
+            }
+
+            ThreadContext.remove("key");
+            ThreadContext.remove("value");
+            ThreadContext.remove("pattern");
+        }
+
+        // If all match, body is validated
+        logger.info("validated request body");
         return true;
     }
 
