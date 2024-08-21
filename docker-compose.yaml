@@ -25,6 +25,7 @@ services:
       - DD_ENV=docker
       - DD_SERVICE=vulcan
       - DD_VERSION=1.3.0
+      - DD_TRACE_SAMPLE_RATE=1
       - DD_GIT_COMMIT_SHA=$DD_GIT_COMMIT_SHA
       - DD_GIT_REPOSITORY_URL=$DD_GIT_REPOSITORY_URL
       # - DD_AGENT_HOST=datadog-agent
@@ -70,6 +71,7 @@ services:
       - DD_ENV=docker
       - DD_SERVICE=god-manager
       - DD_VERSION=1.0.0
+      - DD_TRACE_SAMPLE_RATE=1
       - DD_GIT_COMMIT_SHA=$DD_GIT_COMMIT_SHA
       - DD_GIT_REPOSITORY_URL=$DD_GIT_REPOSITORY_URL
       - DD_APPSEC_ENABLED=true
@@ -110,6 +112,7 @@ services:
       - DD_ENV=docker
       - DD_SERVICE=user-manager
       - DD_VERSION=1.3.0
+      - DD_TRACE_SAMPLE_RATE=1
       - DD_GIT_COMMIT_SHA=$DD_GIT_COMMIT_SHA
       - DD_GIT_REPOSITORY_URL=$DD_GIT_REPOSITORY_URL
       - DD_APPSEC_ENABLED=true
@@ -151,6 +154,7 @@ services:
       - DD_ENV=docker
       - DD_SERVICE=scribe
       - DD_VERSION=0.1.0
+      - DD_TRACE_SAMPLE_RATE=1
       - DD_GIT_COMMIT_SHA=$DD_GIT_COMMIT_SHA
       - DD_GIT_REPOSITORY_URL=$DD_GIT_REPOSITORY_URL
       - DD_APPSEC_ENABLED=true
@@ -200,6 +204,7 @@ services:
       - DD_ENV=docker
       - DD_SERVICE=authenticator
       - DD_VERSION=0.2.0
+      - DD_TRACE_SAMPLE_RATE=1
       - DD_GIT_COMMIT_SHA=$DD_GIT_COMMIT_SHA
       - DD_GIT_REPOSITORY_URL=$DD_GIT_REPOSITORY_URL
       - DD_APPSEC_ENABLED=true
@@ -242,6 +247,7 @@ services:
       - DD_ENV=docker
       - DD_SERVICE=nginx-proxy
       - DD_VERSION=0.1.2
+      - DD_TRACE_SAMPLE_RATE=1
       - DD_GIT_COMMIT_SHA=$DD_GIT_COMMIT_SHA
       - DD_GIT_REPOSITORY_URL=$DD_GIT_REPOSITORY_URL
       - DD_LOGS_INJECTION=true
@@ -315,6 +321,7 @@ services:
       - DD_ENV=docker
       - DD_SERVICE=database-proxy
       - DD_VERSION=0.1.0
+      - DD_TRACE_SAMPLE_RATE=1
       - DD_GIT_COMMIT_SHA=$DD_GIT_COMMIT_SHA
       - DD_GIT_REPOSITORY_URL=$DD_GIT_REPOSITORY_URL
       # - DD_AGENT_HOST=datadog-agent
