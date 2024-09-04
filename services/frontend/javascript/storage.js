@@ -91,7 +91,7 @@ $(document).ready(() => {
 
 function searchWait(req) {
     // Update content
-    while ($("#god-list").children().length > 1) {
+    while ($("#god-list").children().length > 2) {
         $("#god-list").children().last().remove()
     }
 
