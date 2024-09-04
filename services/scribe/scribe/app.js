@@ -86,30 +86,30 @@ async function start() {
     const consumer = client.consumer({ groupId: "scribe-group" })
 
     // Kafka Listeners
-    consumer.on(consumer.events.CRASH, async (error, groupId, _) => {
+    consumer.on(consumer.events.CRASH, async (e) => {
         try {
-            logger.warn(`kafka group '${groupId}' encountered error '${error.name}'`, error)
+            logger.warn(`kafka group '${e.payload.groupId}' encountered error '${e.payload.error}'`, { "event": e.payload, "event.type": e.type })
             await consumer.disconnect()
         } catch (err) {
-            logger.error(`kafka couldn't recover from error because of '${err.name}'`, err)
+            logger.error(`kafka couldn't recover from error because of '${err.name}'`, { "error": err })
         }
     })
 
-    consumer.on(consumer.events.STOP, async () => {
+    consumer.on(consumer.events.STOP, async (e) => {
         try {
-            logger.warn(`kafka consumer stopped, trying to restart`)
+            logger.warn(`kafka consumer stopped, trying to restart`, { "event": e.payload, "event.type": e.type})
             await consumer.disconnect()
         } catch (err) {
-            logger.error(`kafka couldn't recover from stopped consumer because of '${err.name}'`, err)
+            logger.error(`kafka couldn't recover from stopped consumer because of '${err.name}'`, { "error": err })
         }
     })
 
-    consumer.on(consumer.events.DISCONNECT, async () => {
+    consumer.on(consumer.events.DISCONNECT, async (e) => {
         try {
-            logger.debug(`kafka consumer disconnected, trying to restart`)
+            logger.debug(`kafka consumer disconnected, trying to restart`, { "event": e.payload, "event.type": e.type })
             connectToKafkaConsumer(consumer)
         } catch (err) {
-            logger.error(`kafka couldn't recover from disconnection because of '${err.name}'`, err)
+            logger.error(`kafka couldn't recover from disconnection because of '${err.name}'`, { "error": err })
         }
     })
 
