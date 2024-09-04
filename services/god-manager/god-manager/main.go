@@ -1,12 +1,12 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 
 	"github.com/sirupsen/logrus"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
-	"gopkg.in/DataDog/dd-trace-go.v1/profiler"
+	dd_logrus "gopkg.in/DataDog/dd-trace-go.v1/contrib/sirupsen/logrus"
 )
 
 // Global variables
@@ -20,50 +20,32 @@ func main() {
 	version = os.Getenv("DD_VERSION")
 	env = os.Getenv("DD_ENV")
 
-	// Start the tracer
-	tracer.Start(
-		tracer.WithEnv(env),
-		tracer.WithService(service),
-		tracer.WithServiceVersion(version),
-		tracer.WithRuntimeMetrics(),
-	)
-	defer tracer.Stop()
-
-	// Start the Profiler
-	profiler.Start(
-		profiler.WithEnv(env),
-		profiler.WithService(service),
-		profiler.WithVersion(version),
-		profiler.WithProfileTypes(
-			profiler.CPUProfile,
-			profiler.HeapProfile,
-			profiler.GoroutineProfile,
-		),
-	)
-	defer profiler.Stop()
+	// Define default context
+	ctx := context.Background()
 
 	// Create log file if not exist
 	os.Mkdir("/logs", 0755)
 	file, err := os.OpenFile("/logs/god-manager.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
-		LogInitEvent().WithError(err).Error("failed to access log file")
+		Log(ctx).WithError(err).Error("failed to access log file")
 		os.Exit(1)
 	}
 
 	// Configure logrus
 	logrus.SetFormatter(&logrus.JSONFormatter{})
+	logrus.AddHook(&dd_logrus.DDContextLogHook{})
 	logrus.SetOutput(file)
 
 	// Get gin engine
 	app := GetGinEngine(file)
 
 	// Start server
-	LogInitEvent().Info("starting god-manager")
+	Log(ctx).Info("starting god-manager")
 	certFile := fmt.Sprintf("%s/cert.pem", os.Getenv("CERT_FOLDER"))
 	keyFile := fmt.Sprintf("%s/key.pem", os.Getenv("CERT_FOLDER"))
 	err = app.RunTLS(":900", certFile, keyFile)
 	if err != nil {
-		LogInitEvent().WithError(err).Error("failed to start god-manager")
+		Log(ctx).WithError(err).Error("failed to start god-manager")
 		os.Exit(1)
 	}
 }
