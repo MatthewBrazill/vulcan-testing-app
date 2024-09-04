@@ -1,39 +1,24 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
+
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	mongotrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/go.mongodb.org/mongo-driver/mongo"
 )
 
-// Variables
-var client *mongo.Client
+//dd:span resource_name:Databases.GodDatabase operation:god-manager.database
+func GodDatabase(ctx context.Context) (*mongo.Database, error) {
+	var client *mongo.Client
 
-func GodDatabase(ctx *gin.Context) (*mongo.Database, error) {
-	// Check if client exists
-	exists := false
-	if client != nil {
-		err := client.Ping(ctx, nil)
-		if err == nil {
-			exists = true
-		}
+	// Connect to database
+	Log(ctx).Debug("connecting to god-database")
+	options := options.Client().ApplyURI("mongodb://database-proxy:27017/?connect=direct")
+	client, err := mongo.Connect(ctx, options)
+	if err != nil {
+		return nil, err
 	}
 
-	// If client doesn't exists, connect
-	if !exists {
-		Log(ctx).Info("re-connecting to god-database")
-		tracer := mongotrace.NewMonitor(mongotrace.WithServiceName("god-database"))
-		options := options.Client().SetMonitor(tracer).ApplyURI("mongodb://database-proxy:27017/?connect=direct")
-		client, err := mongo.Connect(ctx.Request.Context(), options)
-		if err != nil {
-			return nil, err
-		}
-
-		// Return new database
-		return client.Database("vulcan"), nil
-	}
-
-	// Return existing database
+	// Return new database
 	return client.Database("vulcan"), nil
 }
