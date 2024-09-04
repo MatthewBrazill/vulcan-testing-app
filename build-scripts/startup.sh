@@ -5,11 +5,15 @@
 
 if [ $DD_ENV = "kubernetes" ]
 then
+    echo "recognized kubernetes environment..."
+    echo "preping kubernetes setup..."
     rm -rf /vulcan
     git clone https://github.com/MatthewBrazill/vulcan-testing-app.git /vulcan
     cd /vulcan/services/$DD_SERVICE
+    echo "done!"
 fi
 
+echo "starting service $DD_SERVICE"
 case $DD_SERVICE in
     "vulcan")
         keytool -import -noprompt -alias user-manager-cert -keystore /cacerts/keystore.jks -file /cacerts/user-manager-cert.pem -storepass changeit
@@ -71,3 +75,4 @@ case $DD_SERVICE in
         npm start
         ;;
 esac
+echo "done"
