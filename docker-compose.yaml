@@ -74,13 +74,15 @@ services:
       - DD_TRACE_SAMPLE_RATE=1
       - DD_GIT_COMMIT_SHA=$DD_GIT_COMMIT_SHA
       - DD_GIT_REPOSITORY_URL=$DD_GIT_REPOSITORY_URL
+      - DD_SERVICE_MAPPING=mongo:god-database
       - DD_APPSEC_ENABLED=true
       - DD_IAST_ENABLED=true
+      - DD_PROFILING_ENABLED=true
+      - DD_PROFILING_EXECUTION_TRACE_ENABLED=true
       # - DD_AGENT_HOST=datadog-agent
       # - DD_TRACE_AGENT_PORT=8126
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
       - DD_DOGSTATSD_URL=unix:///var/run/datadog/dsd.socket
-      - DD_PROFILING_EXECUTION_TRACE_ENABLED=true
       - CERT_FOLDER=/god-manager/certificate
     working_dir: /god-manager
     volumes:
