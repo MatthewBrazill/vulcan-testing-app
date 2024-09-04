@@ -38,8 +38,9 @@ case $DD_SERVICE in
         ;;
 
     "god-manager")
+        go install github.com/datadog/orchestrion@latest
         go mod download && go mod verify
-        go build -o ./build/god-manager -tags appsec ./god-manager/...
+        orchestrion go build -o ./build/god-manager -tags appsec ./god-manager/...
         ./build/god-manager
         ;;
 
