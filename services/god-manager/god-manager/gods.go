@@ -11,6 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+//dd:span resource_name:Gods.CreateGod operation:god-manager.handler
 func CreateGod(ctx *gin.Context) {
 	// Extract body from request
 	body := make(map[string]string)
@@ -55,6 +56,7 @@ func CreateGod(ctx *gin.Context) {
 	})
 }
 
+//dd:span resource_name:Gods.GetGod operation:god-manager.handler
 func GetGod(ctx *gin.Context) {
 	// Extract body from request
 	req := make(map[string]string)
@@ -87,6 +89,7 @@ func GetGod(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, result)
 }
 
+//dd:span resource_name:Gods.SearchGod operation:god-manager.handler
 func SearchGod(ctx *gin.Context) {
 	// Extract body from request
 	req := make(map[string]string)
@@ -127,6 +130,7 @@ func SearchGod(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, result)
 }
 
+//dd:span resource_name:Gods.UpdateGod operation:god-manager.handler
 func UpdateGod(ctx *gin.Context) {
 	// Extract body from request
 	req := make(map[string]string)
@@ -172,6 +176,7 @@ func UpdateGod(ctx *gin.Context) {
 	}
 }
 
+//dd:span resource_name:Gods.DeleteGod operation:god-manager.handler
 func DeleteGod(ctx *gin.Context) {
 	// Extract body from request
 	req := make(map[string]string)
