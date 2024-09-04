@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -16,6 +17,7 @@ func CreateGod(ctx *gin.Context) {
 	ctx.ShouldBind(&body)
 
 	// Build god object
+	Log(ctx).WithField("god", body).Debug("building god object")
 	god := bson.M{
 		"godId":    body["godId"],
 		"pantheon": body["pantheon"],
@@ -71,6 +73,7 @@ func GetGod(ctx *gin.Context) {
 	err = db.Collection("gods").FindOne(ctx.Request.Context(), bson.M{"godId": req["godId"]}).Decode(&result)
 	if err != nil {
 		if err.Error() == "mongo: no documents in result" {
+			Log(ctx).Debug(fmt.Sprintf("no god found for %s", body["godId"]))
 			ctx.Status(http.StatusNotFound)
 			return
 		} else {
@@ -102,6 +105,7 @@ func SearchGod(ctx *gin.Context) {
 	cursor, err := db.Collection("gods").Find(ctx.Request.Context(), bson.M{"name": bson.M{"$regex": primitive.Regex{Pattern: req["query"], Options: "i"}}})
 	if err != nil {
 		if err.Error() == "mongo: no documents in result" {
+			Log(ctx).Debug(fmt.Sprintf("no gods found for %s", body["query"]))
 			ctx.Status(http.StatusNotFound)
 			return
 		} else {
@@ -137,6 +141,7 @@ func UpdateGod(ctx *gin.Context) {
 	}
 
 	// Prep update object
+	Log(ctx).WithField("god", body).Debug("preparing god for update")
 	update := make(bson.M)
 	for key, val := range req {
 		if (key == "pantheon" || key == "name" || key == "domain") && val != "" {
@@ -195,6 +200,7 @@ func DeleteGod(ctx *gin.Context) {
 		}).Info("god deleted")
 		ctx.Status(http.StatusOK)
 	} else if result.DeletedCount == 0 {
+		Log(ctx).Debug(fmt.Sprintf("no god found for %s", body["godId"]))
 		ctx.Status(http.StatusNotFound)
 	} else {
 		err = errors.New("unexpected update: delete count isn't 0 or 1")
