@@ -59,8 +59,8 @@ func CreateGod(ctx *gin.Context) {
 //dd:span resource_name:Gods.GetGod operation:god-manager.handler
 func GetGod(ctx *gin.Context) {
 	// Extract body from request
-	req := make(map[string]string)
-	ctx.ShouldBind(&req)
+	body := make(map[string]string)
+	ctx.ShouldBind(&body)
 
 	// Get database
 	db, err := GodDatabase(ctx)
@@ -72,7 +72,7 @@ func GetGod(ctx *gin.Context) {
 
 	// Try to find god in database
 	var result bson.M
-	err = db.Collection("gods").FindOne(ctx.Request.Context(), bson.M{"godId": req["godId"]}).Decode(&result)
+	err = db.Collection("gods").FindOne(ctx.Request.Context(), bson.M{"godId": body["godId"]}).Decode(&result)
 	if err != nil {
 		if err.Error() == "mongo: no documents in result" {
 			Log(ctx).Debug(fmt.Sprintf("no god found for %s", body["godId"]))
@@ -92,8 +92,8 @@ func GetGod(ctx *gin.Context) {
 //dd:span resource_name:Gods.SearchGod operation:god-manager.handler
 func SearchGod(ctx *gin.Context) {
 	// Extract body from request
-	req := make(map[string]string)
-	ctx.ShouldBind(&req)
+	body := make(map[string]string)
+	ctx.ShouldBind(&body)
 
 	// Get database
 	db, err := GodDatabase(ctx)
@@ -105,7 +105,7 @@ func SearchGod(ctx *gin.Context) {
 
 	// Try to search for gods in database
 	var result []bson.M
-	cursor, err := db.Collection("gods").Find(ctx.Request.Context(), bson.M{"name": bson.M{"$regex": primitive.Regex{Pattern: req["query"], Options: "i"}}})
+	cursor, err := db.Collection("gods").Find(ctx.Request.Context(), bson.M{"name": bson.M{"$regex": primitive.Regex{Pattern: body["query"], Options: "i"}}})
 	if err != nil {
 		if err.Error() == "mongo: no documents in result" {
 			Log(ctx).Debug(fmt.Sprintf("no gods found for %s", body["query"]))
@@ -133,8 +133,8 @@ func SearchGod(ctx *gin.Context) {
 //dd:span resource_name:Gods.UpdateGod operation:god-manager.handler
 func UpdateGod(ctx *gin.Context) {
 	// Extract body from request
-	req := make(map[string]string)
-	ctx.ShouldBind(&req)
+	body := make(map[string]string)
+	ctx.ShouldBind(&body)
 
 	// Get database
 	db, err := GodDatabase(ctx)
@@ -147,14 +147,14 @@ func UpdateGod(ctx *gin.Context) {
 	// Prep update object
 	Log(ctx).WithField("god", body).Debug("preparing god for update")
 	update := make(bson.M)
-	for key, val := range req {
+	for key, val := range body {
 		if (key == "pantheon" || key == "name" || key == "domain") && val != "" {
 			update[key] = val
 		}
 	}
 
 	// Update god
-	result, err := db.Collection("gods").UpdateOne(ctx.Request.Context(), bson.M{"godId": req["godId"]}, bson.M{"$set": update})
+	result, err := db.Collection("gods").UpdateOne(ctx.Request.Context(), bson.M{"godId": body["godId"]}, bson.M{"$set": update})
 	if err != nil {
 		Log(ctx).WithError(err).Error(ctx.Error(err).Error())
 		ctx.JSON(http.StatusInternalServerError, err)
@@ -164,7 +164,7 @@ func UpdateGod(ctx *gin.Context) {
 	// Confirm result and return response
 	if result.ModifiedCount == 1 {
 		Log(ctx).WithFields(logrus.Fields{
-			"god": req["godId"],
+			"god": body["godId"],
 		}).Info("god updated")
 		ctx.Status(http.StatusOK)
 	} else if result.ModifiedCount == 0 {
@@ -179,8 +179,8 @@ func UpdateGod(ctx *gin.Context) {
 //dd:span resource_name:Gods.DeleteGod operation:god-manager.handler
 func DeleteGod(ctx *gin.Context) {
 	// Extract body from request
-	req := make(map[string]string)
-	ctx.ShouldBind(&req)
+	body := make(map[string]string)
+	ctx.ShouldBind(&body)
 
 	// Get database
 	db, err := GodDatabase(ctx)
@@ -191,7 +191,7 @@ func DeleteGod(ctx *gin.Context) {
 	}
 
 	// Delete god
-	result, err := db.Collection("gods").DeleteOne(ctx.Request.Context(), bson.M{"godId": req["godId"]})
+	result, err := db.Collection("gods").DeleteOne(ctx.Request.Context(), bson.M{"godId": body["godId"]})
 	if err != nil {
 		Log(ctx).WithError(err).Error(ctx.Error(err).Error())
 		ctx.JSON(http.StatusInternalServerError, err)
@@ -201,7 +201,7 @@ func DeleteGod(ctx *gin.Context) {
 	// Confirm result and return response
 	if result.DeletedCount == 1 {
 		Log(ctx).WithFields(logrus.Fields{
-			"god": req["godId"],
+			"god": body["godId"],
 		}).Info("god deleted")
 		ctx.Status(http.StatusOK)
 	} else if result.DeletedCount == 0 {
