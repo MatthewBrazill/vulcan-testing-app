@@ -5,6 +5,8 @@ This small application was originally used by me to learn golang, but has since 
 
 The application is just a basic application that allows some CRUD actions for god's of several ancient pantheons (though this might change in the future). Written in several languages, the application is deliberately overcomplicated to allow me to try out different languages, technologies, development concepts, as well as learn about systems architecture in a environment that is familiar to me and I know inside out.
 
+After several different approaches to managing the application, the current setup runs several services in Kubernetes, others in Docker and finally one of them (`user-manager`) in both environments. This lets me use a unified single application while still getting insights into use cases for Kubernetes, Docker and other setups.
+
 ## Technologies
 The following isa non-exhaustive list of the technologies that have been used in this repository:
 - Languages:
@@ -16,11 +18,14 @@ The following isa non-exhaustive list of the technologies that have been used in
     - PostgreSQL
     - MongoDB
     - Redis
+- Message Queues:
+    - Kafka
 - Containerization with Kubernetes and Docker
 - Microservices Architecture
 - Application and System Monitoring using Datadog and OpenTelemetry
     - APM and Profiling on Every Service
     - Real User Monitoring
+    - Synthetic Tests
     - Log Collection
 - Good Security Concepts:
     - Secure Password Handling - Including Salt and Pepper
