@@ -10,22 +10,29 @@
 #         sure code changes are applied and theres a fresh start. Database
 #         content is preserved.
 
+build=0
 taredown=0
-docker=0
-kube=0
+application=0
 monitoring=0
-while getopts "tdkm" flag
+while getopts "btam" flag
 do
     case $flag in
+        "b") build=1;;
         "t") taredown=1;;
-        "d") docker=1;;
-        "k") kube=1;;
+        "a") application=1;;
         "m") monitoring=1;;
     esac
 done
 
 if [ $(basename ${PWD}) == "build-scripts" ]; then
+    printf "Detected `build-scripts` directory; Going back to project top level directory...\n"
     cd ..
+fi
+
+if [ $(basename ${PWD}) != "vulcan-testing-app" ]; then
+    printf "It looks like you're in the wrong folder. expected to be in `vulcan-testing-app`, detected `%s`.\n" $(basename ${PWD})
+    printf "Please make sure you're in the correct folder and that it is correctly named."
+    exit 1
 fi
 
 # Build JS Files and Maps
