@@ -2,12 +2,12 @@
 #   Namespace                                            #
 ### -------------------------------------------------- ###
 
-# Vulcan Lang
+# Vulcan Application Namespace
 ---
 kind: Namespace
 apiVersion: v1
 metadata:
-  name: vulcan-lang
+  name: vulcan-application
   labels:
     tags.datadoghq.com/env: kubernetes
 
@@ -25,7 +25,7 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: vulcan-logs-volume
-  #namespace: vulcan-lang
+  namespace: vulcan-application
   labels:
     tags.datadoghq.com/env: kubernetes
 spec:
@@ -41,7 +41,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: vulcan-logs-pvc
-  #namespace: vulcan-lang
+  namespace: vulcan-application
   labels:
     tags.datadoghq.com/env: kubernetes
 spec:
@@ -57,199 +57,23 @@ spec:
 
 
 ### -------------------------------------------------- ###
-#   Web Apps                                             #
+#   Vulcan Application                                   #
 ### -------------------------------------------------- ###
 
-# Golang
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: vesuvius
-  #namespace: vulcan-lang
-  labels:
-    tags.datadoghq.com/env: kubernetes
-    tags.datadoghq.com/service: vesuvius
-spec:
-  type: LoadBalancer
-  ports:
-    - port: 14430
-      targetPort: 443
-  selector:
-    tags.datadoghq.com/service: vesuvius
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: vesuvius
-  #namespace: vulcan-lang
-  labels:
-    tags.datadoghq.com/env: kubernetes
-    tags.datadoghq.com/service: vesuvius
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      tags.datadoghq.com/service: vesuvius
-  template:
-    metadata:
-      labels:
-        tags.datadoghq.com/env: kubernetes
-        tags.datadoghq.com/service: vesuvius
-      annotations:
-        ad.datadoghq.com/vesuvius.logs: '[{"type":"file","source":"vulcan-app","service":"vesuvius","path":"/vulcan-data/kubernetes/logs/golang.log"}]'
-        ad.datadoghq.com/tags: '{"team":"john"}'
-    spec:
-      volumes:
-        - name: logs
-          persistentVolumeClaim:
-            claimName: vulcan-logs-pvc
-        - hostPath:
-            path: /var/run/datadog/
-          name: apmsocketpath
-      containers:
-        - name: vesuvius
-          image: golang:latest
-          command: ["/bin/sh"]
-          args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | bash -s"]
-          volumeMounts:
-            - mountPath: /logs
-              name: logs
-            - name: apmsocketpath
-              mountPath: /var/run/datadog
-          env:
-            - name: DD_ENV
-              value: kubernetes
-            - name: DD_SERVICE
-              value: vesuvius
-            - name: DD_VERSION
-              value: "1.2.0"
-            - name: DD_APPSEC_ENABLED
-              value: "true"
-            - name: DD_IAST_ENABLED
-              value: "true"
-#            - name: DD_AGENT_HOST
-#              value: datadog-agent
-#            - name: DD_TRACE_AGENT_PORT
-#              value: "8126"
-            - name: DD_TRACE_AGENT_URL
-              value: 'unix:///var/run/datadog/apm.socket'
-            - name: DD_TRACE_CLIENT_IP_ENABLED
-              value: "true"
-            - name: VLCN_SESSION_KEY
-              value: ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*
-            - name: VLCN_CERT_FOLDER
-              value: /vulcan/certificate
-          ports:
-            - containerPort: 443
-              protocol: TCP
-          resources:
-            limits:
-              memory: "512Mi"
-              cpu: "1"
-
-
-# JavaScript
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: etna
-  #namespace: vulcan-lang
-  labels:
-    tags.datadoghq.com/env: kubernetes
-    tags.datadoghq.com/service: etna
-spec:
-  type: LoadBalancer
-  ports:
-    - port: 14431
-      targetPort: 443
-  selector:
-    tags.datadoghq.com/service: etna
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: etna
-  #namespace: vulcan-lang
-  labels:
-    tags.datadoghq.com/env: kubernetes
-    tags.datadoghq.com/service: etna
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      tags.datadoghq.com/service: etna
-  template:
-    metadata:
-      labels:
-        tags.datadoghq.com/env: kubernetes
-        tags.datadoghq.com/service: etna
-      annotations:
-        ad.datadoghq.com/etna.logs: '[{"type":"file","source":"vulcan-app","service":"etna","path":"/vulcan-data/kubernetes/logs/node.log"}]'
-        ad.datadoghq.com/tags: '{"team":"matthew"}'
-    spec:
-      volumes:
-        - name: logs
-          persistentVolumeClaim:
-            claimName: vulcan-logs-pvc
-        - hostPath:
-            path: /var/run/datadog/
-          name: apmsocketpath
-      containers:
-        - name: etna
-          image: node:18
-          command: ["/bin/sh"]
-          args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | bash -s"]
-          volumeMounts:
-            - mountPath: /logs
-              name: logs
-            - name: apmsocketpath
-              mountPath: /var/run/datadog
-          env:
-            - name: DD_ENV
-              value: kubernetes
-            - name: DD_SERVICE
-              value: etna
-            - name: DD_VERSION
-              value: "1.2.0"
-            - name: DD_IAST_ENABLED
-              value: "true"
-#            - name: DD_AGENT_HOST
-#              value: datadog-agent
-#            - name: DD_TRACE_AGENT_PORT
-#              value: "8126"
-            - name: DD_TRACE_AGENT_URL
-              value: 'unix:///var/run/datadog/apm.socket'
-            - name: DD_TRACE_CLIENT_IP_ENABLED
-              value: "true"
-            - name: VLCN_SESSION_KEY
-              value: ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*
-            - name: VLCN_CERT_FOLDER
-              value: /vulcan/certificate
-          ports:
-            - containerPort: 443
-              protocol: TCP
-          resources:
-            limits:
-              memory: "512Mi"
-              cpu: "1"
-
-
-# Java
+# Vulcan Backend
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: vulcan
-  #namespace: vulcan-lang
+  namespace: vulcan-application
   labels:
     tags.datadoghq.com/env: kubernetes
     tags.datadoghq.com/service: vulcan
 spec:
   type: LoadBalancer
   ports:
-    - port: 14432
+    - port: 10443
       targetPort: 443
   selector:
     tags.datadoghq.com/service: vulcan
@@ -258,7 +82,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: vulcan
-  #namespace: vulcan-lang
+  namespace: vulcan-application
   labels:
     tags.datadoghq.com/env: kubernetes
     tags.datadoghq.com/service: vulcan
@@ -273,7 +97,7 @@ spec:
         tags.datadoghq.com/env: kubernetes
         tags.datadoghq.com/service: vulcan
       annotations:
-        ad.datadoghq.com/vulcan.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan","path":"/vulcan-data/kubernetes/logs/java.log"}]'
+        ad.datadoghq.com/vulcan.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan","path":"/vulcan-data/kubernetes/logs/vulcan.log"}]'
         ad.datadoghq.com/tags: '{"team":"matthew"}'
     spec:
       volumes:
@@ -299,19 +123,201 @@ spec:
             - name: DD_SERVICE
               value: vulcan
             - name: DD_VERSION
-              value: "1.2.1"
-#            - name: DD_AGENT_HOST
-#              value: datadog-agent
-#            - name: DD_TRACE_AGENT_PORT
-#              value: "8126"
+              value: "1.3.0"
+            - name: DD_TRACE_SAMPLE_RATE
+              value: 1
             - name: DD_TRACE_AGENT_URL
-              value: 'unix:///var/run/datadog/apm.socket'
-            - name: VLCN_SESSION_KEY
-              value: ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*
-            - name: VLCN_CERT_FOLDER
+              value: "unix:///var/run/datadog/apm.socket"
+            - name: DD_DOGSTATSD_URL
+              value: "unix:///var/run/datadog/dsd.socket"
+            - name: DD_TRACE_CLIENT_IP_ENABLED
+              value: "true"
+            - name: DD_DATA_STREAMS_ENABLED
+              value: "true"
+            - name: CERT_FOLDER
               value: /vulcan/certificate
+            - name: VLCN_SESSION_KEY
+              value: $SESSION_KEY
+            - name: PW_PEPPER
+              value: $PASSWORD_PEPPER
           ports:
             - containerPort: 443
+              protocol: TCP
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "1"
+
+
+# User-Manager
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-manager
+  namespace: vulcan-application
+  labels:
+    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/service: user-manager
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 10910
+      targetPort: 910
+  selector:
+    tags.datadoghq.com/service: user-manager
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-manager
+  namespace: vulcan-application
+  labels:
+    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/service: user-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tags.datadoghq.com/service: user-manager
+  template:
+    metadata:
+      labels:
+        tags.datadoghq.com/env: kubernetes
+        tags.datadoghq.com/service: user-manager
+      annotations:
+        ad.datadoghq.com/user-manager.logs: '[{"type":"file","source":"vulcan-app","service":"user-manager","path":"/vulcan-data/kubernetes/logs/user-manager.log"}]'
+        ad.datadoghq.com/tags: '{"team":"matthew"}'
+    spec:
+      volumes:
+        - name: logs
+          persistentVolumeClaim:
+            claimName: vulcan-logs-pvc
+        - hostPath:
+            path: /var/run/datadog/
+          name: apmsocketpath
+      containers:
+        - name: user-manager
+          image: node:18
+          command: ["/bin/sh"]
+          args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | bash -s"]
+          volumeMounts:
+            - mountPath: /logs
+              name: logs
+            - name: apmsocketpath
+              mountPath: /var/run/datadog
+          env:
+            - name: DD_ENV
+              value: kubernetes
+            - name: DD_SERVICE
+              value: user-manager
+            - name: DD_VERSION
+              value: "1.3.0"
+            - name: DD_TRACE_SAMPLE_RATE
+              value: 1
+            - name: DD_APPSEC_ENABLED
+              value: "true"
+            - name: DD_IAST_ENABLED
+              value: "true"
+            - name: DD_TRACE_AGENT_URL
+              value: "unix:///var/run/datadog/apm.socket"
+            - name: DD_DOGSTATSD_URL
+              value: "unix:///var/run/datadog/dsd.socket"
+            - name: DD_TRACE_CLIENT_IP_ENABLED
+              value: "true"
+            - name: CERT_FOLDER
+              value: /user-manager/certificate
+          ports:
+            - containerPort: 910
+              protocol: TCP
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "1"
+
+
+# God-Manager
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: god-manager
+  namespace: vulcan-application
+  labels:
+    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/service: god-manager
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 10900
+      targetPort: 900
+  selector:
+    tags.datadoghq.com/service: god-manager
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: god-manager
+  namespace: vulcan-application
+  labels:
+    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/service: god-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tags.datadoghq.com/service: god-manager
+  template:
+    metadata:
+      labels:
+        tags.datadoghq.com/env: kubernetes
+        tags.datadoghq.com/service: god-manager
+      annotations:
+        ad.datadoghq.com/god-manager.logs: '[{"type":"file","source":"vulcan-app","service":"god-manager","path":"/vulcan-data/kubernetes/logs/god-manager.log"}]'
+        ad.datadoghq.com/tags: '{"team":"matthew"}'
+    spec:
+      volumes:
+        - name: logs
+          persistentVolumeClaim:
+            claimName: vulcan-logs-pvc
+        - hostPath:
+            path: /var/run/datadog/
+          name: apmsocketpath
+      containers:
+        - name: god-manager
+          image: maven:3.9-eclipse-temurin-17
+          command: ["/bin/sh"]
+          args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | bash -s"]
+          volumeMounts:
+            - mountPath: /logs
+              name: logs
+            - name: apmsocketpath
+              mountPath: /var/run/datadog
+          env:
+            - name: DD_ENV
+              value: kubernetes
+            - name: DD_SERVICE
+              value: god-manager
+            - name: DD_VERSION
+              value: "1.0.0"
+            - name: DD_TRACE_SAMPLE_RATE
+              value: 1
+            - name: DD_APPSEC_ENABLED
+              value: "true"
+            - name: DD_IAST_ENABLED
+              value: "true"
+            - name: DD_PROFILING_EXECUTION_TRACE_ENABLED
+              value: "true"
+            - name: DD_TRACE_AGENT_URL
+              value: "unix:///var/run/datadog/apm.socket"
+            - name: DD_DOGSTATSD_URL
+              value: "unix:///var/run/datadog/dsd.socket"
+            - name: DD_TRACE_CLIENT_IP_ENABLED
+              value: "true"
+            - name: CERT_FOLDER
+              value: /god-manager/certificate
+          ports:
+            - containerPort: 900
               protocol: TCP
           resources:
             limits:
@@ -332,7 +338,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: authenticator
-  #namespace: vulcan-lang
+  namespace: vulcan-application
   labels:
     tags.datadoghq.com/env: kubernetes
     tags.datadoghq.com/service: authenticator
@@ -348,7 +354,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: authenticator
-  #namespace: vulcan-lang
+  namespace: vulcan-application
   labels:
     tags.datadoghq.com/env: kubernetes
     tags.datadoghq.com/service: authenticator
@@ -390,18 +396,26 @@ spec:
               value: authenticator
             - name: DD_VERSION
               value: "1.2.1"
-#            - name: DD_AGENT_HOST
-#              value: datadog-agent
-#            - name: DD_TRACE_AGENT_PORT
-#              value: "8126"
+            - name: DD_TRACE_SAMPLE_RATE
+              value: 1
+            - name: DD_APPSEC_ENABLED
+              value: "true"
+            - name: DD_IAST_ENABLED
+              value: "true"
+            - name: DD_LOGS_INJECTION
+              value: "true"
             - name: DD_TRACE_AGENT_URL
-              value: 'unix:///var/run/datadog/apm.socket'
-            - name: VLCN_SESSION_KEY
-              value: ArcetMuxHCFXM4FZYoHPYuizo-*u!ba*
-            - name: VLCN_CERT_FOLDER
-              value: /vulcan/certificate
+              value: "unix:///var/run/datadog/apm.socket"
+            - name: DD_DOGSTATSD_URL
+              value: "unix:///var/run/datadog/dsd.socket"
+            - name: DD_TRACE_CLIENT_IP_ENABLED
+              value: "true"
+            - name: CERT_FOLDER
+              value: /authenticator/certificate
+            - name: PW_PEPPER
+              value: $PASSWORD_PEPPER
           ports:
-            - containerPort: 443
+            - containerPort: 2884
               protocol: TCP
           resources:
             limits:
