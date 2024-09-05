@@ -40,7 +40,7 @@ The following isa non-exhaustive list of the technologies that have been used in
 | User-Manager      | X | X | The management service for all user related things |
 | Scribe            |   | X | The Notes management service handling user notes |
 | Authenticator     | X | X | The authentication and authorization service |
-| Application Proxy |   | X | NGINX Proxy for accessing to the application |
+| Application Proxy |   | X | NGINX Proxy for accessing the application |
 | Database Proxy    | X |   | Proxy for managing the connections to the databases |
 | God-Database      |   | X | MongoDB database for the stored gods |
 | User-Database     |   | X | PostgreSQL database to store users and passwords |
