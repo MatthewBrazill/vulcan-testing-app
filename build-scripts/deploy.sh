@@ -36,31 +36,33 @@ if [ $(basename ${PWD}) != "vulcan-testing-app" ]; then
 fi
 
 # Build JS Files and Maps
-printf "Miniying JS maps...\n"
+if [ "$build" == 1 ]; then
+    printf "Miniying JS maps...\n"
 
-if which wget >/dev/null ; then
-    wget -nc -nv -O build-scripts/closure-compiler.jar https://repo1.maven.org/maven2/com/google/javascript/closure-compiler/v20240317/closure-compiler-v20240317.jar
-elif which curl >/dev/null ; then
-    curl -s -o build-scripts/closure-compiler.jar https://repo1.maven.org/maven2/com/google/javascript/closure-compiler/v20240317/closure-compiler-v20240317.jar
-fi
+    if which wget >/dev/null ; then
+        wget -nc -nv -O build-scripts/closure-compiler.jar https://repo1.maven.org/maven2/com/google/javascript/closure-compiler/v20240317/closure-compiler-v20240317.jar
+    elif which curl >/dev/null ; then
+        curl -s -o build-scripts/closure-compiler.jar https://repo1.maven.org/maven2/com/google/javascript/closure-compiler/v20240317/closure-compiler-v20240317.jar
+    fi
 
-for jsFile in services/frontend/javascript/*.js; do
-    printf "  Minifying $(basename $jsFile)\n"
-    java -jar build-scripts/closure-compiler.jar \
-    --js $jsFile \
-    --js_output_file services/frontend/statics/js/$(basename $jsFile .js).min.js \
-    --create_source_map services/frontend/statics/js/$(basename $jsFile .js).min.js.map \
-    --source_map_include_content true
-done
-printf "Done minifying JS maps!\n\n"
+    for jsFile in services/frontend/javascript/*.js; do
+        printf "  Minifying $(basename $jsFile)\n"
+        java -jar build-scripts/closure-compiler.jar \
+        --js $jsFile \
+        --js_output_file services/frontend/statics/js/$(basename $jsFile .js).min.js \
+        --create_source_map services/frontend/statics/js/$(basename $jsFile .js).min.js.map \
+        --source_map_include_content true
+    done
+    printf "Done minifying JS maps!\n\n"
 
-# Upload Maps to Datadog
-if which datadog-ci >/dev/null ; then
-    printf "Uploading JS Maps to Datadog...\n"
-    datadog-ci sourcemaps upload services/frontend/statics/js --service vulcan-app --release-version 1.9 --minified-path-prefix /js/ | grep --line-buffered "^Uploading sourcemap*" | sed 's/^/  /'
-    printf "Done uploading JS maps!\n\n"
-else
-    printf "Missing Datadog CI tool; skipping JS Map upload.\n\n"
+    # Upload Maps to Datadog
+    if which datadog-ci >/dev/null ; then
+        printf "Uploading JS Maps to Datadog...\n"
+        datadog-ci sourcemaps upload services/frontend/statics/js --service vulcan-app --release-version 1.9 --minified-path-prefix /js/ | grep --line-buffered "^Uploading sourcemap*" | sed 's/^/  /'
+        printf "Done uploading JS maps!\n\n"
+    else
+        printf "Missing Datadog CI tool; skipping JS Map upload.\n\n"
+    fi
 fi
 
 # Taredown
