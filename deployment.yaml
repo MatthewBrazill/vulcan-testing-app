@@ -104,17 +104,17 @@ spec:
         - name: logs
           persistentVolumeClaim:
             claimName: vulcan-logs-pvc
-        - hostPath:
+        - name: apmsocketpath
+          hostPath:
             path: /var/run/datadog/
-          name: apmsocketpath
       containers:
         - name: vulcan
           image: maven:3.9-eclipse-temurin-17
           command: ["/bin/sh"]
           args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | bash -s"]
           volumeMounts:
-            - mountPath: /logs
-              name: logs
+            - name: logs
+              mountPath: /logs
             - name: apmsocketpath
               mountPath: /var/run/datadog
           env:
@@ -193,17 +193,17 @@ spec:
         - name: logs
           persistentVolumeClaim:
             claimName: vulcan-logs-pvc
-        - hostPath:
+        - name: apmsocketpath
+          hostPath:
             path: /var/run/datadog/
-          name: apmsocketpath
       containers:
         - name: user-manager
           image: node:18
           command: ["/bin/sh"]
           args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | bash -s"]
           volumeMounts:
-            - mountPath: /logs
-              name: logs
+            - name: logs
+              mountPath: /logs
             - name: apmsocketpath
               mountPath: /var/run/datadog
           env:
@@ -280,17 +280,17 @@ spec:
         - name: logs
           persistentVolumeClaim:
             claimName: vulcan-logs-pvc
-        - hostPath:
+        - name: apmsocketpath
+          hostPath:
             path: /var/run/datadog/
-          name: apmsocketpath
       containers:
         - name: god-manager
           image: maven:3.9-eclipse-temurin-17
           command: ["/bin/sh"]
           args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | bash -s"]
           volumeMounts:
-            - mountPath: /logs
-              name: logs
+            - name: logs
+              mountPath: /logs
             - name: apmsocketpath
               mountPath: /var/run/datadog
           env:
@@ -376,17 +376,17 @@ spec:
         - name: logs
           persistentVolumeClaim:
             claimName: vulcan-logs-pvc
-        - hostPath:
+        - name: apmsocketpath
+          hostPath:
             path: /var/run/datadog/
-          name: apmsocketpath
       containers:
         - name: authenticator
           image: maven:3.9-eclipse-temurin-17
           command: ["/bin/sh"]
           args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | bash -s"]
           volumeMounts:
-            - mountPath: /logs
-              name: logs
+            - name: logs
+              mountPath: /logs
             - name: apmsocketpath
               mountPath: /var/run/datadog
           env:
