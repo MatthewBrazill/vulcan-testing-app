@@ -65,45 +65,33 @@ if [ "$build" == 1 ]; then
     fi
 fi
 
-# Taredown
+# Taredown Application
 if [ "$taredown" == 1 ]; then
     printf "Vulcan Application Taredown...\n"
-    if [ "$docker" == 0 ] && [ "$kube" == 0 ]; then
-        printf "  Docker...\n"
-        docker-compose down 2> /dev/null
-        printf "  Kubernetes...\n"
-        kubectl delete secret vulcan-secrets
-        kubectl delete -f deployment.yaml 2> /dev/null
-    elif [ "$docker" == 1 ]; then
-        printf "  Docker...\n"
-        docker-compose down 2> /dev/null
-    elif [ "$kube" == 1 ]; then
-        printf "  Kubernetes...\n"
-        kubectl delete secret vulcan-secrets
-        kubectl delete -f deployment.yaml 2> /dev/null
-    fi
+    
+    printf "  Docker...\n"
+    docker-compose down 2> /dev/null
+    printf "  Kubernetes...\n"
+    kubectl delete secret vulcan-secrets
+    kubectl delete -f deployment.yaml 2> /dev/null
+        
     printf "Finished taredown!\n\n"
 fi
 
-# Build
-printf "Deploying Vulcan Application...\n"
-export DD_GIT_COMMIT_SHA=$(git rev-parse HEAD)
-export DD_GIT_REPOSITORY_URL="https://github.com/MatthewBrazill/vulcan-testing-app"
-if [ "$docker" == 0 ] && [ "$kube" == 0 ]; then
+# Deploy Application
+if [ "$application" == 1 ]; then
+    printf "Deploying Vulcan Application...\n"
+    export DD_GIT_COMMIT_SHA=$(git rev-parse HEAD)
+    export DD_GIT_REPOSITORY_URL="https://github.com/MatthewBrazill/vulcan-testing-app"
+    
     printf "  Docker...\n"
     docker-compose --env-file ./secrets.env up -d 2> /dev/null
     printf "  Kubernetes...\n"
     kubectl create secret generic vulcan-secrets --from-env-file secrets.env
     kubectl apply -f deployment.yaml 2> /dev/null
-elif [ "$docker" == 1 ]; then
-    printf "  Docker...\n"
-    docker-compose --env-file ./secrets.env up -d 2> /dev/null
-elif [ "$kube" == 1 ]; then
-    printf "  Kubernetes...\n"
-    kubectl create secret generic vulcan-secrets --from-env-file secrets.env
-    kubectl apply -f deployment.yaml 2> /dev/null
+        
+    printf "Finsihed deploying! You can now use the Vulcan App: https://localhost/login\n\n"
 fi
-printf "Finsihed deploying! You can now use the Vulcan App: https://localhost/login\n\n"
 
 # Monitoring
 if [ "$monitoring" == 1 ]; then
