@@ -27,6 +27,22 @@ The following isa non-exhaustive list of the technologies that have been used in
     - Application Internal HTTPS
     - Input Sanitation
 
+## Architecture Overview
+| Service Name      | Kubernetes | Docker | Summary |
+| ----------------- | - | - | --------------------- |
+| Vulcan            | X |   | The main application backend |
+| God-Manager       | X |   | The management service for the stored gods |
+| User-Manager      | X | X | The management service for all user related things |
+| Scribe            |   | X | The Notes management service handling user notes |
+| Authenticator     | X | X | The authentication and authorization service |
+| Application Proxy |   | X | NGINX Proxy for accessing to the application |
+| Database Proxy    | X |   | Proxy for managing the connections to the databases |
+| God-Database      |   | X | MongoDB database for the stored gods |
+| User-Database     |   | X | PostgreSQL database to store users and passwords |
+| Notes-Database    |   | X | MongoDB database to store the notes for each user |
+| Notes-Queue       | X |   | Kafka queue for new user notes |
+| Session-Store     | X |   | A redis database for session storage of the application |
+
 ## Monitoring
 All applications, services, and databases are also set up to be instrumented using Datadog to allow for in depth monitoring, troubleshooting and tracking using all of its features.
 
