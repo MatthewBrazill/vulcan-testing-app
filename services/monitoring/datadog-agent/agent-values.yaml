@@ -66,10 +66,10 @@ agents:
   annotations:
     ad.datadoghq.com/agent.logs: '[{"source":"datadog-agent","service":"datadog-agent"}]'
   volumes:
-    - hostPath:
-        path: /vulcan-data/kubernetes/logs/
-      name: vulcan-logs
+    - name: logs
+      persistentVolumeClaim:
+        claimName: vulcan-logs-pvc
   volumeMounts:
-    - name: vulcan-logs
-      mountPath: /vulcan-data/kubernetes/logs/
-      readOnly: true'
+    - name: logs
+      mountPath: /vulcan-data/logs/
+      readOnly: true
