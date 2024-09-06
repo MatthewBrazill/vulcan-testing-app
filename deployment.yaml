@@ -71,10 +71,12 @@ metadata:
     tags.datadoghq.com/env: kubernetes
     tags.datadoghq.com/service: vulcan
 spec:
-  type: LoadBalancer
+  type: NodePort
+  externalTrafficPolicy: Local
   ports:
-    - port: 10443
+    - port: 443
       targetPort: 443
+      nodePort: 32100
   selector:
     tags.datadoghq.com/service: vulcan
 ---
@@ -160,10 +162,9 @@ metadata:
     tags.datadoghq.com/env: kubernetes
     tags.datadoghq.com/service: user-manager
 spec:
-  type: LoadBalancer
   ports:
-    - port: 10910
-      targetPort: 910
+    - port: 443
+      targetPort: 443
   selector:
     tags.datadoghq.com/service: user-manager
 ---
@@ -247,10 +248,9 @@ metadata:
     tags.datadoghq.com/env: kubernetes
     tags.datadoghq.com/service: god-manager
 spec:
-  type: LoadBalancer
   ports:
-    - port: 10900
-      targetPort: 900
+    - port: 443
+      targetPort: 443
   selector:
     tags.datadoghq.com/service: god-manager
 ---
@@ -343,10 +343,9 @@ metadata:
     tags.datadoghq.com/env: kubernetes
     tags.datadoghq.com/service: authenticator
 spec:
-  type: LoadBalancer
   ports:
-    - port: 12884
-      targetPort: 2884
+    - port: 443
+      targetPort: 443
   selector:
     tags.datadoghq.com/service: authenticator
 ---
