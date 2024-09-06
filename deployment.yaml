@@ -99,7 +99,7 @@ spec:
         tags.datadoghq.com/env: kubernetes
         tags.datadoghq.com/service: vulcan
       annotations:
-        ad.datadoghq.com/vulcan.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan","path":"/vulcan-data/kubernetes/logs/vulcan.log"}]'
+        ad.datadoghq.com/vulcan.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan","path":"/vulcan-data/logs/vulcan.log"}]'
         ad.datadoghq.com/tags: '{"team":"matthew"}'
     spec:
       volumes:
@@ -187,7 +187,7 @@ spec:
         tags.datadoghq.com/env: kubernetes
         tags.datadoghq.com/service: user-manager
       annotations:
-        ad.datadoghq.com/user-manager.logs: '[{"type":"file","source":"vulcan-app","service":"user-manager","path":"/vulcan-data/kubernetes/logs/user-manager.log"}]'
+        ad.datadoghq.com/user-manager.logs: '[{"type":"file","source":"vulcan-app","service":"user-manager","path":"/vulcan-data/logs/user-manager.log"}]'
         ad.datadoghq.com/tags: '{"team":"matthew"}'
     spec:
       volumes:
@@ -273,7 +273,7 @@ spec:
         tags.datadoghq.com/env: kubernetes
         tags.datadoghq.com/service: god-manager
       annotations:
-        ad.datadoghq.com/god-manager.logs: '[{"type":"file","source":"vulcan-app","service":"god-manager","path":"/vulcan-data/kubernetes/logs/god-manager.log"}]'
+        ad.datadoghq.com/god-manager.logs: '[{"type":"file","source":"vulcan-app","service":"god-manager","path":"/vulcan-data/logs/god-manager.log"}]'
         ad.datadoghq.com/tags: '{"team":"matthew"}'
     spec:
       volumes:
@@ -368,7 +368,7 @@ spec:
         tags.datadoghq.com/env: kubernetes
         tags.datadoghq.com/service: authenticator
       annotations:
-        ad.datadoghq.com/authenticator.logs: '[{"type":"file","source":"vulcan-app","service":"authenticator","path":"/vulcan-data/kubernetes/logs/auth.log"}]'
+        ad.datadoghq.com/authenticator.logs: '[{"type":"file","source":"vulcan-app","service":"authenticator","path":"/vulcan-data/logs/auth.log"}]'
         ad.datadoghq.com/tags: '{"team":"matthew"}'
     spec:
       volumes:
