@@ -96,15 +96,12 @@ fi
 # Monitoring
 if [ "$monitoring" == 1 ]; then
     printf "Adding Monitoring Resources...\n"
-    if [ "$docker" == 0 ] && [ "$kube" == 0 ]; then
-        printf "  Docker...\n"
-        docker-compose --env-file ./secrets.env --file ./services/monitoring/docker-compose.yaml up -d 2> /dev/null
-        printf "  Kubernetes...\n"
-    elif [ "$docker" == 1 ]; then
-        printf "  Docker...\n"
-        docker-compose --env-file ./secrets.env --file ./services/monitoring/docker-compose.yaml up -d 2> /dev/null
-    elif [ "$kube" == 1 ]; then
-        printf "  Kubernetes...\n"
-    fi
+    
+    printf "  Docker...\n"
+    docker-compose --env-file ./secrets.env --file ./services/monitoring/docker-compose.yaml up -d 2> /dev/null
+    printf "  Kubernetes...\n"
+    kubectl create secret generic vulcan-secrets --from-env-file secrets.env
+    helm install datadog-agent -f ./services/monitoring/datadog-agent/agent-values.yaml datadog/datadog 2> /dev/null
+        
     printf "Done!\n"
 fi
