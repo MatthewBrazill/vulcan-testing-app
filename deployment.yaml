@@ -287,7 +287,7 @@ spec:
             path: /var/run/datadog/
       containers:
         - name: god-manager
-          image: maven:3.9-eclipse-temurin-17
+          image: golang:latest
           command: ["/bin/sh"]
           args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | bash -s"]
           volumeMounts:
@@ -382,7 +382,7 @@ spec:
             path: /var/run/datadog/
       containers:
         - name: authenticator
-          image: maven:3.9-eclipse-temurin-17
+          image: python:bookworm
           command: ["/bin/sh"]
           args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | bash -s"]
           volumeMounts:
