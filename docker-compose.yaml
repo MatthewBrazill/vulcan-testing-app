@@ -237,17 +237,17 @@ services:
 
 
   # Application Proxy
-  nginx-proxy:
+  vulcan-proxy:
     image: nginx:1.25-alpine
-    container_name: nginx-proxy
+    container_name: vulcan-proxy
     ports:
-      - 555:555
+      - 443:443
     networks:
       - vulcan_app
       - datadog_bridge
     environment:
       - DD_ENV=docker
-      - DD_SERVICE=nginx-proxy
+      - DD_SERVICE=vulcan-proxy
       - DD_VERSION=0.1.2
       - DD_TRACE_SAMPLE_RATE=1
       - DD_GIT_COMMIT_SHA=$DD_GIT_COMMIT_SHA
@@ -260,15 +260,15 @@ services:
       - DD_TRACE_CLIENT_IP_ENABLED=true
       - CERT_FOLDER=/certificate
     volumes:
-      - ./services/nginx-proxy:/etc/nginx
+      - ./services/vulcan-proxy:/etc/nginx
       - ./build-scripts/startup.sh:/startup.sh
       - ./services/vulcan/certificate:/certificate
       - /var/run/datadog:/var/run/datadog
     command: /startup.sh
     labels:
       com.datadoghq.ad.checks: '{"nginx":{"instances":[{"nginx_status_url":"http://%%host%%:81/nginx_status/"}]}}'
-      com.datadoghq.ad.logs: '[{"source":"nginx","service":"nginx-proxy"}]'
-      com.datadoghq.ad.tags: '["env:docker","service:nginx-proxy"]'
+      com.datadoghq.ad.logs: '[{"source":"nginx","service":"vulcan-proxy"}]'
+      com.datadoghq.ad.tags: '["env:docker","service:vulcan-proxy"]'
     deploy:
       resources:
         limits:
