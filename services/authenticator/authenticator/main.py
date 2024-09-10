@@ -25,4 +25,4 @@ structlog.configure(
 
 if __name__ == "__main__":
     certPath = os.environ["CERT_FOLDER"]
-    uvicorn.run(app, host="0.0.0.0", port=2884, ssl_certfile=f"{certPath}/cert.pem", ssl_keyfile=f"{certPath}/key.pem")
+    uvicorn.run(app, host="0.0.0.0", port=443, ssl_certfile=f"{certPath}/cert.pem", ssl_keyfile=f"{certPath}/key.pem")

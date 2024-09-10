@@ -231,7 +231,7 @@ spec:
             - name: CERT_FOLDER
               value: /user-manager/certificate
           ports:
-            - containerPort: 910
+            - containerPort: 443
               protocol: TCP
           resources:
             limits:
@@ -319,7 +319,7 @@ spec:
             - name: CERT_FOLDER
               value: /god-manager/certificate
           ports:
-            - containerPort: 900
+            - containerPort: 443
               protocol: TCP
           resources:
             limits:
@@ -417,7 +417,7 @@ spec:
               valueFrom: 
                 secretKeyRef: PASSWORD_PEPPER
           ports:
-            - containerPort: 2884
+            - containerPort: 443
               protocol: TCP
           resources:
             limits:

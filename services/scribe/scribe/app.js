@@ -117,7 +117,7 @@ async function start() {
     https.createServer({
         key: fs.readFileSync(`${process.env.CERT_FOLDER}/key.pem`),
         cert: fs.readFileSync(`${process.env.CERT_FOLDER}/cert.pem`)
-    }, app).listen(920, () => {
+    }, app).listen(443, () => {
         logger.info("starting scribe")
     })
 }

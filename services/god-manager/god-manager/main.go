@@ -43,7 +43,7 @@ func main() {
 	Log(ctx).Info("starting god-manager")
 	certFile := fmt.Sprintf("%s/cert.pem", os.Getenv("CERT_FOLDER"))
 	keyFile := fmt.Sprintf("%s/key.pem", os.Getenv("CERT_FOLDER"))
-	err = app.RunTLS(":900", certFile, keyFile)
+	err = app.RunTLS(":443", certFile, keyFile)
 	if err != nil {
 		Log(ctx).WithError(err).Error("failed to start god-manager")
 		os.Exit(1)
