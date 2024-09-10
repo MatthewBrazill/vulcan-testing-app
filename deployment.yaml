@@ -140,10 +140,14 @@ spec:
               value: /vulcan/certificate
             - name: VLCN_SESSION_KEY
               valueFrom:
-                secretKeyRef: SESSION_KEY
+                secretKeyRef:
+                  name: vulcan-secrets
+                  key: SESSION_KEY
             - name: PW_PEPPER
-              valueFrom: 
-                secretKeyRef: PASSWORD_PEPPER
+              valueFrom:
+                secretKeyRef:
+                  name: vulcan-secrets
+                  key: PASSWORD_PEPPER
           ports:
             - containerPort: 443
               protocol: TCP
@@ -415,7 +419,9 @@ spec:
               value: /authenticator/certificate
             - name: PW_PEPPER
               valueFrom: 
-                secretKeyRef: PASSWORD_PEPPER
+                secretKeyRef: 
+                  name: vulcan-secrets
+                  key: PASSWORD_PEPPER
           ports:
             - containerPort: 443
               protocol: TCP
