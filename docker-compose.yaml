@@ -351,6 +351,8 @@ services:
   god-database:
     image: mongo:latest
     container_name: god-database
+    ports:
+      - 27017:27017
     networks:
       - vulcan_app
       - datadog_bridge
@@ -371,6 +373,8 @@ services:
   notes-database:
     image: mongo:latest
     container_name: notes-database
+    ports:
+      - 27018:27017
     networks:
       - vulcan_app
       - datadog_bridge
@@ -391,6 +395,8 @@ services:
   user-database:
     image: postgres:15
     container_name: user-database
+    ports:
+      - 5432:5432
     networks:
       - vulcan_app
       - datadog_bridge
