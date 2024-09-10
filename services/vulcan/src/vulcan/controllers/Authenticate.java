@@ -62,7 +62,7 @@ public class Authenticate {
             auth.put("password", body.get("password"));
 
             // Make authentication request to authenticator service
-            HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://authenticator:2884/authenticate"), auth);
+            HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://authenticator.vulcan-application.svc.cluster.local/authenticate"), auth);
 
             // Handle response
             switch (response.statusCode()) {

@@ -101,7 +101,7 @@ public class Helpers {
             }
 
             // Make authorization request to authenticator service
-            HttpResponse<String> res = Helpers.httpPostRequest(new URI("https://authenticator:2884/authorize"), body);
+            HttpResponse<String> res = Helpers.httpPostRequest(new URI("https://authenticator.vulcan-application.svc.cluster.local/authorize"), body);
 
             // Handle response
             switch (res.statusCode()) {

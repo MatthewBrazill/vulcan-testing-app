@@ -146,7 +146,7 @@ public class Storage {
                     godSearch.put("query", body.get("query"));
 
                     // Make god request
-                    HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://god-manager:900/search"), godSearch);
+                    HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://god-manager.vulcan-application.svc.cluster.local/search"), godSearch);
 
                     // Handle response
                     switch (response.statusCode()) {

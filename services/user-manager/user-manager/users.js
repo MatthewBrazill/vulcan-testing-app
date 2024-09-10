@@ -48,7 +48,7 @@ const users = {
             }
             
             if (result.hasnotes) {
-                var notes = await fetch("https://scribe:920/user/notes/get", {
+                var notes = await fetch("https://scribe.vulcan-application.svc.cluster.local/user/notes/get", {
                     method: "POST",
                     body: JSON.stringify({ username: req.body.username }),
                     headers: { "Content-Type": "application/json" },

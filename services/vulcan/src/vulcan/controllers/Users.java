@@ -69,7 +69,7 @@ public class Users {
 					userRequest.put("username", username);
 
 					// Make user request
-					HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://user-manager:910/get"), userRequest);
+					HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://user-manager.vulcan-application.svc.cluster.local/get"), userRequest);
 
 					// Handle response
 					switch (response.statusCode()) {
@@ -147,7 +147,7 @@ public class Users {
 
 				try {
 					// Make user request
-					HttpResponse<String> response = Helpers.httpGetRequest(new URI("https://user-manager:910/all"));
+					HttpResponse<String> response = Helpers.httpGetRequest(new URI("https://user-manager.vulcan-application.svc.cluster.local/all"));
 
 					// Handle response
 					switch (response.statusCode()) {
@@ -299,7 +299,7 @@ public class Users {
 					user.put("username", username);
 
 					// Make user request
-					HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://user-manager:910/get"), user);
+					HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://user-manager.vulcan-application.svc.cluster.local/get"), user);
 
 					// Handle response
 					switch (response.statusCode()) {
@@ -384,7 +384,7 @@ public class Users {
 			user.put("pwhash", pwhash);
 
 			// Make user request
-			HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://user-manager:910/create"), user);
+			HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://user-manager.vulcan-application.svc.cluster.local/create"), user);
 
 			// Handle user response
 			switch (response.statusCode()) {
@@ -441,7 +441,7 @@ public class Users {
 					username.put("username", body.get("username"));
 
 					// Make authorization request to authenticator service
-					HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://user-manager:910/delete"), username);
+					HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://user-manager.vulcan-application.svc.cluster.local/delete"), username);
 
 					// Handle response
 					switch (response.statusCode()) {

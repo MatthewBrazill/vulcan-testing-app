@@ -64,7 +64,7 @@ public class Gods {
             god.put("domain", body.get("domain"));
 
             // Make god request
-            HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://god-manager:900/create"), god);
+            HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://god-manager.vulcan-application.svc.cluster.local/create"), god);
 
             // Handle god response
             switch (response.statusCode()) {
@@ -111,7 +111,7 @@ public class Gods {
             godId.put("godId", body.get("godId"));
 
             // Make god request
-            HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://god-manager:900/get"), godId);
+            HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://god-manager.vulcan-application.svc.cluster.local/get"), godId);
 
             // Handle response
             switch (response.statusCode()) {
@@ -174,7 +174,7 @@ public class Gods {
             logger.debug("creating updated god object");
 
             // Make god request
-            HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://god-manager:900/update"), god);
+            HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://god-manager.vulcan-application.svc.cluster.local/update"), god);
 
             // Handle god response
             switch (response.statusCode()) {
@@ -227,7 +227,7 @@ public class Gods {
             godId.put("godId", body.get("godId"));
 
             // Make authorization request to authenticator service
-            HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://god-manager:900/delete"), godId);
+            HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://god-manager.vulcan-application.svc.cluster.local/delete"), godId);
 
             // Handle response
             switch (response.statusCode()) {
