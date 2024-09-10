@@ -127,7 +127,7 @@ spec:
             - name: DD_VERSION
               value: "1.3.0"
             - name: DD_TRACE_SAMPLE_RATE
-              value: 1
+              value: "1"
             - name: DD_TRACE_AGENT_URL
               value: "unix:///var/run/datadog/apm.socket"
             - name: DD_DOGSTATSD_URL
@@ -217,7 +217,7 @@ spec:
             - name: DD_VERSION
               value: "1.3.0"
             - name: DD_TRACE_SAMPLE_RATE
-              value: 1
+              value: "1"
             - name: DD_APPSEC_ENABLED
               value: "true"
             - name: DD_IAST_ENABLED
@@ -303,7 +303,7 @@ spec:
             - name: DD_VERSION
               value: "1.0.0"
             - name: DD_TRACE_SAMPLE_RATE
-              value: 1
+              value: "1"
             - name: DD_APPSEC_ENABLED
               value: "true"
             - name: DD_IAST_ENABLED
@@ -398,7 +398,7 @@ spec:
             - name: DD_VERSION
               value: "1.2.1"
             - name: DD_TRACE_SAMPLE_RATE
-              value: 1
+              value: "1"
             - name: DD_APPSEC_ENABLED
               value: "true"
             - name: DD_IAST_ENABLED
