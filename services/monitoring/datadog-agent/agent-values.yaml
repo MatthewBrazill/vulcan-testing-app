@@ -41,7 +41,7 @@ datadog:
     socketEnabled: true
 
   serviceMonitoring:
-    enabled: true
+    enabled: false
 
   processAgent:
     enabled: false
