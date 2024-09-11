@@ -595,3 +595,103 @@ spec:
             limits:
               memory: "1G"
               cpu: "0.4"
+
+
+
+
+
+### -------------------------------------------------- ###
+#   Data Storage                                         #
+### -------------------------------------------------- ###
+
+# Database Proxy
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: database-proxy
+  namespace: vulcan-application
+  labels:
+    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/service: database-proxy
+spec:
+  ports:
+    - name: user-database
+      port: 5432
+      targetPort: 5432
+    - name: god-database
+      port: 27017
+      targetPort: 27017
+    - name: notes-database
+      port: 27018
+      targetPort: 27018
+  selector:
+    tags.datadoghq.com/service: database-proxy
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: database-proxy
+  namespace: vulcan-application
+  labels:
+    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/service: database-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tags.datadoghq.com/service: database-proxy
+  template:
+    metadata:
+      labels:
+        tags.datadoghq.com/env: kubernetes
+        tags.datadoghq.com/service: database-proxy
+      annotations:
+        ad.datadoghq.com/nginx.checks: '{"nginx":{"instances":[{"nginx_status_url":"http://%%host%%:81/nginx_status/"}]}}'
+        ad.datadoghq.com/database-proxy.logs: '[{"source":"nginx","service":"database-proxy"}]'
+        ad.datadoghq.com/tags: '{"team":"matthew"}'
+    spec:
+      volumes:
+        - name: logs
+          persistentVolumeClaim:
+            claimName: vulcan-logs-pvc
+        - name: apmsocketpath
+          hostPath:
+            path: /var/run/datadog/
+      containers:
+        - name: database-proxy
+          image: nginx:1.25-alpine
+          command: ["/bin/sh"]
+          args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
+          volumeMounts:
+            - name: logs
+              mountPath: /logs
+            - name: apmsocketpath
+              mountPath: /var/run/datadog
+          env:
+            - name: DD_ENV
+              value: kubernetes
+            - name: DD_SERVICE
+              value: database-proxy
+            - name: DD_VERSION
+              value: "0.1.0"
+            - name: DD_TRACE_SAMPLE_RATE
+              value: "1"
+            - name: DD_APPSEC_ENABLED
+              value: "true"
+            - name: DD_IAST_ENABLED
+              value: "true"
+            - name: DD_TRACE_AGENT_URL
+              value: "unix:///var/run/datadog/apm.socket"
+            - name: DD_DOGSTATSD_URL
+              value: "unix:///var/run/datadog/dsd.socket"
+            - name: DD_TRACE_CLIENT_IP_ENABLED
+              value: "true"
+          ports:
+            - containerPort: 5432
+            - containerPort: 27017
+            - containerPort: 27018
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "0.4"
