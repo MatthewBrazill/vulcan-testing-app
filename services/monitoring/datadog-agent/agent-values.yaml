@@ -24,10 +24,14 @@ datadog:
 
   apiKey:
     valueFrom:
-      secretKeyRef: DD_API_KEY
+      secretKeyRef:
+        name: datadog-secrets
+        key: DD_API_KEY
   appKey:
     valueFrom:
-      secretKeyRef: DD_APP_KEY
+      secretKeyRef:
+        name: datadog-secrets
+        key: DD_APP_KEY
   clusterName: pupmac-cluster
 
   networkMonitoring:
