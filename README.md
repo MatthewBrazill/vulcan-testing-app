@@ -56,11 +56,13 @@ To deploy the monitoring, ensure that the API and APP keys are properly set as d
 To ensure that the Datadog Synthetics Private Location works, add the worker configs to the `datadog-synthetics` folder as `worker-config-kubernetes.json` and `worker-config-docker.json` respectively.
 
 ## Deployment Instructions
-The entire application can be deployed to both Kubernetes and Docker in two steps! First, set up an env file called `secrets.env` in the project root directory. This is where secrets will be stored. In that file you will need to add values for the following:
+The entire application can be deployed in a single line using the deployment script in `build-scripts/deploy.sh`! However to ensure that the correct API keys and secrets are used, first update the `deployment.yaml` and `services/monitoring.secrets.yaml` files in the project with the relevant values. This is how the secrets will be made available to the application. In that file you will need to add values for the following:
 
-- DD_API_KEY: The API key for Datadog that is used for the Datadog agent
-- DD_APP_KEY: The Datadog APP key also used for the agent
-- SESSION_KEY: The session key used for the vulcan applications sessions
-- PASSWORD_PEPPER: The pepper used for the password hashing
+- `deployment.yaml`
+    - SESSION_KEY: The session key used for the vulcan applications sessions
+    - PASSWORD_PEPPER: The pepper used for the password hashing
+- `services/monitoring.secrets.yaml`
+    - DD_API_KEY: The API key for Datadog that is used for the Datadog agent
+    - DD_APP_KEY: The Datadog APP key also used for the agent
 
-After setting up the `secrets.env` file, you then just need to run the deploy script in the `build-scripts` folder, which will automatically deploy all the necessary containers in Docker and on Kubernetes, as well as create source maps of frontend scripts and upload those to Datadog.
+After setting up the files, you then just need to run the deploy script in the `build-scripts` folder, which will automatically deploy all the necessary containers in Docker and on Kubernetes, as well as create source maps of frontend scripts and upload those to Datadog. Further details on the usage of that script is available at the top of the script file.
