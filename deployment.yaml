@@ -519,3 +519,79 @@ spec:
             limits:
               memory: "512Mi"
               cpu: "1"
+
+
+# Kafka Queue
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notes-queue
+  namespace: vulcan-application
+  labels:
+    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/service: notes-queue
+spec:
+  type: NodePort
+  externalTrafficPolicy: Local
+  ports:
+    - port: 9092
+      targetPort: 9092
+      nodePort: 32200
+  selector:
+    tags.datadoghq.com/service: notes-queue
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notes-queue
+  namespace: vulcan-application
+  labels:
+    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/service: notes-queue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tags.datadoghq.com/service: notes-queue
+  template:
+    metadata:
+      labels:
+        tags.datadoghq.com/env: kubernetes
+        tags.datadoghq.com/service: notes-queue
+      annotations:
+        ad.datadoghq.com/notes-queue.logs: '[{"source":"kafka","service":"notes-queue","log_processing_rules":[{"type":"multi_line","name":"log_date_start","pattern":"\\[\\d{4}-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01]) (0?[1-9]|1[012]):([012345]?[1-9]):([012345]?[1-9]),\\d{3}\\]"}]}]'
+        ad.datadoghq.com/tags: '{"team":"matthew"}'
+    spec:
+      volumes:
+        - name: logs
+          persistentVolumeClaim:
+            claimName: vulcan-logs-pvc
+        - name: apmsocketpath
+          hostPath:
+            path: /var/run/datadog/
+      initContainers:
+        - name: init-notes-queue
+          image: apache/kafka:latest
+          command: ["/bin/sh"]
+          args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
+      containers:
+        - name: notes-queue
+          image: apache/kafka:latest
+          volumeMounts:
+            - name: logs
+              mountPath: /logs
+            - name: apmsocketpath
+              mountPath: /var/run/datadog
+          env:
+            - name: DD_ENV
+              value: kubernetes
+            - name: DD_SERVICE
+              value: notes-queue
+          ports:
+            - containerPort: 9092
+              protocol: TCP
+          resources:
+            limits:
+              memory: "1G"
+              cpu: "0.4"
