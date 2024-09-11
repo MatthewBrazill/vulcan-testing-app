@@ -22,16 +22,8 @@ datadog:
   orchestratorExplorer:
     enabled: true
 
-  apiKey:
-    valueFrom:
-      secretKeyRef:
-        name: datadog-secrets
-        key: DD_API_KEY
-  appKey:
-    valueFrom:
-      secretKeyRef:
-        name: datadog-secrets
-        key: DD_APP_KEY
+  apiKey: <dd-api-key>
+  appKey: <dd-app-key>
   clusterName: pupmac-cluster
 
   networkMonitoring:
