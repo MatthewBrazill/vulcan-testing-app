@@ -429,3 +429,93 @@ spec:
             limits:
               memory: "512Mi"
               cpu: "1"
+
+
+# Scribe
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: scribe
+  namespace: vulcan-application
+  labels:
+    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/service: scribe
+spec:
+  ports:
+    - port: 443
+      targetPort: 443
+  selector:
+    tags.datadoghq.com/service: scribe
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scribe
+  namespace: vulcan-application
+  labels:
+    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/service: scribe
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tags.datadoghq.com/service: scribe
+  template:
+    metadata:
+      labels:
+        tags.datadoghq.com/env: kubernetes
+        tags.datadoghq.com/service: scribe
+      annotations:
+        ad.datadoghq.com/scribe.logs: '[{"type":"file","source":"vulcan-app","service":"scribe","path":"/vulcan-data/logs/scribe.log"}]'
+        ad.datadoghq.com/tags: '{"team":"matthew"}'
+    spec:
+      volumes:
+        - name: logs
+          persistentVolumeClaim:
+            claimName: vulcan-logs-pvc
+        - name: apmsocketpath
+          hostPath:
+            path: /var/run/datadog/
+      containers:
+        - name: scribe
+          image: node:18
+          command: ["/bin/sh"]
+          args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
+          volumeMounts:
+            - name: logs
+              mountPath: /logs
+            - name: apmsocketpath
+              mountPath: /var/run/datadog
+          env:
+            - name: DD_ENV
+              value: kubernetes
+            - name: DD_SERVICE
+              value: scribe
+            - name: DD_VERSION
+              value: "0.1.0"
+            - name: DD_TRACE_SAMPLE_RATE
+              value: "1"
+            - name: DD_APPSEC_ENABLED
+              value: "true"
+            - name: DD_IAST_ENABLED
+              value: "true"
+            - name: DD_LOGS_INJECTION
+              value: "true"
+            - name: DD_TRACE_AGENT_URL
+              value: "unix:///var/run/datadog/apm.socket"
+            - name: DD_DOGSTATSD_URL
+              value: "unix:///var/run/datadog/dsd.socket"
+            - name: DD_TRACE_CLIENT_IP_ENABLED
+              value: "true"
+            - name: DD_DATA_STREAMS_ENABLED
+              value: "true"
+            - name: CERT_FOLDER
+              value: /vulcan/services/scribe/certificate
+          ports:
+            - containerPort: 443
+              protocol: TCP
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "1"
