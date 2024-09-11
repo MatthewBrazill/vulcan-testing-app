@@ -98,7 +98,7 @@ if [ "$monitoring" == 1 ] && [ "$taredown" == 1 ]; then
     printf "  Docker...\n"
     docker-compose --file ./services/monitoring/docker-compose.yaml down 2> /dev/null
     printf "  Kubernetes...\n"
-    helm uninstall datadog-agent datadog/datadog | sed 's/^/    /'
+    helm uninstall datadog-agent | sed 's/^/    /'
 
     printf "Done!\n"
 fi
