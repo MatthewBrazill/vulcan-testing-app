@@ -72,8 +72,7 @@ if [ "$taredown" == 1 ]; then
     printf "  Docker...\n"
     docker-compose down 2> /dev/null
     printf "  Kubernetes...\n"
-    kubectl delete secret vulcan-secrets
-    kubectl delete -f deployment.yaml | grep -v --line-buffered "*unchanged*" | sed 's/^/  /'
+    kubectl delete -f deployment.yaml | grep -v --line-buffered "*unchanged*" | sed 's/^/    /'
         
     printf "Finished taredown!\n\n"
 fi
@@ -87,21 +86,20 @@ if [ "$application" == 1 ]; then
     printf "  Docker...\n"
     docker-compose --env-file ./secrets.env up -d 2> /dev/null
     printf "  Kubernetes...\n"
-    kubectl create secret generic vulcan-secrets --from-env-file secrets.env
-    kubectl apply -f deployment.yaml | grep -v --line-buffered "*unchanged*" | sed 's/^/  /'
+    kubectl apply -f deployment.yaml | grep -v --line-buffered "*unchanged*" | sed 's/^/    /'
         
     printf "Finsihed deploying! You can now use the Vulcan App: https://localhost/login\n\n"
 fi
 
-# Monitoring
+# Deploy Monitoring
 if [ "$monitoring" == 1 ]; then
-    printf "Adding Monitoring Resources...\n"
-    
+    printf "Deploying Monitoring Resources...\n"
+
     printf "  Docker...\n"
     docker-compose --env-file ./secrets.env --file ./services/monitoring/docker-compose.yaml up -d 2> /dev/null
     printf "  Kubernetes...\n"
-    kubectl create secret generic vulcan-secrets --from-env-file secrets.env
+    kubectl apply -f ./services/monitoring/secrets.yaml | grep -v --line-buffered "*unchanged*" | sed 's/^/    /'
     helm install datadog-agent -f ./services/monitoring/datadog-agent/agent-values.yaml datadog/datadog 2> /dev/null
-        
+
     printf "Done!\n"
 fi
