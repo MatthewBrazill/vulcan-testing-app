@@ -24,7 +24,7 @@ case $DD_SERVICE in
         java -javaagent:/dd-java-agent.jar \
             -Djavax.net.ssl.trustStore=/cacerts/keystore.jks \
             -Djavax.net.ssl.trustStorePassword=changeit \
-            -Dlog4j2.configurationFile=/vulcan/src/log4j2.xml \
+            -Dlog4j2.configurationFile=/vulcan/services/vulcan/src/log4j2.xml \
             -Dvulcan.session.key=$VLCN_SESSION_KEY \
             -Ddd.trace.agent.url=$DD_TRACE_AGENT_URL \
             -Ddd.env=$DD_ENV \
@@ -38,7 +38,7 @@ case $DD_SERVICE in
             -Ddd.trace.sampling.rules='[{"service":"vulcan","sample_rate":1}]' \
             -Ddd.service.mapping=redis:session-store,postgresql:user-database,mongo:god-database,kafka:notes-queue \
             -jar ./target/vulcan.jar \
-            --logging.config=/vulcan/src/log4j2.xml
+            --logging.config=/vulcan/services/vulcan/src/log4j2.xml
         ;;
 
     "god-manager")
