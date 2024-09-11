@@ -92,7 +92,7 @@ if [ "$application" == 1 ]; then
 fi
 
 # Taredown Monitoring
-if [ "$monitoring" == 1 && "$taredown" == 1 ]; then
+if [ "$monitoring" == 1 ] && [ "$taredown" == 1 ]; then
     printf "Monitoring Resources Taredown...\n"
 
     printf "  Docker...\n"
