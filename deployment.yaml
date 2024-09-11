@@ -137,7 +137,7 @@ spec:
             - name: DD_DATA_STREAMS_ENABLED
               value: "true"
             - name: CERT_FOLDER
-              value: /vulcan/service/vulcan/certificate
+              value: /vulcan/services/vulcan/certificate
             - name: VLCN_SESSION_KEY
               valueFrom:
                 secretKeyRef:
@@ -233,7 +233,7 @@ spec:
             - name: DD_TRACE_CLIENT_IP_ENABLED
               value: "true"
             - name: CERT_FOLDER
-              value: /vulcan/service/user-manager/certificate
+              value: /vulcan/services/user-manager/certificate
           ports:
             - containerPort: 443
               protocol: TCP
@@ -321,7 +321,7 @@ spec:
             - name: DD_TRACE_CLIENT_IP_ENABLED
               value: "true"
             - name: CERT_FOLDER
-              value: /vulcan/service/god-manager/certificate
+              value: /vulcan/services/god-manager/certificate
           ports:
             - containerPort: 443
               protocol: TCP
@@ -416,7 +416,7 @@ spec:
             - name: DD_TRACE_CLIENT_IP_ENABLED
               value: "true"
             - name: CERT_FOLDER
-              value: /vulcan/service/authenticator/certificate
+              value: /vulcan/services/authenticator/certificate
             - name: PW_PEPPER
               valueFrom: 
                 secretKeyRef: 
