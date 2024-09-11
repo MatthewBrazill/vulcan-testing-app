@@ -695,3 +695,67 @@ spec:
             limits:
               memory: "512Mi"
               cpu: "0.4"
+
+
+# Session Store
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: session-store
+  namespace: vulcan-application
+  labels:
+    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/service: session-store
+spec:
+  ports:
+    - port: 6379
+      targetPort: 6379
+  selector:
+    tags.datadoghq.com/service: session-store
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: session-store
+  namespace: vulcan-application
+  labels:
+    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/service: session-store
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tags.datadoghq.com/service: session-store
+  template:
+    metadata:
+      labels:
+        tags.datadoghq.com/env: kubernetes
+        tags.datadoghq.com/service: session-store
+      annotations:
+        ad.datadoghq.com/redisdb.checks: '{"redisdb":{"instances":[{"host":"session-store","port":"6379","password":""}]}}'
+        ad.datadoghq.com/session-store.logs: '[{"source":"redis","service":"session-store"}]'
+        ad.datadoghq.com/tags: '{"team":"matthew"}'
+    spec:
+      volumes:
+        - name: logs
+          persistentVolumeClaim:
+            claimName: vulcan-logs-pvc
+        - name: apmsocketpath
+          hostPath:
+            path: /var/run/datadog/
+      containers:
+        - name: session-store
+          image: redis/redis-stack-server:latest
+          volumeMounts:
+            - name: logs
+              mountPath: /logs
+            - name: apmsocketpath
+              mountPath: /var/run/datadog
+          ports:
+            - containerPort: 6379
+              protocol: TCP
+          resources:
+            limits:
+              memory: "1G"
+              cpu: "0.2"
