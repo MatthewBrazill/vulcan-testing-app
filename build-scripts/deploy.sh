@@ -98,8 +98,7 @@ if [ "$monitoring" == 1 && "$taredown" == 1 ]; then
     printf "  Docker...\n"
     docker-compose --file ./services/monitoring/docker-compose.yaml down 2> /dev/null
     printf "  Kubernetes...\n"
-    kubectl delete -f ./services/monitoring/secret.yaml
-    helm uninstall datadog-agent datadog/datadog 2> /dev/null
+    helm uninstall datadog-agent datadog/datadog | sed 's/^/    /'
 
     printf "Done!\n"
 fi
@@ -111,8 +110,7 @@ if [ "$monitoring" == 1 ]; then
     printf "  Docker...\n"
     docker-compose --env-file ./secrets.env --file ./services/monitoring/docker-compose.yaml up -d 2> /dev/null
     printf "  Kubernetes...\n"
-    kubectl apply -f ./services/monitoring/secrets.yaml | grep -v --line-buffered "*unchanged*" | sed 's/^/    /'
-    helm install datadog-agent -f ./services/monitoring/datadog-agent/agent-values.yaml datadog/datadog 2> /dev/null
+    helm install datadog-agent -f ./services/monitoring/datadog-agent/agent-values.yaml datadog/datadog | sed 's/^/    /'
 
     printf "Done!\n"
 fi
