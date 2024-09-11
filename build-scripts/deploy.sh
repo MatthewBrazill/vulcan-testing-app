@@ -91,6 +91,19 @@ if [ "$application" == 1 ]; then
     printf "Finsihed deploying! You can now use the Vulcan App: https://localhost/login\n\n"
 fi
 
+# Taredown Monitoring
+if [ "$monitoring" == 1 && "$taredown" == 1 ]; then
+    printf "Monitoring Resources Taredown...\n"
+
+    printf "  Docker...\n"
+    docker-compose --file ./services/monitoring/docker-compose.yaml down 2> /dev/null
+    printf "  Kubernetes...\n"
+    kubectl delete -f ./services/monitoring/secret.yaml
+    helm uninstall datadog-agent datadog/datadog 2> /dev/null
+
+    printf "Done!\n"
+fi
+
 # Deploy Monitoring
 if [ "$monitoring" == 1 ]; then
     printf "Deploying Monitoring Resources...\n"
