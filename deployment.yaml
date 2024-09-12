@@ -27,7 +27,7 @@ metadata:
   name: vulcan-secrets
   namespace: vulcan-application
 type: generic
-data:
+stringData:
   PASSWORD_PEPPER: <password-pepper>
   SESSION_KEY: <session-key>
 
