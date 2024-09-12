@@ -124,8 +124,8 @@ spec:
     spec:
       volumes:
         - name: logs
-          persistentVolumeClaim:
-            claimName: vulcan-logs-pvc
+          hostPath:
+            path: /vulcan-data/logs/
         - name: apmsocketpath
           hostPath:
             path: /var/run/datadog/
@@ -218,8 +218,8 @@ spec:
     spec:
       volumes:
         - name: logs
-          persistentVolumeClaim:
-            claimName: vulcan-logs-pvc
+          hostPath:
+            path: /vulcan-data/logs/
         - name: apmsocketpath
           hostPath:
             path: /var/run/datadog/
@@ -304,8 +304,8 @@ spec:
     spec:
       volumes:
         - name: logs
-          persistentVolumeClaim:
-            claimName: vulcan-logs-pvc
+          hostPath:
+            path: /vulcan-data/logs/
         - name: apmsocketpath
           hostPath:
             path: /var/run/datadog/
@@ -399,8 +399,8 @@ spec:
     spec:
       volumes:
         - name: logs
-          persistentVolumeClaim:
-            claimName: vulcan-logs-pvc
+          hostPath:
+            path: /vulcan-data/logs/
         - name: apmsocketpath
           hostPath:
             path: /var/run/datadog/
@@ -492,8 +492,8 @@ spec:
     spec:
       volumes:
         - name: logs
-          persistentVolumeClaim:
-            claimName: vulcan-logs-pvc
+          hostPath:
+            path: /vulcan-data/logs/
         - name: apmsocketpath
           hostPath:
             path: /var/run/datadog/
@@ -585,8 +585,8 @@ spec:
     spec:
       volumes:
         - name: logs
-          persistentVolumeClaim:
-            claimName: vulcan-logs-pvc
+          hostPath:
+            path: /vulcan-data/logs/
         - name: apmsocketpath
           hostPath:
             path: /var/run/datadog/
@@ -673,8 +673,8 @@ spec:
     spec:
       volumes:
         - name: logs
-          persistentVolumeClaim:
-            claimName: vulcan-logs-pvc
+          hostPath:
+            path: /vulcan-data/logs/
         - name: apmsocketpath
           hostPath:
             path: /var/run/datadog/
@@ -759,8 +759,8 @@ spec:
     spec:
       volumes:
         - name: logs
-          persistentVolumeClaim:
-            claimName: vulcan-logs-pvc
+          hostPath:
+            path: /vulcan-data/logs/
         - name: apmsocketpath
           hostPath:
             path: /var/run/datadog/
