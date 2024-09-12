@@ -9,7 +9,7 @@ apiVersion: v1
 metadata:
   name: vulcan-application
   labels:
-    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/env: dev
 
 
 
@@ -47,7 +47,7 @@ metadata:
   name: vulcan-logs-volume
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/env: dev
 spec:
   storageClassName: manual
   capacity:
@@ -63,7 +63,7 @@ metadata:
   name: vulcan-logs-pvc
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/env: dev
 spec:
   storageClassName: manual
   accessModes:
@@ -88,7 +88,7 @@ metadata:
   name: vulcan
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/env: dev
     tags.datadoghq.com/service: vulcan
 spec:
   type: NodePort
@@ -106,7 +106,7 @@ metadata:
   name: vulcan
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/env: dev
     tags.datadoghq.com/service: vulcan
 spec:
   replicas: 1
@@ -116,7 +116,7 @@ spec:
   template:
     metadata:
       labels:
-        tags.datadoghq.com/env: kubernetes
+        tags.datadoghq.com/env: dev
         tags.datadoghq.com/service: vulcan
       annotations:
         ad.datadoghq.com/vulcan.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan","path":"/vulcan-data/logs/vulcan.log"}]'
@@ -141,7 +141,7 @@ spec:
               mountPath: /var/run/datadog
           env:
             - name: DD_ENV
-              value: kubernetes
+              value: dev
             - name: DD_SERVICE
               value: vulcan
             - name: DD_VERSION
@@ -185,7 +185,7 @@ metadata:
   name: user-manager
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/env: dev
     tags.datadoghq.com/service: user-manager
 spec:
   ports:
@@ -200,7 +200,7 @@ metadata:
   name: user-manager
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/env: dev
     tags.datadoghq.com/service: user-manager
 spec:
   replicas: 1
@@ -210,7 +210,7 @@ spec:
   template:
     metadata:
       labels:
-        tags.datadoghq.com/env: kubernetes
+        tags.datadoghq.com/env: dev
         tags.datadoghq.com/service: user-manager
       annotations:
         ad.datadoghq.com/user-manager.logs: '[{"type":"file","source":"vulcan-app","service":"user-manager","path":"/vulcan-data/logs/user-manager.log"}]'
@@ -235,7 +235,7 @@ spec:
               mountPath: /var/run/datadog
           env:
             - name: DD_ENV
-              value: kubernetes
+              value: dev
             - name: DD_SERVICE
               value: user-manager
             - name: DD_VERSION
@@ -271,7 +271,7 @@ metadata:
   name: god-manager
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/env: dev
     tags.datadoghq.com/service: god-manager
 spec:
   ports:
@@ -286,7 +286,7 @@ metadata:
   name: god-manager
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/env: dev
     tags.datadoghq.com/service: god-manager
 spec:
   replicas: 1
@@ -296,7 +296,7 @@ spec:
   template:
     metadata:
       labels:
-        tags.datadoghq.com/env: kubernetes
+        tags.datadoghq.com/env: dev
         tags.datadoghq.com/service: god-manager
       annotations:
         ad.datadoghq.com/god-manager.logs: '[{"type":"file","source":"vulcan-app","service":"god-manager","path":"/vulcan-data/logs/god-manager.log"}]'
@@ -321,7 +321,7 @@ spec:
               mountPath: /var/run/datadog
           env:
             - name: DD_ENV
-              value: kubernetes
+              value: dev
             - name: DD_SERVICE
               value: god-manager
             - name: DD_VERSION
@@ -366,7 +366,7 @@ metadata:
   name: authenticator
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/env: dev
     tags.datadoghq.com/service: authenticator
 spec:
   ports:
@@ -381,7 +381,7 @@ metadata:
   name: authenticator
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/env: dev
     tags.datadoghq.com/service: authenticator
 spec:
   replicas: 1
@@ -391,7 +391,7 @@ spec:
   template:
     metadata:
       labels:
-        tags.datadoghq.com/env: kubernetes
+        tags.datadoghq.com/env: dev
         tags.datadoghq.com/service: authenticator
       annotations:
         ad.datadoghq.com/authenticator.logs: '[{"type":"file","source":"vulcan-app","service":"authenticator","path":"/vulcan-data/logs/auth.log"}]'
@@ -416,7 +416,7 @@ spec:
               mountPath: /var/run/datadog
           env:
             - name: DD_ENV
-              value: kubernetes
+              value: dev
             - name: DD_SERVICE
               value: authenticator
             - name: DD_VERSION
@@ -459,7 +459,7 @@ metadata:
   name: scribe
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/env: dev
     tags.datadoghq.com/service: scribe
 spec:
   ports:
@@ -474,7 +474,7 @@ metadata:
   name: scribe
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/env: dev
     tags.datadoghq.com/service: scribe
 spec:
   replicas: 1
@@ -484,7 +484,7 @@ spec:
   template:
     metadata:
       labels:
-        tags.datadoghq.com/env: kubernetes
+        tags.datadoghq.com/env: dev
         tags.datadoghq.com/service: scribe
       annotations:
         ad.datadoghq.com/scribe.logs: '[{"type":"file","source":"vulcan-app","service":"scribe","path":"/vulcan-data/logs/scribe.log"}]'
@@ -509,7 +509,7 @@ spec:
               mountPath: /var/run/datadog
           env:
             - name: DD_ENV
-              value: kubernetes
+              value: dev
             - name: DD_SERVICE
               value: scribe
             - name: DD_VERSION
@@ -549,7 +549,7 @@ metadata:
   name: notes-queue
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/env: dev
     tags.datadoghq.com/service: notes-queue
 spec:
   type: NodePort
@@ -567,7 +567,7 @@ metadata:
   name: notes-queue
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/env: dev
     tags.datadoghq.com/service: notes-queue
 spec:
   replicas: 1
@@ -577,7 +577,7 @@ spec:
   template:
     metadata:
       labels:
-        tags.datadoghq.com/env: kubernetes
+        tags.datadoghq.com/env: dev
         tags.datadoghq.com/service: notes-queue
       annotations:
         ad.datadoghq.com/notes-queue.logs: '[{"source":"kafka","service":"notes-queue","log_processing_rules":[{"type":"multi_line","name":"log_date_start","pattern":"\\[\\d{4}-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01]) (0?[1-9]|1[012]):([012345]?[1-9]):([012345]?[1-9]),\\d{3}\\]"}]}]'
@@ -605,7 +605,7 @@ spec:
               mountPath: /var/run/datadog
           env:
             - name: DD_ENV
-              value: kubernetes
+              value: dev
             - name: DD_SERVICE
               value: notes-queue
           ports:
@@ -632,7 +632,7 @@ metadata:
   name: database-proxy
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/env: dev
     tags.datadoghq.com/service: database-proxy
 spec:
   ports:
@@ -654,7 +654,7 @@ metadata:
   name: database-proxy
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/env: dev
     tags.datadoghq.com/service: database-proxy
 spec:
   replicas: 1
@@ -664,7 +664,7 @@ spec:
   template:
     metadata:
       labels:
-        tags.datadoghq.com/env: kubernetes
+        tags.datadoghq.com/env: dev
         tags.datadoghq.com/service: database-proxy
       annotations:
         ad.datadoghq.com/nginx.checks: '{"nginx":{"instances":[{"nginx_status_url":"http://%%host%%:81/nginx_status/"}]}}'
@@ -690,7 +690,7 @@ spec:
               mountPath: /var/run/datadog
           env:
             - name: DD_ENV
-              value: kubernetes
+              value: dev
             - name: DD_SERVICE
               value: database-proxy
             - name: DD_VERSION
@@ -725,7 +725,7 @@ metadata:
   name: session-store
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/env: dev
     tags.datadoghq.com/service: session-store
 spec:
   ports:
@@ -740,7 +740,7 @@ metadata:
   name: session-store
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: kubernetes
+    tags.datadoghq.com/env: dev
     tags.datadoghq.com/service: session-store
 spec:
   replicas: 1
@@ -750,7 +750,7 @@ spec:
   template:
     metadata:
       labels:
-        tags.datadoghq.com/env: kubernetes
+        tags.datadoghq.com/env: dev
         tags.datadoghq.com/service: session-store
       annotations:
         ad.datadoghq.com/redisdb.checks: '{"redisdb":{"instances":[{"host":"session-store","port":"6379","password":""}]}}'
