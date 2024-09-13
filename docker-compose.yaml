@@ -11,137 +11,6 @@ services:
   ### -------------------------------------------------- ###
   #   Vulcan Application                                   #
   ### -------------------------------------------------- ###
-  
-  # Vulcan Backend
-  vulcan:
-    image: maven:3.9-eclipse-temurin-17
-    container_name: vulcan
-    ports:
-      - 443:443
-    networks:
-      - vulcan_app
-      - datadog_bridge
-    environment:
-      - DD_ENV=docker
-      - DD_SERVICE=vulcan
-      - DD_VERSION=1.3.0
-      - DD_TRACE_SAMPLE_RATE=1
-      - DD_GIT_COMMIT_SHA=$DD_GIT_COMMIT_SHA
-      - DD_GIT_REPOSITORY_URL=$DD_GIT_REPOSITORY_URL
-      # - DD_AGENT_HOST=datadog-agent
-      # - DD_TRACE_AGENT_PORT=8126
-      - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
-      - DD_DOGSTATSD_URL=unix:///var/run/datadog/dsd.socket
-      - DD_TRACE_CLIENT_IP_ENABLED=true
-      - DD_DATA_STREAMS_ENABLED=true
-      - CERT_FOLDER=/vulcan/certificate
-      - VLCN_SESSION_KEY=$SESSION_KEY
-      - PW_PEPPER=$PASSWORD_PEPPER
-    working_dir: /vulcan
-    volumes:
-      - ./services/vulcan:/vulcan
-      - ./services/frontend:/frontend
-      - ./build-scripts/startup.sh:/startup.sh
-      - ./services/authenticator/certificate/cert.pem:/cacerts/authenticator-cert.pem
-      - ./services/god-manager/certificate/cert.pem:/cacerts/god-manager-cert.pem
-      - ./services/user-manager/certificate/cert.pem:/cacerts/user-manager-cert.pem
-      - /vulcan-data/docker/logs:/logs
-      - /var/run/datadog:/var/run/datadog
-    command: bash /startup.sh
-    labels:
-      com.datadoghq.ad.logs: '[{"type":"file","source":"vulcan","service":"vulcan","path":"/vulcan-data/docker/logs/vulcan.log"}]'
-      com.datadoghq.ad.tags: '["env:docker","service:vulcan"]'
-    deploy:
-      resources:
-        limits:
-          cpus: "1"
-          memory: 1G
-
-
-  # God Manager
-  god-manager:
-    image: golang:latest
-    container_name: god-manager
-    ports:
-      - 900:900
-    networks:
-      - vulcan_app
-      - datadog_bridge
-    environment:
-      - DD_ENV=docker
-      - DD_SERVICE=god-manager
-      - DD_VERSION=1.0.0
-      - DD_TRACE_SAMPLE_RATE=1
-      - DD_GIT_COMMIT_SHA=$DD_GIT_COMMIT_SHA
-      - DD_GIT_REPOSITORY_URL=$DD_GIT_REPOSITORY_URL
-      - DD_SERVICE_MAPPING=mongo:god-database
-      - DD_APPSEC_ENABLED=true
-      - DD_IAST_ENABLED=true
-      - DD_PROFILING_ENABLED=true
-      - DD_PROFILING_EXECUTION_TRACE_ENABLED=true
-      # - DD_AGENT_HOST=datadog-agent
-      # - DD_TRACE_AGENT_PORT=8126
-      - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
-      - DD_DOGSTATSD_URL=unix:///var/run/datadog/dsd.socket
-      - CERT_FOLDER=/god-manager/certificate
-    working_dir: /god-manager
-    volumes:
-      - ./services/god-manager:/god-manager
-      - ./build-scripts/startup.sh:/startup.sh
-      - /vulcan-data/docker/logs:/logs
-      - /var/run/datadog:/var/run/datadog
-    command: bash /startup.sh
-    labels:
-      com.datadoghq.ad.logs: '[{"type":"file","source":"god-manager","service":"god-manager","path":"/vulcan-data/docker/logs/god-manager.log"}]'
-      com.datadoghq.ad.tags: '["env:docker","service:god-manager"]'
-    deploy:
-      resources:
-        limits:
-          cpus: "0.8"
-          memory: 1G
-
-
-  # User Manager
-  user-manager:
-    image: node:18
-    container_name: user-manager
-    ports:
-      - 910:910
-    networks:
-      - vulcan_app
-      - datadog_bridge
-    environment:
-      - DD_ENV=docker
-      - DD_SERVICE=user-manager
-      - DD_VERSION=1.3.0
-      - DD_TRACE_SAMPLE_RATE=1
-      - DD_GIT_COMMIT_SHA=$DD_GIT_COMMIT_SHA
-      - DD_GIT_REPOSITORY_URL=$DD_GIT_REPOSITORY_URL
-      - DD_APPSEC_ENABLED=true
-      - DD_IAST_ENABLED=true
-      # - DD_AGENT_HOST=datadog-agent
-      # - DD_TRACE_AGENT_PORT=8126
-      - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
-      - DD_DOGSTATSD_URL=unix:///var/run/datadog/dsd.socket
-      - DD_TRACE_CLIENT_IP_ENABLED=true
-      - DD_TRACE_STARTUP_LOGS=true
-      - CERT_FOLDER=/user-manager/certificate
-    working_dir: /user-manager
-    volumes:
-      - ./services/user-manager:/user-manager
-      - ./build-scripts/startup.sh:/startup.sh
-      - /vulcan-data/docker/logs:/logs
-      - /var/run/datadog:/var/run/datadog
-    command: bash /startup.sh
-    labels:
-      com.datadoghq.ad.logs: '[{"type":"file","source":"user-manager","service":"user-manager","path":"/vulcan-data/docker/logs/user-manager.log"}]'
-      com.datadoghq.ad.tags: '["env:docker","service:user-manager"]'
-    deploy:
-      resources:
-        limits:
-          cpus: "0.4"
-          memory: 1G
-
 
   # Scribe
   scribe:
@@ -193,49 +62,6 @@ services:
   #   Supporting Infrastructure                            #
   ### -------------------------------------------------- ###
 
-  # Authenticator
-  authenticator:
-    image: python:bookworm
-    container_name: authenticator
-    ports:
-      - 2884:2884
-    networks:
-      - vulcan_app
-      - datadog_bridge
-    environment:
-      - DD_ENV=docker
-      - DD_SERVICE=authenticator
-      - DD_VERSION=0.2.0
-      - DD_TRACE_SAMPLE_RATE=1
-      - DD_GIT_COMMIT_SHA=$DD_GIT_COMMIT_SHA
-      - DD_GIT_REPOSITORY_URL=$DD_GIT_REPOSITORY_URL
-      - DD_APPSEC_ENABLED=true
-      - DD_IAST_ENABLED=true
-      - DD_LOGS_INJECTION=true
-      # - DD_AGENT_HOST=datadog-agent
-      # - DD_TRACE_AGENT_PORT=8126
-      - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
-      - DD_DOGSTATSD_URL=unix:///var/run/datadog/dsd.socket
-      - DD_TRACE_CLIENT_IP_ENABLED=true
-      - CERT_FOLDER=/authenticator/certificate
-      - PW_PEPPER=$PASSWORD_PEPPER
-    working_dir: /authenticator
-    volumes:
-      - ./services/authenticator:/authenticator
-      - ./build-scripts/startup.sh:/startup.sh
-      - /vulcan-data/docker/logs:/logs
-      - /var/run/datadog:/var/run/datadog
-    command: bash /startup.sh
-    labels:
-      com.datadoghq.ad.logs: '[{"type":"file","source":"authenticator","service":"authenticator","path":"/vulcan-data/docker/logs/auth.log"}]'
-      com.datadoghq.ad.tags: '["env:docker","service:authenticator"]'
-    deploy:
-      resources:
-        limits:
-          cpus: "1"
-          memory: 1G
-
-
   # Application Proxy
   vulcan-proxy:
     image: nginx:1.25-alpine
@@ -276,76 +102,12 @@ services:
           memory: 1G
 
 
-  # Kafka Queue
-  notes-queue:
-    image: apache/kafka:latest
-    container_name: notes-queue
-    ports:
-      - 9092:9092
-    networks:
-      - vulcan_app
-      - datadog_bridge
-    environment:
-      - DD_ENV=docker
-      - DD_SERVICE=notes-queue
-    volumes:
-      - ./services/message-queues/kafka/kafka.properties:/etc/kafka/docker/server.properties
-      - ./services/message-queues/kafka/certificate:/certificate
-    labels:
-      com.datadoghq.ad.logs: '[{"source":"kafka","service":"notes-queue","log_processing_rules":[{"type":"multi_line","name":"log_date_start","pattern":"\\[\\d{4}-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01]) (0?[1-9]|1[012]):([012345]?[1-9]):([012345]?[1-9]),\\d{3}\\]"}]}]'
-      com.datadoghq.ad.tags: '["env:docker","service:notes-queue"]'
-    deploy:
-      resources:
-        limits:
-          cpus: "0.4"
-          memory: 1G
-
-
 
 
 
   ### -------------------------------------------------- ###
   #   Data Storage                                         #
   ### -------------------------------------------------- ###
-
-  # Database Proxy
-  database-proxy:
-    image: nginx:1.25-alpine
-    container_name: database-proxy
-    ports:
-      - 5432:5432
-      - 27017:27017
-      - 6379:6379
-    networks:
-      - vulcan_app
-      - datadog_bridge
-    environment:
-      - DD_ENV=docker
-      - DD_SERVICE=database-proxy
-      - DD_VERSION=0.1.0
-      - DD_TRACE_SAMPLE_RATE=1
-      - DD_GIT_COMMIT_SHA=$DD_GIT_COMMIT_SHA
-      - DD_GIT_REPOSITORY_URL=$DD_GIT_REPOSITORY_URL
-      # - DD_AGENT_HOST=datadog-agent
-      # - DD_TRACE_AGENT_PORT=8126
-      - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
-      - DD_DOGSTATSD_URL=unix:///var/run/datadog/dsd.socket
-      - DD_TRACE_CLIENT_IP_ENABLED=true
-    volumes:
-      - ./services/database-proxy:/etc/nginx
-      - ./build-scripts/startup.sh:/startup.sh
-      - /var/run/datadog:/var/run/datadog
-    command: /startup.sh
-    labels:
-      com.datadoghq.ad.checks: '{"nginx":{"instances":[{"nginx_status_url":"http://%%host%%:81/nginx_status/"}]}}'
-      com.datadoghq.ad.logs: '[{"source":"nginx","service":"database-proxy"}]'
-      com.datadoghq.ad.tags: '["env:docker","service:database-proxy"]'
-    deploy:
-      resources:
-        limits:
-          cpus: "0.4"
-          memory: 1G
-
 
   # God Database
   god-database:
@@ -408,26 +170,6 @@ services:
       com.datadoghq.ad.checks: '{"postgres":{"instances":[{"dbm":"true","host":"user-database","port":5432,"username":"datadog","password":"5aae8c35f7e16245","dbname":"vulcan_users"}]}}'
       com.datadoghq.ad.logs: '[{"source":"postgresql","service":"user-database"}]'
       com.datadoghq.ad.tags: '["env:docker","service:user-database"]'
-    deploy:
-      resources:
-        limits:
-          cpus: "0.2"
-          memory: 1G
-
-
-  # Session Store
-  session-store:
-    image: redis/redis-stack-server:latest
-    container_name: session-store
-    networks:
-      - vulcan_app
-      - datadog_bridge
-    volumes:
-      - ./services/databases/session-store/data:/data
-    labels:
-      com.datadoghq.ad.checks: '{"redisdb":{"instances":[{"host":"session-store","port":"6379","password":""}]}}'
-      com.datadoghq.ad.logs: '[{"source":"redis","service":"session-store"}]'
-      com.datadoghq.ad.tags: '["env:docker","service:session-store"]'
     deploy:
       resources:
         limits:
