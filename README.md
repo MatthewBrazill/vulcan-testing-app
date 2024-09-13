@@ -56,11 +56,14 @@ To deploy the monitoring, ensure that the API and APP keys are properly set as d
 To ensure that the Datadog Synthetics Private Location works, add the worker configs to the `datadog-synthetics` folder as `worker-config-kubernetes.json` and `worker-config-docker.json` respectively.
 
 ## Deployment Instructions
-The entire application can be deployed in a single line using the deployment script in `build-scripts/deploy.sh`! However, to ensure that the correct API keys and secrets are used, first update the `deployment.yaml` and `services/monitoring/datadog-agent/agent-values.yaml` files in the project with the relevant values. This is how the secrets will be made available to the application. In that file you will need to add values for the following:
+The entire application can be deployed in a single line using the deployment script in `build-scripts/deploy.sh`! However, to ensure that the correct API keys and secrets are used, first update the `deployment.yaml`, `services/monitoring/docker-compose.yaml` and `services/monitoring/datadog-agent/agent-values.yaml` files in the project with the relevant values. This is how the secrets will be made available to the application. In that file you will need to add values for the following:
 
 - `deployment.yaml`
     - `password-pepper`: The pepper used for the password hashing
     - `session-key`: The session key used for the vulcan applications sessions
+- `services/monitoring/docker-compose.yaml`
+    - `dd-api-key`: The API key for Datadog that is used for the Datadog agent
+    - `dd-app-key`: The Datadog APP key also used for the agent
 - `services/monitoring/datadog-agent/agent-values.yaml`
     - `dd-api-key`: The API key for Datadog that is used for the Datadog agent
     - `dd-app-key`: The Datadog APP key also used for the agent

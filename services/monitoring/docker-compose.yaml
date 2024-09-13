@@ -11,8 +11,8 @@ services:
     networks:
       - datadog_bridge
     environment:
-      - DD_API_KEY=$DD_API_KEY
-      - DD_APP_KEY=$DD_APP_KEY
+      - DD_API_KEY=<dd-api-key>
+      - DD_APP_KEY=<dd-app-key>
       - DD_ENV=dev
       - DD_CONTAINER_EXCLUDE=name:minikube
       - DD_HOSTNAME=pupmac
@@ -67,7 +67,7 @@ services:
     networks:
       - datadog_bridge
     environment:
-      - DD_API_KEY=$DD_API_KEY
+      - DD_API_KEY=<dd-api-key>
     volumes:
       - ./otel-collector/otel-collector.yaml:/etc/otelcol-contrib/config.yaml
 

@@ -108,7 +108,7 @@ if [ "$monitoring" == 1 ]; then
     printf "Deploying Monitoring Resources...\n"
 
     printf "  Docker...\n"
-    docker-compose --env-file ./secrets.env --file ./services/monitoring/docker-compose.yaml up -d 2> /dev/null
+    docker-compose --file ./services/monitoring/docker-compose.yaml up -d 2> /dev/null
     printf "  Kubernetes...\n"
     helm install datadog-agent -f ./services/monitoring/datadog-agent/agent-values.yaml datadog/datadog | sed 's/^/    /'
 
