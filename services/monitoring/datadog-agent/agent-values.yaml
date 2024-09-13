@@ -1,6 +1,6 @@
 targetSystem: "linux"
 commonLabels:
-  tags.datadoghq.com/env: kubernetes
+  tags.datadoghq.com/env: dev
 datadog:
   kubelet:
     tlsVerify: false

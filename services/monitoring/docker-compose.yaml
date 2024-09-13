@@ -13,7 +13,7 @@ services:
     environment:
       - DD_API_KEY=$DD_API_KEY
       - DD_APP_KEY=$DD_APP_KEY
-      - DD_ENV=docker
+      - DD_ENV=dev
       - DD_CONTAINER_EXCLUDE=name:minikube
       - DD_HOSTNAME=pupmac
       - DD_DOGSTATSD_SOCKET=/var/run/datadog/dsd.socket
