@@ -63,8 +63,8 @@ agents:
     ad.datadoghq.com/agent.logs: '[{"source":"datadog-agent","service":"datadog-agent"}]'
   volumes:
     - name: logs
-      persistentVolumeClaim:
-        claimName: vulcan-logs-pvc
+      hostPath:
+        path: /vulcan-data/logs/
   volumeMounts:
     - name: logs
       mountPath: /vulcan-data/logs/
