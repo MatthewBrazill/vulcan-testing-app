@@ -3,17 +3,15 @@
 # Startup script that runs the nececary code to build and start the application
 # for each of the needed services.
 
-if [ $DD_ENV = "kubernetes" ]
-then
-    echo "recognized kubernetes environment..."
-    echo "preping kubernetes setup..."
-    rm -rf /vulcan
-    git clone https://github.com/MatthewBrazill/vulcan-testing-app.git /vulcan
-    cd /vulcan/services/$DD_SERVICE
-    echo "done!"
-fi
+echo "running service $DD_SERVICE on $DD_ENV environment"
 
-echo "starting service $DD_SERVICE"
+echo "pulling git repo..."
+rm -rf /vulcan
+git clone https://github.com/MatthewBrazill/vulcan-testing-app.git /vulcan
+
+cd /vulcan/services/$DD_SERVICE
+
+echo "starting service $DD_SERVICE..."
 case $DD_SERVICE in
     "vulcan")
         keytool -import -noprompt -alias user-manager-cert -keystore /cacerts/keystore.jks -file /cacerts/user-manager-cert.pem -storepass changeit
@@ -59,6 +57,7 @@ case $DD_SERVICE in
         ;;
 
     "vulcan-proxy")
+        cp -a /vulcan/services/vulcan-proxy/. /etc/nginx/
         wget -nc -nv -O /usr/nginx-datadog-module.so.tgz https://github.com/DataDog/nginx-datadog/releases/download/v1.1.0/nginx_1.25.4-alpine-arm64-ngx_http_datadog_module.so.tgz
         tar -xzf /usr/nginx-datadog-module.so.tgz -C /usr/lib/nginx/modules
         nginx -g "daemon off;"

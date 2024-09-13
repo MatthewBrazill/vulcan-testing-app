@@ -37,10 +37,9 @@ services:
       - DD_TRACE_CLIENT_IP_ENABLED=true
       - DD_TRACE_STARTUP_LOGS=true
       - DD_DATA_STREAMS_ENABLED=true
-      - CERT_FOLDER=/scribe/certificate
+      - CERT_FOLDER=/vulcan/services/scribe/certificate
     working_dir: /scribe
     volumes:
-      - ./services/scribe:/scribe
       - ./build-scripts/startup.sh:/startup.sh
       - /vulcan-data/docker/logs:/logs
       - /var/run/datadog:/var/run/datadog
@@ -84,11 +83,9 @@ services:
       - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
       - DD_DOGSTATSD_URL=unix:///var/run/datadog/dsd.socket
       - DD_TRACE_CLIENT_IP_ENABLED=true
-      - CERT_FOLDER=/certificate
+      - CERT_FOLDER=/vulcan/services/vulcan-proxy/certificate
     volumes:
-      - ./services/vulcan-proxy:/etc/nginx
       - ./build-scripts/startup.sh:/startup.sh
-      - ./services/vulcan/certificate:/certificate
       - /var/run/datadog:/var/run/datadog
     command: /startup.sh
     labels:
