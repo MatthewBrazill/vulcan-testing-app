@@ -26,6 +26,28 @@ const notes = {
             })
             res.status(500).json(err)
         }
+    },
+
+    async delete(req, res) {
+        try {
+            const db = (await databases.notesDatabase()).collection("userNotes")
+            var user = await db.deleteOne({ username: req.body.username })
+
+            if (user === undefined) {
+                res.sendStatus(404)
+            }
+            res.sendStatus(200)
+        } catch (err) {
+            const span = tracer.scope().active()
+            span.setTag('error', err)
+            logger.error({
+                error: err.message,
+                stack: err.stack,
+                endpoint: req.path,
+                message: `error with '${req.path}' endpoint`
+            })
+            res.status(500).json(err)
+        }
     }
 }
 
