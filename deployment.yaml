@@ -309,11 +309,22 @@ spec:
         - name: apmsocketpath
           hostPath:
             path: /var/run/datadog/
-      containers:
-        - name: god-manager
+      initContainers:
+        - name: init-god-manager
           image: golang:latest
           command: ["/bin/sh"]
           args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
+          env:
+            - name: DD_SERVICE
+              value: god-manager
+          resources:
+            limits:
+              memory: "4G"
+              cpu: "4"
+      containers:
+        - name: god-manager
+          image: golang:latest
+          command: ["/vulcan/services/god-manager/build/god-manager"]
           volumeMounts:
             - name: logs
               mountPath: /logs

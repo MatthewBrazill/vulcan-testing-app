@@ -43,7 +43,6 @@ case $DD_SERVICE in
         go install github.com/datadog/orchestrion@latest
         go mod download && go mod verify
         orchestrion go build -o ./build/god-manager -tags appsec ./god-manager/...
-        ./build/god-manager
         ;;
 
     "user-manager")
