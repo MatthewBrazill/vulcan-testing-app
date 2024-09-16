@@ -84,7 +84,7 @@ if [ "$application" == 1 ]; then
     export DD_GIT_REPOSITORY_URL="https://github.com/MatthewBrazill/vulcan-testing-app"
     
     printf "  Docker...\n"
-    docker-compose --env-file ./secrets.env up -d 2> /dev/null
+    docker-compose up -d 2> /dev/null
     printf "  Kubernetes...\n"
     kubectl apply -f deployment.yaml | grep -v --line-buffered "*unchanged*" | sed 's/^/    /'
         

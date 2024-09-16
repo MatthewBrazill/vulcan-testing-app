@@ -11,6 +11,9 @@ git clone https://github.com/MatthewBrazill/vulcan-testing-app.git /vulcan
 
 cd /vulcan/services/$DD_SERVICE
 
+export DD_GIT_COMMIT_SHA=$(git rev-parse HEAD)
+export DD_GIT_REPOSITORY_URL=$(git config --get remote.origin.url)
+
 echo "starting service $DD_SERVICE..."
 case $DD_SERVICE in
     "vulcan")
