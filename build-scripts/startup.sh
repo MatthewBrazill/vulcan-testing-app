@@ -6,7 +6,7 @@
 echo "running service $DD_SERVICE on $DD_ENV environment"
 
 echo "pulling git repo..."
-rm -rf /vulcan
+rm -rf /vulcan/*
 git clone https://github.com/MatthewBrazill/vulcan-testing-app.git /vulcan
 
 cd /vulcan/services/$DD_SERVICE

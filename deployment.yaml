@@ -309,11 +309,16 @@ spec:
         - name: apmsocketpath
           hostPath:
             path: /var/run/datadog/
+        - name: workDir
+          emptyDir: {}
       initContainers:
         - name: init-god-manager
           image: golang:latest
           command: ["/bin/sh"]
           args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
+          volumeMounts:
+            - name: workDir
+              mountPath: "/vulcan"
           env:
             - name: DD_SERVICE
               value: god-manager
@@ -330,6 +335,8 @@ spec:
               mountPath: /logs
             - name: apmsocketpath
               mountPath: /var/run/datadog
+            - name: workDir
+              mountPath: "/vulcan"
           env:
             - name: DD_ENV
               value: dev
@@ -601,11 +608,16 @@ spec:
         - name: apmsocketpath
           hostPath:
             path: /var/run/datadog/
+        - name: workDir
+          emptyDir: {}
       initContainers:
         - name: init-notes-queue
           image: apache/kafka:latest
           command: ["/bin/sh"]
           args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
+          volumeMounts:
+            - name: workDir
+              mountPath: "/vulcan"
       containers:
         - name: notes-queue
           image: apache/kafka:latest
@@ -614,6 +626,8 @@ spec:
               mountPath: /logs
             - name: apmsocketpath
               mountPath: /var/run/datadog
+            - name: workDir
+              mountPath: "/vulcan"
           env:
             - name: DD_ENV
               value: dev
