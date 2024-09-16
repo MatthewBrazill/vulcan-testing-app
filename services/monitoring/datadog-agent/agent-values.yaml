@@ -37,11 +37,11 @@ datadog:
     socketEnabled: true
 
   serviceMonitoring:
-    enabled: false
+    enabled: true
 
   processAgent:
-    enabled: false
-    processCollection: false
+    enabled: true
+    processCollection: true
 
   clusterChecks:
     enabled: true
