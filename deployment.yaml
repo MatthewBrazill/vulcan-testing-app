@@ -309,7 +309,7 @@ spec:
         - name: apmsocketpath
           hostPath:
             path: /var/run/datadog/
-        - name: workDir
+        - name: workdir
           emptyDir: {}
       initContainers:
         - name: init-god-manager
@@ -317,7 +317,7 @@ spec:
           command: ["/bin/sh"]
           args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
           volumeMounts:
-            - name: workDir
+            - name: workdir
               mountPath: "/vulcan"
           env:
             - name: DD_SERVICE
@@ -335,7 +335,7 @@ spec:
               mountPath: /logs
             - name: apmsocketpath
               mountPath: /var/run/datadog
-            - name: workDir
+            - name: workdir
               mountPath: "/vulcan"
           env:
             - name: DD_ENV
@@ -608,7 +608,7 @@ spec:
         - name: apmsocketpath
           hostPath:
             path: /var/run/datadog/
-        - name: workDir
+        - name: workdir
           emptyDir: {}
       initContainers:
         - name: init-notes-queue
@@ -616,7 +616,7 @@ spec:
           command: ["/bin/sh"]
           args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
           volumeMounts:
-            - name: workDir
+            - name: workdir
               mountPath: "/vulcan"
       containers:
         - name: notes-queue
@@ -626,7 +626,7 @@ spec:
               mountPath: /logs
             - name: apmsocketpath
               mountPath: /var/run/datadog
-            - name: workDir
+            - name: workdir
               mountPath: "/vulcan"
           env:
             - name: DD_ENV
