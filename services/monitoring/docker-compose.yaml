@@ -9,7 +9,7 @@ services:
       - 8126:8126
       - 8125:8125
     networks:
-      - datadog_bridge
+      - pupkube
     environment:
       - DD_API_KEY=<dd-api-key>
       - DD_APP_KEY=<dd-app-key>
@@ -65,7 +65,7 @@ services:
     image: otel/opentelemetry-collector-contrib
     container_name: otel-collector
     networks:
-      - datadog_bridge
+      - pupkube
     environment:
       - DD_API_KEY=<dd-api-key>
     volumes:
@@ -78,7 +78,7 @@ services:
     stdin_open: true
     container_name: datadog-private-location
     networks:
-      - datadog_bridge
+      - pupkube
     volumes:
       - ./datadog-synthetics/worker-config-docker.json:/etc/datadog/synthetics-check-runner.json
     shm_size: 1gb
@@ -94,6 +94,6 @@ services:
       interval: 10s
       start_period: 30s
 networks:
-  datadog_bridge:
-    name: datadog_bridge
+  pupkube:
+    name: pupkube
     external: true
