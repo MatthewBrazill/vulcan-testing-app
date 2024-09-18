@@ -13,7 +13,7 @@ func GodDatabase(ctx context.Context) (*mongo.Database, error) {
 
 	// Connect to database
 	Log(ctx).Debug("connecting to god-database")
-	options := options.Client().ApplyURI("mongodb://database-proxy:27017/?connect=direct")
+	options := options.Client().ApplyURI("mongodb://god-database:27017/?connect=direct")
 	client, err := mongo.Connect(ctx, options)
 	if err != nil {
 		return nil, err

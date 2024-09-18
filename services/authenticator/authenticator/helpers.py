@@ -15,5 +15,5 @@ async def validate(params, tests):
 
 @tracer.wrap(name="authenticator.database", resource="userDatabase")
 async def userDatabase():
-    database = await asyncpg.connect(host="database-proxy", port="5432", user="vulcan", password="yKCstvg4hrB9pmDP", database="vulcan_users")
+    database = await asyncpg.connect(host="user-database", port="5432", user="vulcan", password="yKCstvg4hrB9pmDP", database="vulcan_users")
     return database

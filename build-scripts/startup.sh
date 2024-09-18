@@ -65,13 +65,6 @@ case $DD_SERVICE in
         nginx -g "daemon off;"
         ;;
 
-    "database-proxy")
-        cp -a /vulcan/services/database-proxy/. /etc/nginx/
-        wget -nc -nv -O /usr/nginx-datadog-module.so.tgz https://github.com/DataDog/nginx-datadog/releases/download/v1.1.0/nginx_1.25.4-alpine-arm64-ngx_http_datadog_module.so.tgz
-        tar -xzf /usr/nginx-datadog-module.so.tgz -C /usr/lib/nginx/modules
-        nginx -g "daemon off;"
-        ;;
-
     "notes-queue")
         cp -rf /vulcan/services/message-queues/kafka/kafka.properties /etc/kafka/docker/server.properties
         #sh /etc/kafka/docker/run
