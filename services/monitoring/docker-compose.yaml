@@ -1,4 +1,3 @@
-version: '3.9'
 name: vulcan-monitoring
 services:
   datadog-agent:
