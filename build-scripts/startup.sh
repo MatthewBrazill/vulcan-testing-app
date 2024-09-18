@@ -5,6 +5,11 @@
 
 echo "running service $DD_SERVICE on $DD_ENV environment"
 
+if which git >/dev/null ; then
+    apt update
+    apt install -y git
+fi
+
 echo "pulling git repo..."
 rm -rf /vulcan/*
 git clone https://github.com/MatthewBrazill/vulcan-testing-app.git /vulcan
