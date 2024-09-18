@@ -6,8 +6,8 @@
 echo "running service $DD_SERVICE on $DD_ENV environment"
 
 if which git >/dev/null ; then
-    apt update
-    apt install -y git
+    apk update
+    apk add git
 fi
 
 echo "pulling git repo..."
