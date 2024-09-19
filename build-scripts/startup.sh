@@ -22,9 +22,9 @@ export DD_GIT_REPOSITORY_URL=$(git config --get remote.origin.url)
 echo "starting service $DD_SERVICE..."
 case $DD_SERVICE in
     "vulcan")
-        keytool -import -noprompt -alias user-manager-cert -keystore /cacerts/keystore.jks -file /cacerts/user-manager-cert.pem -storepass changeit
-        keytool -import -noprompt -alias god-manager-cert -keystore /cacerts/keystore.jks -file /cacerts/god-manager-cert.pem -storepass changeit
-        keytool -import -noprompt -alias authenticator-cert -keystore /cacerts/keystore.jks -file /cacerts/authenticator-cert.pem -storepass changeit
+        keytool -import -noprompt -alias user-manager-cert -keystore /cacerts/keystore.jks -file /vulcan/services/user-manager/certificate/cert.pem -storepass changeit
+        keytool -import -noprompt -alias god-manager-cert -keystore /cacerts/keystore.jks -file /vulcan/services/god-manager/certificate/cert.pem -storepass changeit
+        keytool -import -noprompt -alias authenticator-cert -keystore /cacerts/keystore.jks -file /vulcan/services/authenticator/certificate/cert.pem -storepass changeit
         wget -nc -nv -O /dd-java-agent.jar https://dtdg.co/latest-java-tracer
         mvn install
         java -javaagent:/dd-java-agent.jar \
