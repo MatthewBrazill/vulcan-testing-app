@@ -70,7 +70,7 @@ if [ "$taredown" == 1 ]; then
     printf "Vulcan Application Taredown...\n"
 
     printf "  Docker...\n"
-    docker-compose down 2> /dev/null
+    docker compose down | sed "s/^/    /"
     printf "  Kubernetes...\n"
     kubectl delete -f deployment.yaml | sed "s/^/    /"
 
@@ -84,7 +84,7 @@ if [ "$application" == 1 ]; then
     export DD_GIT_REPOSITORY_URL="https://github.com/MatthewBrazill/vulcan-testing-app"
 
     printf "  Docker...\n"
-    docker-compose up -d 2> /dev/null
+    docker compose up -d --quiet-pull | sed "s/^/    /"
     printf "  Kubernetes...\n"
     kubectl apply -f deployment.yaml | grep -v --line-buffered ".*unchanged.*" | sed "s/^/    /"
 
@@ -96,7 +96,7 @@ if [ "$monitoring" == 1 ] && [ "$taredown" == 1 ]; then
     printf "Monitoring Resources Taredown...\n"
 
     printf "  Docker...\n"
-    docker-compose --file ./services/monitoring/docker-compose.yaml down 2> /dev/null
+    docker compose --file ./services/monitoring/docker-compose.yaml down | sed "s/^/    /"
     printf "  Kubernetes...\n"
     helm uninstall datadog-agent | sed "s/^/    /"
 
@@ -108,7 +108,7 @@ if [ "$monitoring" == 1 ]; then
     printf "Deploying Monitoring Resources...\n"
 
     printf "  Docker...\n"
-    docker-compose --file ./services/monitoring/docker-compose.yaml up -d 2> /dev/null
+    docker compose --file ./services/monitoring/docker-compose.yaml up -d --quiet-pull | sed "s/^/    /"
     printf "  Kubernetes...\n"
     helm install datadog-agent -f ./services/monitoring/datadog-agent/agent-values.yaml datadog/datadog | sed "s/^/    /"
 
