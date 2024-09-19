@@ -5,7 +5,7 @@
 
 echo "running service $DD_SERVICE on $DD_ENV environment"
 
-if which git >/dev/null ; then
+if ! command -v git >/dev/null ; then
     apk update
     apk add git
 fi
