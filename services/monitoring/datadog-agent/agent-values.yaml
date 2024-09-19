@@ -5,6 +5,9 @@ datadog:
   kubelet:
     tlsVerify: false
 
+  tags:
+    - env:dev
+
   kubeStateMetricsEnabled: false
   kubeStateMetricsCore:
     enabled: true
