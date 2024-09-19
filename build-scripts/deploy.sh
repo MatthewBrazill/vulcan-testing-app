@@ -58,7 +58,7 @@ if [ "$build" == 1 ]; then
     # Upload Maps to Datadog
     if which datadog-ci >/dev/null ; then
         printf "Uploading JS Maps to Datadog...\n"
-        datadog-ci sourcemaps upload services/frontend/statics/js --service vulcan-app --release-version 1.9 --minified-path-prefix /js/ | grep --line-buffered "^Uploading sourcemap*" | sed 's/^/  /'
+        datadog-ci sourcemaps upload services/frontend/statics/js --service vulcan-app --release-version 1.9 --minified-path-prefix /js/ | grep --line-buffered "^Uploading sourcemap*" | sed "s/^/  /"
         printf "Done uploading JS maps!\n\n"
     else
         printf "Missing Datadog CI tool; skipping JS Map upload.\n\n"
@@ -68,12 +68,12 @@ fi
 # Taredown Application
 if [ "$taredown" == 1 ]; then
     printf "Vulcan Application Taredown...\n"
-    
+
     printf "  Docker...\n"
     docker-compose down 2> /dev/null
     printf "  Kubernetes...\n"
-    kubectl delete -f deployment.yaml | grep -v --line-buffered "*unchanged*" | sed 's/^/    /'
-        
+    kubectl delete -f deployment.yaml | sed "s/^/    /"
+
     printf "Finished taredown!\n\n"
 fi
 
@@ -82,12 +82,12 @@ if [ "$application" == 1 ]; then
     printf "Deploying Vulcan Application...\n"
     export DD_GIT_COMMIT_SHA=$(git rev-parse HEAD)
     export DD_GIT_REPOSITORY_URL="https://github.com/MatthewBrazill/vulcan-testing-app"
-    
+
     printf "  Docker...\n"
     docker-compose up -d 2> /dev/null
     printf "  Kubernetes...\n"
-    kubectl apply -f deployment.yaml | grep -v --line-buffered "*unchanged*" | sed 's/^/    /'
-        
+    kubectl apply -f deployment.yaml | grep -v --line-buffered ".*unchanged.*" | sed "s/^/    /"
+
     printf "Finsihed deploying! You can now use the Vulcan App: https://localhost/login\n\n"
 fi
 
@@ -98,7 +98,7 @@ if [ "$monitoring" == 1 ] && [ "$taredown" == 1 ]; then
     printf "  Docker...\n"
     docker-compose --file ./services/monitoring/docker-compose.yaml down 2> /dev/null
     printf "  Kubernetes...\n"
-    helm uninstall datadog-agent | sed 's/^/    /'
+    helm uninstall datadog-agent | sed "s/^/    /"
 
     printf "Done!\n"
 fi
@@ -110,7 +110,7 @@ if [ "$monitoring" == 1 ]; then
     printf "  Docker...\n"
     docker-compose --file ./services/monitoring/docker-compose.yaml up -d 2> /dev/null
     printf "  Kubernetes...\n"
-    helm install datadog-agent -f ./services/monitoring/datadog-agent/agent-values.yaml datadog/datadog | sed 's/^/    /'
+    helm install datadog-agent -f ./services/monitoring/datadog-agent/agent-values.yaml datadog/datadog | sed "s/^/    /"
 
     printf "Done!\n"
 fi
