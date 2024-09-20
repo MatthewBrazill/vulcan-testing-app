@@ -22,6 +22,7 @@ export DD_GIT_REPOSITORY_URL=$(git config --get remote.origin.url)
 echo "starting service $DD_SERVICE..."
 case $DD_SERVICE in
     "vulcan")
+        keytool -genkey -noprompt -alias dummy-cert -keystore /cacerts/keystore.jks -keyalg RSA -storepass changeit
         keytool -import -noprompt -alias user-manager-cert -keystore /cacerts/keystore.jks -file /vulcan/services/user-manager/certificate/cert.pem -storepass changeit
         keytool -import -noprompt -alias god-manager-cert -keystore /cacerts/keystore.jks -file /vulcan/services/god-manager/certificate/cert.pem -storepass changeit
         keytool -import -noprompt -alias authenticator-cert -keystore /cacerts/keystore.jks -file /vulcan/services/authenticator/certificate/cert.pem -storepass changeit
