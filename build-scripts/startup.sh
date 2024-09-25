@@ -24,7 +24,7 @@ if ! command -v git >/dev/null ; then
 fi
 
 echo "pulling git repo..."
-rm -rf /vulcan
+rm -rf /vulcan/*
 git clone https://github.com/MatthewBrazill/vulcan-testing-app.git /vulcan
 
 cd /vulcan/services/$DD_SERVICE
@@ -59,7 +59,6 @@ case $DD_SERVICE in
         ;;
 
     "god-manager")
-        go install github.com/datadog/orchestrion@latest
         go mod download && go mod verify
         orchestrion go build -o ./build/god-manager -tags appsec ./god-manager/...
         ;;

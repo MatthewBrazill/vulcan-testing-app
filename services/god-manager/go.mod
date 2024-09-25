@@ -17,7 +17,7 @@ require (
 
 replace github.com/gomodule/redigo v2.0.0+incompatible => github.com/gomodule/redigo v1.8.9
 
-require github.com/datadog/orchestrion v0.7.4
+require github.com/DataDog/orchestrion v0.9.0
 
 require (
 	cloud.google.com/go v0.115.1 // indirect
