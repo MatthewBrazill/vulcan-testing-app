@@ -11,4 +11,4 @@ It will always show an error, but this can be safely ignored
 
 package main
 
-import _ "github.com/datadog/orchestrion"
+import _ "github.com/DataDog/orchestrion"
