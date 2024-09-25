@@ -15,8 +15,6 @@ services:
   scribe:
     image: node:18
     container_name: scribe
-    ports:
-      - 920:920
     networks:
       - vulcan_app
       - pupkube
@@ -105,8 +103,6 @@ services:
   god-database:
     image: mongo:latest
     container_name: god-database
-    ports:
-      - 27017:27017
     networks:
       - vulcan_app
       - pupkube
@@ -127,8 +123,6 @@ services:
   notes-database:
     image: mongo:latest
     container_name: notes-database
-    ports:
-      - 27018:27017
     networks:
       - vulcan_app
       - pupkube
@@ -149,8 +143,6 @@ services:
   user-database:
     image: postgres:15
     container_name: user-database
-    ports:
-      - 5432:5432
     networks:
       - vulcan_app
       - pupkube
