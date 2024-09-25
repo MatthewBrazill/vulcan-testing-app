@@ -550,6 +550,10 @@ spec:
               value: "true"
             - name: CERT_FOLDER
               value: /vulcan/services/scribe/certificate
+            - name: KAFKA_BROKER
+              value: notes-queue.vulcan-application.svc.cluster.local:9092
+            - name: KAFKA_CLIENT_ID
+              value: kube-scribe
           ports:
             - containerPort: 443
               protocol: TCP

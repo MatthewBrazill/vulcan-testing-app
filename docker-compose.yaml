@@ -33,7 +33,9 @@ services:
       - DD_TRACE_STARTUP_LOGS=true
       - DD_DATA_STREAMS_ENABLED=true
       - CERT_FOLDER=/vulcan/services/scribe/certificate
-    working_dir: /scribe
+      - KAFKA_BROKER=pupkube:32200
+      - KAFKA_CLIENT_ID=docker-scribe
+    working_dir: /
     volumes:
       - /vulcan-data/docker/logs:/logs
       - /var/run/datadog:/var/run/datadog
