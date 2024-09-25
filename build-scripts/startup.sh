@@ -7,8 +7,20 @@ echo "running service $DD_SERVICE on $DD_ENV environment"
 cd /
 
 if ! command -v git >/dev/null ; then
-    apk update
-    apk add git
+    echo "didn't find git installed; installing..."
+    if command -v apk >/dev/null ; then
+        apk update
+        apk add git
+    elif command -v apt >/dev/null ; then
+        apt update
+        apt install git -y
+    elif command -v yum >/dev/null ; then
+        yup update
+        yup -y install git
+    else
+        echo "failed to install git"
+        exit 1
+    fi
 fi
 
 echo "pulling git repo..."
