@@ -4,6 +4,7 @@
 # for each of the needed services.
 
 echo "running service $DD_SERVICE on $DD_ENV environment"
+cd /
 
 if ! command -v git >/dev/null ; then
     apk update
