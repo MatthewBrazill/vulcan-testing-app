@@ -24,7 +24,8 @@ if ! command -v git >/dev/null ; then
 fi
 
 echo "pulling git repo..."
-rm -rf /vulcan/*
+rm -rf /vulcan/* > /dev/null
+rm -rf /vulcan/.* > /dev/null
 git clone https://github.com/MatthewBrazill/vulcan-testing-app.git /vulcan
 
 cd /vulcan/services/$DD_SERVICE
