@@ -39,7 +39,7 @@ services:
     volumes:
       - /vulcan-data/docker/logs:/logs
       - /var/run/datadog:/var/run/datadog
-    command: "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"
+    command: ["/bin/sh", "-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
     labels:
       com.datadoghq.ad.logs: '[{"type":"file","source":"scribe","service":"scribe","path":"/vulcan-data/docker/logs/scribe.log"}]'
       com.datadoghq.ad.tags: '["env:dev","service:scribe"]'
@@ -80,7 +80,7 @@ services:
       - CERT_FOLDER=/vulcan/services/vulcan-proxy/certificate
     volumes:
       - /var/run/datadog:/var/run/datadog
-    command: "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"
+    command: ["/bin/sh", "-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
     labels:
       com.datadoghq.ad.checks: '{"nginx":{"instances":[{"nginx_status_url":"http://%%host%%:81/nginx_status/"}]}}'
       com.datadoghq.ad.logs: '[{"source":"nginx","service":"vulcan-proxy"}]'
