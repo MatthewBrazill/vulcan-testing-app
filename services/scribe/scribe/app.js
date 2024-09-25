@@ -30,7 +30,7 @@ async function start() {
     // Setting up Kafka Client
     const client = new kafka.Kafka({
         clientId: "docker-scribe",
-        brokers: ["notes-queue:9092"],
+        brokers: ["pupkube:32200", "notes-queue.vulcan-application.svc.cluster.local:9092"],
         logCreator: (level) => {
             // Define the custom logger to use Winston
             return (log) => {
