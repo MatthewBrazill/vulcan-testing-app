@@ -614,17 +614,11 @@ spec:
             path: /var/run/datadog/
         - name: workdir
           emptyDir: {}
-      initContainers:
-        - name: init-notes-queue
-          image: apache/kafka:latest
-          command: ["/bin/sh"]
-          args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
-          volumeMounts:
-            - name: workdir
-              mountPath: "/vulcan"
       containers:
         - name: notes-queue
           image: apache/kafka:latest
+          command: ["/bin/sh"]
+          args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
           volumeMounts:
             - name: logs
               mountPath: /logs
