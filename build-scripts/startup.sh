@@ -63,6 +63,8 @@ case $DD_SERVICE in
         go install github.com/DataDog/orchestrion@v0.9.0
         go mod download && go mod verify
         orchestrion go build -o ./build/god-manager -tags appsec ./god-manager/...
+        echo "done"
+        exit 0
         ;;
 
     "user-manager")
@@ -85,6 +87,8 @@ case $DD_SERVICE in
 
     "notes-queue")
         cp -rf /vulcan/services/message-queues/kafka/kafka.properties /etc/kafka/docker/server.properties
+        echo "done"
+        exit 0
         ;;
 
     "scribe")
@@ -92,4 +96,5 @@ case $DD_SERVICE in
         npm start
         ;;
 esac
-echo "done"
+echo "looks like something went wrong"
+exit 1
