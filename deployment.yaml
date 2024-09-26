@@ -133,7 +133,7 @@ spec:
         - name: vulcan
           image: maven:3.9-eclipse-temurin-17
           command: ["/bin/sh"]
-          args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
+          args: ["-c", "wget -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
           volumeMounts:
             - name: logs
               mountPath: /logs
@@ -227,7 +227,7 @@ spec:
         - name: user-manager
           image: node:18
           command: ["/bin/sh"]
-          args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
+          args: ["-c", "wget -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
           volumeMounts:
             - name: logs
               mountPath: /logs
@@ -315,7 +315,7 @@ spec:
         - name: init-god-manager
           image: golang:latest
           command: ["/bin/sh"]
-          args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
+          args: ["-c", "wget -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
           volumeMounts:
             - name: workdir
               mountPath: "/vulcan"
@@ -426,7 +426,7 @@ spec:
         - name: authenticator
           image: python:bookworm
           command: ["/bin/sh"]
-          args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
+          args: ["-c", "wget -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
           volumeMounts:
             - name: logs
               mountPath: /logs
@@ -519,7 +519,7 @@ spec:
         - name: scribe
           image: node:18
           command: ["/bin/sh"]
-          args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
+          args: ["-c", "wget -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
           volumeMounts:
             - name: logs
               mountPath: /logs
@@ -618,7 +618,7 @@ spec:
         - name: notes-queue
           image: apache/kafka:latest
           command: ["/bin/sh"]
-          args: ["-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
+          args: ["-c", "wget -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
           volumeMounts:
             - name: logs
               mountPath: /logs
