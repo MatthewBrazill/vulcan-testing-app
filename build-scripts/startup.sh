@@ -24,8 +24,8 @@ if ! command -v git >/dev/null ; then
 fi
 
 echo "pulling git repo..."
-rm -rf /vulcan/* > /dev/null
-rm -rf /vulcan/.* > /dev/null
+rm -rf /vulcan/* 2> /dev/null
+rm -rf /vulcan/.* 2> /dev/null
 git clone https://github.com/MatthewBrazill/vulcan-testing-app.git /vulcan
 
 cd /vulcan/services/$DD_SERVICE
@@ -68,7 +68,7 @@ case $DD_SERVICE in
         ;;
 
     "user-manager")
-        npm install .
+        npm install . > /dev/null
         npm start
         ;;
 
@@ -92,7 +92,7 @@ case $DD_SERVICE in
         ;;
 
     "scribe")
-        npm install .
+        npm install . > /dev/null
         npm start
         ;;
 esac
