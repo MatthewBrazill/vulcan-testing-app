@@ -505,7 +505,7 @@ spec:
         tags.datadoghq.com/env: dev
         tags.datadoghq.com/service: scribe
       annotations:
-        ad.datadoghq.com/scribe.logs: '[{"type":"file","source":"vulcan-app","service":"scribe","path":"/vulcan-data/logs/scribe.log"}]'
+        ad.datadoghq.com/scribe.logs: '[{"type":"file","source":"vulcan-app","service":"scribe","path":"/vulcan-data/logs/scribe.log"},{"source":"startup-script","service":"scribe"}]'
         ad.datadoghq.com/tags: '{"team":"matthew"}'
     spec:
       volumes:
@@ -519,7 +519,7 @@ spec:
         - name: scribe
           image: node:18
           command: ["/bin/sh"]
-          args: ["-c", "wget -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
+          args: ["-c", "wget -nv -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
           volumeMounts:
             - name: logs
               mountPath: /logs
