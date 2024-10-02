@@ -119,6 +119,7 @@ spec:
         tags.datadoghq.com/env: dev
         tags.datadoghq.com/service: vulcan
       annotations:
+        ad.datadoghq.com/init-vulcan.logs: '[{"source":"startup-script","service":"vulcan"}]'
         ad.datadoghq.com/vulcan.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan","path":"/vulcan-data/logs/vulcan.log"}]'
         ad.datadoghq.com/tags: '{"team":"matthew"}'
     spec:
@@ -129,16 +130,33 @@ spec:
         - name: apmsocketpath
           hostPath:
             path: /var/run/datadog/
+        - name: workdir
+          emptyDir: {}
+      initContainers:
+        - name: init-vulcan
+          image: maven:3.9-eclipse-temurin-17
+          command: ["/bin/sh"]
+          args: ["-c", "wget -nv -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
+          volumeMounts:
+            - name: workdir
+              mountPath: "/vulcan"
+          env:
+            - name: DD_ENV
+              value: dev
+            - name: DD_SERVICE
+              value: vulcan
       containers:
         - name: vulcan
           image: maven:3.9-eclipse-temurin-17
-          command: ["/bin/sh"]
-          args: ["-c", "wget -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
+          command: ["java"]
+          args: ["-javaagent:/vulcan/services/vulcan/dd-java-agent.jar", "-Dlog4j2.configurationFile=/vulcan/services/vulcan/src/log4j2.xml", "-Dvulcan.session.key=$VLCN_SESSION_KEY", "-jar", "/vulcan/services/vulcan/target/vulcan.jar", "--logging.config=/vulcan/services/vulcan/src/log4j2.xml"]
           volumeMounts:
             - name: logs
               mountPath: /logs
             - name: apmsocketpath
               mountPath: /var/run/datadog
+            - name: workdir
+              mountPath: "/vulcan"
           env:
             - name: DD_ENV
               value: dev
@@ -148,6 +166,16 @@ spec:
               value: "1.3.0"
             - name: DD_TRACE_SAMPLE_RATE
               value: "1"
+            - name: DD_PROFILING_ENABLED
+              value: "true"
+            - name: DD_DBM_PROPAGATION_MODE
+              value: "full"
+            - name: DD_SERVICE_MAPPING
+              value: "redis:session-store,postgresql:user-database,mongo:god-database,kafka:notes-queue"
+            - name: DD_APPSEC_ENABLED
+              value: "true"
+            - name: DD_IAST_ENABLED
+              value: "true"
             - name: DD_TRACE_AGENT_URL
               value: "unix:///var/run/datadog/apm.socket"
             - name: DD_DOGSTATSD_URL
