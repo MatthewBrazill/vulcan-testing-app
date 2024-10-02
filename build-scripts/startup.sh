@@ -41,22 +41,8 @@ case $DD_SERVICE in
         keytool -import -noprompt -alias authenticator-cert -cacerts -file /vulcan/services/authenticator/certificate/cert.pem -storepass changeit
         wget -nc -nv -O /dd-java-agent.jar https://dtdg.co/latest-java-tracer
         mvn install
-        java -javaagent:/dd-java-agent.jar \
-            -Dlog4j2.configurationFile=/vulcan/services/vulcan/src/log4j2.xml \
-            -Dvulcan.session.key=$VLCN_SESSION_KEY \
-            -Ddd.trace.agent.url=$DD_TRACE_AGENT_URL \
-            -Ddd.env=$DD_ENV \
-            -Ddd.service=$DD_SERVICE \
-            -Ddd.version=$DD_VERSION \
-            -Ddd.profiling.enabled=true \
-            -Ddd.logs.injection=true \
-            -Ddd.appsec.enabled=true \
-            -Ddd.iast.enabled=true \
-            -Ddd.dbm.propagation.mode=full \
-            -Ddd.trace.sampling.rules='[{"service":"vulcan","sample_rate":1}]' \
-            -Ddd.service.mapping=redis:session-store,postgresql:user-database,mongo:god-database,kafka:notes-queue \
-            -jar ./target/vulcan.jar \
-            --logging.config=/vulcan/services/vulcan/src/log4j2.xml
+        echo "done"
+        exit 0
         ;;
 
     "god-manager")
