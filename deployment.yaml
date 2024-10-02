@@ -602,6 +602,7 @@ spec:
         tags.datadoghq.com/env: dev
         tags.datadoghq.com/service: notes-queue
       annotations:
+        ad.datadoghq.com/init-notes-queue.logs: '[{"source":"startup-script","service":"notes-queue"}]'
         ad.datadoghq.com/notes-queue.logs: '[{"source":"kafka","service":"notes-queue","log_processing_rules":[{"type":"multi_line","name":"log_date_start","pattern":"\\[\\d{4}-(0[1-9]|1[012])-([012][0-9]|3[01]) ([01][1-9]|2[0123]):([012345][0-9]):([012345][0-9]),\\d{3}\\]"}]}]'
         ad.datadoghq.com/tags: '{"team":"matthew"}'
     spec:
@@ -614,11 +615,24 @@ spec:
             path: /var/run/datadog/
         - name: workdir
           emptyDir: {}
+      initContainers:
+        - name: init-notes-queue
+          image: apache/kafka:latest
+          securityContext:
+            runAsUser: 0
+          command: ["/bin/sh"]
+          args: ["-c", "wget -nv -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
+          volumeMounts:
+            - name: workdir
+              mountPath: "/vulcan"
+          env:
+            - name: DD_ENV
+              value: dev
+            - name: DD_SERVICE
+              value: notes-queue
       containers:
         - name: notes-queue
           image: apache/kafka:latest
-          command: ["/bin/sh"]
-          args: ["-c", "wget -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
           volumeMounts:
             - name: logs
               mountPath: /logs
