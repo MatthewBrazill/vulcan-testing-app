@@ -54,6 +54,7 @@ case $DD_SERVICE in
         ;;
 
     "user-manager")
+        npm config set update-notifier false
         npm install . > /dev/null
         npm start
         ;;
@@ -78,6 +79,7 @@ case $DD_SERVICE in
         ;;
 
     "scribe")
+        npm config set update-notifier false
         npm install . > /dev/null
         npm start
         ;;
