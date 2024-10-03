@@ -39,6 +39,7 @@ case $DD_SERVICE in
         keytool -import -noprompt -alias user-manager-cert -cacerts -file /vulcan/services/user-manager/certificate/cert.pem -storepass changeit
         keytool -import -noprompt -alias god-manager-cert -cacerts -file /vulcan/services/god-manager/certificate/cert.pem -storepass changeit
         keytool -import -noprompt -alias authenticator-cert -cacerts -file /vulcan/services/authenticator/certificate/cert.pem -storepass changeit
+        cp /opt/java/openjdk/lib/security/cacerts /vulcan/services/vulcan/cacert
         wget -nc -nv -O /vulcan/services/vulcan/dd-java-agent.jar https://dtdg.co/latest-java-tracer
         mvn install -q
         echo "done"
