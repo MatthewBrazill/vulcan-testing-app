@@ -139,7 +139,7 @@ spec:
           args: ["-c", "wget -nv -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
           volumeMounts:
             - name: workdir
-              mountPath: "/vulcan"
+              mountPath: /vulcan
           env:
             - name: DD_ENV
               value: dev
@@ -149,14 +149,21 @@ spec:
         - name: vulcan
           image: maven:3.9-eclipse-temurin-17
           command: ["java"]
-          args: ["-javaagent:/vulcan/services/vulcan/dd-java-agent.jar", "-Dlog4j2.configurationFile=/vulcan/services/vulcan/src/log4j2.xml", "-Dvulcan.session.key=$VLCN_SESSION_KEY", "-jar", "/vulcan/services/vulcan/target/vulcan.jar", "--logging.config=/vulcan/services/vulcan/src/log4j2.xml"]
+          args:
+            - "-javaagent:/vulcan/services/vulcan/dd-java-agent.jar"
+            - "-Djavax.net.ssl.trustStore=/vulcan/services/vulcan/cacert"
+            - "-Dlog4j2.configurationFile=/vulcan/services/vulcan/src/log4j2.xml"
+            - "-Dvulcan.session.key=$VLCN_SESSION_KEY"
+            - "-jar"
+            - "/vulcan/services/vulcan/target/vulcan.jar"
+            - "--logging.config=/vulcan/services/vulcan/src/log4j2.xml"
           volumeMounts:
             - name: logs
               mountPath: /logs
             - name: apmsocketpath
               mountPath: /var/run/datadog
             - name: workdir
-              mountPath: "/vulcan"
+              mountPath: /vulcan
           env:
             - name: DD_ENV
               value: dev
@@ -347,7 +354,7 @@ spec:
           args: ["-c", "wget -nv -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
           volumeMounts:
             - name: workdir
-              mountPath: "/vulcan"
+              mountPath: /vulcan
           env:
             - name: DD_SERVICE
               value: god-manager
@@ -361,7 +368,7 @@ spec:
             - name: apmsocketpath
               mountPath: /var/run/datadog
             - name: workdir
-              mountPath: "/vulcan"
+              mountPath: /vulcan
           env:
             - name: DD_ENV
               value: dev
