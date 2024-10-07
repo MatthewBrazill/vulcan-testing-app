@@ -41,9 +41,9 @@ public class App implements WebMvcConfigurer {
 				partials.add("nav");
 
 				if (partials.contains(name)) {
-					return new FileReader(ResourceUtils.getFile("/vulcan/services/frontend/partials/" + name + ".html"));
+					return new FileReader(ResourceUtils.getFile("file:/vulcan/services/frontend/partials/" + name + ".html"));
 				} else {
-					return new FileReader(ResourceUtils.getFile("/vulcan/services/frontend/pages/" + name + ".html"));
+					return new FileReader(ResourceUtils.getFile("file:/vulcan/services/frontend/pages/" + name + ".html"));
 				}
 			}
 		};
@@ -59,9 +59,9 @@ public class App implements WebMvcConfigurer {
 		Logger logger = LogManager.getLogger("vulcan");
 		logger.debug("setting resource locations");
 
-		registry.addResourceHandler("/js/**").addResourceLocations("/vulcan/services/frontend/statics/js/");
-		registry.addResourceHandler("/css/**").addResourceLocations("/vulcan/services/frontend/statics/css/");
-		registry.addResourceHandler("/img/**").addResourceLocations("/vulcan/services/frontend/statics/img/");
+		registry.addResourceHandler("/js/**").addResourceLocations("file:/vulcan/services/frontend/statics/js/");
+		registry.addResourceHandler("/css/**").addResourceLocations("file:/vulcan/services/frontend/statics/css/");
+		registry.addResourceHandler("/img/**").addResourceLocations("file:/vulcan/services/frontend/statics/img/");
 	}
 
 	// Add interceptor logging
@@ -97,7 +97,7 @@ public class App implements WebMvcConfigurer {
 		properties.put("spring.data.redis.port", 6379);
 
 		// Configure views
-		properties.put("spring.mustache.prefix", "/vulcan/services/frontend/pages/");
+		properties.put("spring.mustache.prefix", "file:/vulcan/services/frontend/pages/");
 		properties.put("spring.mustache.suffix", ".html");
 		logger.debug("defined properties");
 
