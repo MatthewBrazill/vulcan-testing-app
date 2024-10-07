@@ -97,7 +97,7 @@ public class App implements WebMvcConfigurer {
 		properties.put("spring.data.redis.port", 6379);
 
 		// Configure views
-		properties.put("spring.mustache.prefix", "file:../frontend/pages/");
+		properties.put("spring.mustache.prefix", "/vulcan/services/frontend/pages/");
 		properties.put("spring.mustache.suffix", ".html");
 		logger.debug("defined properties");
 
