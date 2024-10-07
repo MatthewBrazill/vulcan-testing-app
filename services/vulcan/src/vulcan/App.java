@@ -49,7 +49,7 @@ public class App implements WebMvcConfigurer {
 		};
 
 		return Mustache.compiler()
-				.defaultValue("error")
+				.defaultValue("MissingValue")
 				.withLoader(templateLoader);
 	}
 
