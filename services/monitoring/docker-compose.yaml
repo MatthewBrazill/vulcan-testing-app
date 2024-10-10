@@ -72,8 +72,8 @@ services:
 
 
   private-location:
-    image: datadog/synthetics-private-location-worker:latest
-    platform: linux/x86_64
+    image: datadog/synthetics-private-location-worker:1.52.0
+    platform: linux/amd64
     stdin_open: true
     container_name: datadog-private-location
     networks:
