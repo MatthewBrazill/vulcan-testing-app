@@ -159,22 +159,30 @@ async function startExpress() {
 
 start().then(async () => {
     while (true) {
-        try { await startKafka() }
+        try {
+            logger.info("starting kafka consumer")
+            await startKafka()
+        }
         catch (err) {
-            logger.error({
+            logger.warn({
                 error: err,
                 message: `error starting scribe kafka consumer: ${err.message}`
             })
+            logger.warn("restarting scribe kafka consumer")
         }
     }
 }).then(async () => {
     while (true) {
-        try { await startExpress() }
+        try {
+            logger.info("starting express server")
+            await startExpress()
+        }
         catch (err) {
-            logger.error({
+            logger.warn({
                 error: err,
-                message: `error starting scribe express server: ${err.message}`
+                message: `scribe express server ran into an issue: ${err.message}`
             })
+            logger.warn("restarting scribe express server")
         }
     }
 }).catch((err) => {
