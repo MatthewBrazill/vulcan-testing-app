@@ -26,8 +26,18 @@ async function start() {
     // Create log file if it doesn't exist
     if (!fs.existsSync("/logs")) { fs.mkdirSync("/logs") }
     fs.closeSync(fs.openSync("/logs/scribe.log", 'w'))
+}
 
-    // Setting up Kafka Client
+
+
+/*
+Split the kafka and express sections into separate threads
+and add some additional failure and restart detection to avoid 
+crashing the service when kafka disconnects.
+*/
+
+async function startKafka() {
+    // Setting up Kafka Client and connect
     const client = new kafka.Kafka({
         clientId: process.env.KAFKA_CLIENT_ID,
         brokers: [ process.env.KAFKA_BROKER ],
@@ -48,27 +58,6 @@ async function start() {
             }
         }
     })
-
-    // Create express app
-    const app = express()
-
-    // Set up middleware logging
-    app.use(function requestLogging(req, res, next) {
-        next()
-        logger.info({
-            path: req.path,
-            method: req.method,
-            status: res.statusCode,
-            message: `scribe accessed ${req.path}`
-        })
-    })
-
-    // Remaining WebApp settings
-    app.use(express.json())
-    app.use(express.urlencoded({ extended: true }))
-
-    // Users
-    app.route("/user/notes/get").post(notes.get)
 
     // Create topics if they don't already exist
     const admin = client.admin()
@@ -113,17 +102,7 @@ async function start() {
         }
     })
 
-    connectToKafkaConsumer(consumer)
-    https.createServer({
-        key: fs.readFileSync(`${process.env.CERT_FOLDER}/key.pem`),
-        cert: fs.readFileSync(`${process.env.CERT_FOLDER}/cert.pem`)
-    }, app).listen(443, () => {
-        logger.info("starting scribe")
-    })
-}
-
-// Move connection to a separate function to allow reconnection in consumer listeners
-async function connectToKafkaConsumer(consumer) {
+    // Connect to kafka broker
     logger.info("connecting to kafka broker")
     await consumer.connect()
     await consumer.subscribe({ topics: ["user-notes", "god-notes"] })
@@ -131,7 +110,7 @@ async function connectToKafkaConsumer(consumer) {
         eachMessage: async (payload) => {
             return await tracer.trace("scribe.route", async function routeKafkaQueue() {
                 logger.info({
-                    topic: payload.topic,
+                    payload: payload,
                     message: `scribe received message for topic ${payload.topic}`
                 })
                 switch (payload.topic) {
@@ -148,10 +127,60 @@ async function connectToKafkaConsumer(consumer) {
     return consumer
 }
 
-start().catch((err) => {
+async function startExpress() {
+    // Create express app
+    const app = express()
+
+    // Set up middleware logging
+    app.use(function requestLogging(req, res, next) {
+        next()
+        logger.info({
+            path: req.path,
+            method: req.method,
+            status: res.statusCode,
+            message: `scribe accessed ${req.path}`
+        })
+    })
+
+    // Remaining WebApp settings
+    app.use(express.json())
+    app.use(express.urlencoded({ extended: true }))
+
+    // Users
+    app.route("/user/notes/get").post(notes.get)
+
+    https.createServer({
+        key: fs.readFileSync(`${process.env.CERT_FOLDER}/key.pem`),
+        cert: fs.readFileSync(`${process.env.CERT_FOLDER}/cert.pem`)
+    }, app).listen(443, () => {
+        logger.info("starting scribe")
+    })
+}
+
+start().then(async () => {
+    while (true) {
+        try { await startKafka() }
+        catch (err) {
+            logger.error({
+                error: err,
+                message: `error starting scribe kafka consumer: ${err.message}`
+            })
+        }
+    }
+}).then(async () => {
+    while (true) {
+        try { await startExpress() }
+        catch (err) {
+            logger.error({
+                error: err,
+                message: `error starting scribe express server: ${err.message}`
+            })
+        }
+    }
+}).catch((err) => {
     logger.error({
-        error: err.message,
-        stack: err.stack,
+        error: err,
+        note: "Uhh, this shouldn't ever happen. Like, this should be impossible. Congrats for reading this!",
         message: `fatal error when starting scribe: ${err.name}`
     })
     console.log(`fatal error when starting scribe: ${err}`)
