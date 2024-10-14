@@ -40,7 +40,7 @@ async function startKafka() {
     // Setting up Kafka Client and connect
     const client = new kafka.Kafka({
         clientId: process.env.KAFKA_CLIENT_ID,
-        brokers: [ process.env.KAFKA_BROKER ],
+        brokers: [process.env.KAFKA_BROKER],
         logCreator: (level) => {
             // Define the custom logger to use Winston
             return (log) => {
@@ -86,7 +86,7 @@ async function startKafka() {
 
     consumer.on(consumer.events.STOP, async (e) => {
         try {
-            logger.warn(`kafka consumer stopped, trying to restart`, { "event": e.payload, "event.type": e.type})
+            logger.warn(`kafka consumer stopped, trying to restart`, { "event": e.payload, "event.type": e.type })
             await consumer.disconnect()
         } catch (err) {
             logger.error(`kafka couldn't recover from stopped consumer because of '${err.name}'`, { "error": err })
