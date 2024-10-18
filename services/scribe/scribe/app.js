@@ -134,9 +134,11 @@ start().then(async () => {
             consumer = await createKafkaConsumer()
 
             // Connect to kafka broker
-            logger.info("connecting to kafka broker")
+            logger.debug("connecting to kafka broker")
             await consumer.connect()
+            logger.debug({ message: "subscribing to kafka topics", topics: ["user-notes", "god-notes"] })
             await consumer.subscribe({ topics: ["user-notes", "god-notes"] })
+            logger.debug("running kafka consumer handler")
             await consumer.run({
                 eachMessage: async (payload) => {
                     return await tracer.trace("scribe.route", async function routeKafkaQueue() {
@@ -161,10 +163,12 @@ start().then(async () => {
                 error: err,
                 message: `error running scribe kafka consumer: ${err.message}`
             })
-            logger.warn("restarting scribe kafka consumer")
         }
-        try { consumer.disconnect() }
-        catch (err) { logger.warn("restarting scribe kafka consumer") }
+        logger.debug("stopping kafka consumer")
+        await consumer.stop()
+        logger.debug("disconnecting from kafka broker")
+        await consumer.disconnect()
+        logger.warn("restarting scribe kafka consumer")
     }
 }).then(async () => {
     while (true) {
