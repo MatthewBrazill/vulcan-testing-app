@@ -36,7 +36,7 @@ and add some additional failure and restart detection to avoid
 crashing the service when kafka disconnects.
 */
 
-async function startKafka() {
+async function createKafkaConsumer() {
     // Setting up Kafka Client and connect
     const client = new kafka.Kafka({
         clientId: process.env.KAFKA_CLIENT_ID,
@@ -93,37 +93,6 @@ async function startKafka() {
         }
     })
 
-    consumer.on(consumer.events.DISCONNECT, async (e) => {
-        try {
-            logger.debug(`kafka consumer disconnected, trying to restart`, { "event": e.payload, "event.type": e.type })
-            connectToKafkaConsumer(consumer)
-        } catch (err) {
-            logger.error(`kafka couldn't recover from disconnection because of '${err.name}'`, { "error": err })
-        }
-    })
-
-    // Connect to kafka broker
-    logger.info("connecting to kafka broker")
-    await consumer.connect()
-    await consumer.subscribe({ topics: ["user-notes", "god-notes"] })
-    await consumer.run({
-        eachMessage: async (payload) => {
-            return await tracer.trace("scribe.route", async function routeKafkaQueue() {
-                logger.info({
-                    payload: payload,
-                    message: `scribe received message for topic ${payload.topic}`
-                })
-                switch (payload.topic) {
-                    case "user-notes":
-                        handlers.userNotesHandler(payload)
-                        break
-                    case "god-notes":
-                        handlers.godNotesHandler(payload)
-                        break
-                }
-            })
-        }
-    })
     return consumer
 }
 
@@ -159,17 +128,41 @@ async function startExpress() {
 
 start().then(async () => {
     while (true) {
+        var consumer
         try {
             logger.info("starting kafka consumer")
-            await startKafka()
+            consumer = await createKafkaConsumer()
+
+            // Connect to kafka broker
+            logger.info("connecting to kafka broker")
+            await consumer.connect().subscribe({ topics: ["user-notes", "god-notes"] }).run({
+                eachMessage: async (payload) => {
+                    return await tracer.trace("scribe.route", async function routeKafkaQueue() {
+                        logger.info({
+                            payload: payload,
+                            message: `scribe received message for topic ${payload.topic}`
+                        })
+                        switch (payload.topic) {
+                            case "user-notes":
+                                handlers.userNotesHandler(payload)
+                                break
+                            case "god-notes":
+                                handlers.godNotesHandler(payload)
+                                break
+                        }
+                    })
+                }
+            })
         }
         catch (err) {
             logger.warn({
                 error: err,
-                message: `error starting scribe kafka consumer: ${err.message}`
+                message: `error running scribe kafka consumer: ${err.message}`
             })
             logger.warn("restarting scribe kafka consumer")
         }
+        try { consumer.disconnect() }
+        catch (err) { logger.warn("restarting scribe kafka consumer") }
     }
 }).then(async () => {
     while (true) {
