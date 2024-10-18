@@ -135,7 +135,9 @@ start().then(async () => {
 
             // Connect to kafka broker
             logger.info("connecting to kafka broker")
-            await consumer.connect().subscribe({ topics: ["user-notes", "god-notes"] }).run({
+            await consumer.connect()
+            await consumer.subscribe({ topics: ["user-notes", "god-notes"] })
+            await consumer.run({
                 eachMessage: async (payload) => {
                     return await tracer.trace("scribe.route", async function routeKafkaQueue() {
                         logger.info({
