@@ -2,7 +2,7 @@
 
 // Imports
 const tracer = require("dd-trace")
-const logger = require("./logger.js")
+const logger = require("./logger.js").kafka()
 const databases = require("./databases.js")
 
 const notes = {

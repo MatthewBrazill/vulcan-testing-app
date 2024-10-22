@@ -18,7 +18,9 @@ const express = require("express")
 const https = require("https")
 const fs = require("fs")
 const kafka = require("kafkajs")
-const logger = require("./logger.js")
+const logger = require("./logger.js").default()
+const kafkaLogger = require("./logger.js").kafka()
+const expressLogger = require("./logger.js").express()
 const handlers = require("./handlers.js")
 const notes = require("./notes.js")
 
@@ -47,13 +49,13 @@ async function createKafkaConsumer() {
                 switch (level) {
                     case kafka.logLevel.ERROR:
                     case kafka.logLevel.NOTHING:
-                        return logger.error(log.log)
+                        return kafkaLogger.error(log.log)
                     case kafka.logLevel.WARN:
-                        return logger.warn(log.log)
+                        return kafkaLogger.warn(log.log)
                     case kafka.logLevel.INFO:
-                        return logger.info(log.log)
+                        return kafkaLogger.info(log.log)
                     case kafka.logLevel.DEBUG:
-                        return logger.debug(log.log)
+                        return kafkaLogger.debug(log.log)
                 }
             }
         }
@@ -67,8 +69,8 @@ async function createKafkaConsumer() {
             { topic: "user-notes" },
             { topic: "god-notes" }
         ]
-    })) logger.debug("created kafka topics")
-    else logger.debug("kafka topics already exist")
+    })) kafkaLogger.debug("created kafka topics")
+    else kafkaLogger.debug("kafka topics already exist")
     await admin.disconnect()
 
     // Kafka Consumer Configurations
@@ -77,19 +79,19 @@ async function createKafkaConsumer() {
     // Kafka Listeners
     consumer.on(consumer.events.CRASH, async (e) => {
         try {
-            logger.warn(`kafka group '${e.payload.groupId}' encountered error '${e.payload.error}'`, { "event": e.payload, "event.type": e.type })
+            kafkaLogger.warn(`kafka group '${e.payload.groupId}' encountered error '${e.payload.error}'`, { "event": e.payload, "event.type": e.type })
             await consumer.disconnect()
         } catch (err) {
-            logger.error(`kafka couldn't recover from error because of '${err.name}'`, { "error": err })
+            kafkaLogger.error(`kafka couldn't recover from error because of '${err.name}'`, { "error": err })
         }
     })
 
     consumer.on(consumer.events.STOP, async (e) => {
         try {
-            logger.warn(`kafka consumer stopped, trying to restart`, { "event": e.payload, "event.type": e.type })
+            kafkaLogger.warn(`kafka consumer stopped, trying to restart`, { "event": e.payload, "event.type": e.type })
             await consumer.disconnect()
         } catch (err) {
-            logger.error(`kafka couldn't recover from stopped consumer because of '${err.name}'`, { "error": err })
+            kafkaLogger.error(`kafka couldn't recover from stopped consumer because of '${err.name}'`, { "error": err })
         }
     })
 
@@ -103,7 +105,7 @@ async function startExpress() {
     // Set up middleware logging
     app.use(function requestLogging(req, res, next) {
         next()
-        logger.info({
+        expressLogger.info({
             path: req.path,
             method: req.method,
             status: res.statusCode,
@@ -122,7 +124,7 @@ async function startExpress() {
         key: fs.readFileSync(`${process.env.CERT_FOLDER}/key.pem`),
         cert: fs.readFileSync(`${process.env.CERT_FOLDER}/cert.pem`)
     }, app).listen(443, () => {
-        logger.info("starting scribe")
+        expressLogger.info("express server started")
     })
 }
 
@@ -130,19 +132,19 @@ start().then(async () => {
     while (true) {
         var consumer
         try {
-            logger.info("starting kafka consumer")
+            kafkaLogger.info("starting kafka consumer")
             consumer = await createKafkaConsumer()
 
             // Connect to kafka broker
-            logger.debug("connecting to kafka broker")
+            kafkaLogger.debug("connecting to kafka broker")
             await consumer.connect()
-            logger.debug({ message: "subscribing to kafka topics", topics: ["user-notes", "god-notes"] })
+            kafkaLogger.debug({ message: "subscribing to kafka topics", topics: ["user-notes", "god-notes"] })
             await consumer.subscribe({ topics: ["user-notes", "god-notes"] })
-            logger.debug("running kafka consumer handler")
+            kafkaLogger.debug("running kafka consumer handler")
             await consumer.run({
                 eachMessage: async (payload) => {
                     return await tracer.trace("scribe.route", async function routeKafkaQueue() {
-                        logger.info({
+                        kafkaLogger.info({
                             payload: payload,
                             message: `scribe received message for topic ${payload.topic}`
                         })
@@ -159,29 +161,29 @@ start().then(async () => {
             })
         }
         catch (err) {
-            logger.warn({
+            kafkaLogger.warn({
                 error: err,
                 message: `error running scribe kafka consumer: ${err.message}`
             })
         }
-        logger.debug("stopping kafka consumer")
+        kafkaLogger.debug("stopping kafka consumer")
         await consumer.stop()
-        logger.debug("disconnecting from kafka broker")
+        kafkaLogger.debug("disconnecting from kafka broker")
         await consumer.disconnect()
-        logger.warn("restarting scribe kafka consumer")
+        kafkaLogger.warn("restarting scribe kafka consumer")
     }
 }).then(async () => {
     while (true) {
         try {
-            logger.info("starting express server")
+            expressLogger.info("starting express server")
             await startExpress()
         }
         catch (err) {
-            logger.warn({
+            expressLogger.warn({
                 error: err,
                 message: `scribe express server ran into an issue: ${err.message}`
             })
-            logger.warn("restarting scribe express server")
+            expressLogger.warn("restarting scribe express server")
         }
     }
 }).catch((err) => {

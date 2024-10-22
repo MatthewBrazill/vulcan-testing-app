@@ -2,7 +2,7 @@
 
 // Imports
 const tracer = require("dd-trace")
-const logger = require("./logger")
+const logger = require("./logger").express()
 const databases = require("./databases")
 
 const handlers = {
