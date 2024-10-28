@@ -75,26 +75,6 @@ async function createKafkaConsumer() {
 
     // Kafka Consumer Configurations
     const consumer = client.consumer({ groupId: "scribe-group" })
-
-    // Kafka Listeners
-    consumer.on(consumer.events.CRASH, async (e) => {
-        try {
-            kafkaLogger.warn(`kafka group '${e.payload.groupId}' encountered error '${e.payload.error}'`, { "event": e.payload, "event.type": e.type })
-            await consumer.disconnect()
-        } catch (err) {
-            kafkaLogger.error(`kafka couldn't recover from error because of '${err.name}'`, { "error": err })
-        }
-    })
-
-    consumer.on(consumer.events.STOP, async (e) => {
-        try {
-            kafkaLogger.warn(`kafka consumer stopped, trying to restart`, { "event": e.payload, "event.type": e.type })
-            await consumer.disconnect()
-        } catch (err) {
-            kafkaLogger.error(`kafka couldn't recover from stopped consumer because of '${err.name}'`, { "error": err })
-        }
-    })
-
     return consumer
 }
 
