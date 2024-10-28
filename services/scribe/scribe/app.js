@@ -109,63 +109,68 @@ async function startExpress() {
 }
 
 start().then(async () => {
-    while (true) {
-        var consumer
-        try {
-            kafkaLogger.info("starting kafka consumer")
-            consumer = await createKafkaConsumer()
+    const kafkaPromise = new Promise(async () => {
+        while (true) {
+            var consumer
+            try {
+                kafkaLogger.info("starting kafka consumer")
+                consumer = await createKafkaConsumer()
 
-            // Connect to kafka broker
-            kafkaLogger.debug("connecting to kafka broker")
-            await consumer.connect()
-            kafkaLogger.debug({ message: "subscribing to kafka topics", topics: ["user-notes", "god-notes"] })
-            await consumer.subscribe({ topics: ["user-notes", "god-notes"] })
-            kafkaLogger.debug("running kafka consumer handler")
-            await consumer.run({
-                eachMessage: async (payload) => {
-                    return await tracer.trace("scribe.route", async function routeKafkaQueue() {
-                        kafkaLogger.info({
-                            payload: payload,
-                            message: `scribe received message for topic ${payload.topic}`
+                // Connect to kafka broker
+                kafkaLogger.debug("connecting to kafka broker")
+                await consumer.connect()
+                kafkaLogger.debug({ message: "subscribing to kafka topics", topics: ["user-notes", "god-notes"] })
+                await consumer.subscribe({ topics: ["user-notes", "god-notes"] })
+                kafkaLogger.debug("running kafka consumer handler")
+                await consumer.run({
+                    eachMessage: async (payload) => {
+                        return await tracer.trace("scribe.route", async function routeKafkaQueue() {
+                            kafkaLogger.info({
+                                payload: payload,
+                                message: `scribe received message for topic ${payload.topic}`
+                            })
+                            switch (payload.topic) {
+                                case "user-notes":
+                                    handlers.userNotesHandler(payload)
+                                    break
+                                case "god-notes":
+                                    handlers.godNotesHandler(payload)
+                                    break
+                            }
                         })
-                        switch (payload.topic) {
-                            case "user-notes":
-                                handlers.userNotesHandler(payload)
-                                break
-                            case "god-notes":
-                                handlers.godNotesHandler(payload)
-                                break
-                        }
-                    })
-                }
-            })
+                    }
+                })
+            } catch (err) {
+                kafkaLogger.warn({
+                    error: err,
+                    message: `error running scribe kafka consumer: ${err.message}`
+                })
+            }
+            kafkaLogger.debug("stopping kafka consumer")
+            await consumer.stop()
+            kafkaLogger.debug("disconnecting from kafka broker")
+            await consumer.disconnect()
+            kafkaLogger.warn("restarting scribe kafka consumer")
         }
-        catch (err) {
-            kafkaLogger.warn({
-                error: err,
-                message: `error running scribe kafka consumer: ${err.message}`
-            })
+    })
+
+    const expressPromise = new Promise(async () => {
+        while (true) {
+            try {
+                expressLogger.info("starting express server")
+                await startExpress()
+            } catch (err) {
+                expressLogger.warn({
+                    error: err,
+                    message: `scribe express server ran into an issue: ${err.message}`
+                })
+                expressLogger.warn("restarting scribe express server")
+            }
         }
-        kafkaLogger.debug("stopping kafka consumer")
-        await consumer.stop()
-        kafkaLogger.debug("disconnecting from kafka broker")
-        await consumer.disconnect()
-        kafkaLogger.warn("restarting scribe kafka consumer")
-    }
-}).then(async () => {
-    while (true) {
-        try {
-            expressLogger.info("starting express server")
-            await startExpress()
-        }
-        catch (err) {
-            expressLogger.warn({
-                error: err,
-                message: `scribe express server ran into an issue: ${err.message}`
-            })
-            expressLogger.warn("restarting scribe express server")
-        }
-    }
+    })
+
+    await Promise.allSettled([kafkaPromise, expressPromise])
+    throw "VulcanError: scribe finished but shouldn't have"
 }).catch((err) => {
     logger.error({
         error: err,
