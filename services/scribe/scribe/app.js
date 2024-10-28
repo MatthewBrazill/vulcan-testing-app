@@ -169,7 +169,7 @@ start().then(async () => {
         }
     })
 
-    await Promise.allSettled([kafkaPromise, expressPromise])
+    await Promise.all([kafkaPromise, expressPromise])
     throw "VulcanError: scribe finished but shouldn't have"
 }).catch((err) => {
     logger.error({
