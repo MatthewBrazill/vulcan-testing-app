@@ -122,9 +122,11 @@ async function startExpress() {
     // Remaining WebApp settings
     app.use(express.json())
     app.use(express.urlencoded({ extended: true }))
+    expressLogger.debug("configured express settings")
 
     // Users
     app.route("/user/notes/get").post(notes.get)
+    expressLogger.debug("registered express routes")
 
     https.createServer({
         key: fs.readFileSync(`${process.env.CERT_FOLDER}/key.pem`),
@@ -142,6 +144,7 @@ start().then(async () => {
     var expressRunning = false
 
     while (true) {
+        logger.debug("running start loop")
         if (!kafkaRunning) {
             kafkaPromise = startKafka()
             kafkaPromise.catch(() => {
@@ -150,7 +153,7 @@ start().then(async () => {
                     error: err,
                     message: `error running scribe kafka consumer: ${err.message}`
                 })
-                kafkaLogger.warn("restarting scribe kafka consumer")
+                kafkaLogger.debug("restarting scribe kafka consumer")
             })
             kafkaRunning = true
         }
@@ -163,14 +166,15 @@ start().then(async () => {
                     error: err,
                     message: `scribe express server ran into an issue: ${err.message}`
                 })
-                expressLogger.warn("restarting scribe express server")
+                expressLogger.debug("restarting scribe express server")
             })
             expressRunning = true
         }
 
         await Promise.all([kafkaPromise, expressPromise])
+        logger.debug({ message: "promise.all() resolved", promises: [kafkaPromise, expressPromise] })
     }
-}).catch ((err) => {
+}).catch((err) => {
     logger.error({
         error: err,
         note: "Uhh, this shouldn't ever happen. Like, this should be impossible. Congrats for reading this!",
