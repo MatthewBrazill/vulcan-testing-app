@@ -38,8 +38,9 @@ and add some additional failure and restart detection to avoid
 crashing the service when kafka disconnects.
 */
 
-async function createKafkaConsumer() {
+async function startKafka() {
     // Setting up Kafka Client and connect
+    kafkaLogger.info("starting kafka client")
     const client = new kafka.Kafka({
         clientId: process.env.KAFKA_CLIENT_ID,
         brokers: [process.env.KAFKA_BROKER],
@@ -74,8 +75,39 @@ async function createKafkaConsumer() {
     await admin.disconnect()
 
     // Kafka Consumer Configurations
+    kafkaLogger.info("starting kafka consumer")
     const consumer = client.consumer({ groupId: "scribe-group" })
-    return consumer
+
+    // Connect to kafka broker
+    kafkaLogger.debug("connecting to kafka broker")
+    await consumer.connect()
+    kafkaLogger.debug({ message: "subscribing to kafka topics", topics: ["user-notes", "god-notes"] })
+    await consumer.subscribe({ topics: ["user-notes", "god-notes"] })
+    kafkaLogger.debug("running kafka consumer handler")
+    await consumer.run({
+        eachMessage: async (payload) => {
+            return await tracer.trace("scribe.route", async function routeKafkaQueue() {
+                kafkaLogger.info({
+                    payload: payload,
+                    message: `scribe received message for topic ${payload.topic}`
+                })
+                switch (payload.topic) {
+                    case "user-notes":
+                        handlers.userNotesHandler(payload)
+                        break
+                    case "god-notes":
+                        handlers.godNotesHandler(payload)
+                        break
+                }
+            })
+        }
+    })
+
+
+    kafkaLogger.debug("stopping kafka consumer")
+    await consumer.stop()
+    kafkaLogger.debug("disconnecting from kafka broker")
+    await consumer.disconnect()
 }
 
 async function startExpress() {
@@ -109,69 +141,29 @@ async function startExpress() {
 }
 
 start().then(async () => {
-    const kafkaPromise = new Promise(async () => {
-        while (true) {
-            var consumer
-            try {
-                kafkaLogger.info("starting kafka consumer")
-                consumer = await createKafkaConsumer()
-
-                // Connect to kafka broker
-                kafkaLogger.debug("connecting to kafka broker")
-                await consumer.connect()
-                kafkaLogger.debug({ message: "subscribing to kafka topics", topics: ["user-notes", "god-notes"] })
-                await consumer.subscribe({ topics: ["user-notes", "god-notes"] })
-                kafkaLogger.debug("running kafka consumer handler")
-                await consumer.run({
-                    eachMessage: async (payload) => {
-                        return await tracer.trace("scribe.route", async function routeKafkaQueue() {
-                            kafkaLogger.info({
-                                payload: payload,
-                                message: `scribe received message for topic ${payload.topic}`
-                            })
-                            switch (payload.topic) {
-                                case "user-notes":
-                                    handlers.userNotesHandler(payload)
-                                    break
-                                case "god-notes":
-                                    handlers.godNotesHandler(payload)
-                                    break
-                            }
-                        })
-                    }
-                })
-            } catch (err) {
-                kafkaLogger.warn({
-                    error: err,
-                    message: `error running scribe kafka consumer: ${err.message}`
-                })
-            }
-            kafkaLogger.debug("stopping kafka consumer")
-            await consumer.stop()
-            kafkaLogger.debug("disconnecting from kafka broker")
-            await consumer.disconnect()
+    while (true) {
+        const kafkaPromise = startKafka()
+        kafkaPromise.catch(() => {
+            kafkaLogger.warn({
+                error: err,
+                message: `error running scribe kafka consumer: ${err.message}`
+            })
             kafkaLogger.warn("restarting scribe kafka consumer")
-        }
-    })
+        })
 
-    const expressPromise = new Promise(async () => {
-        while (true) {
-            try {
-                expressLogger.info("starting express server")
-                await startExpress()
-            } catch (err) {
-                expressLogger.warn({
-                    error: err,
-                    message: `scribe express server ran into an issue: ${err.message}`
-                })
-                expressLogger.warn("restarting scribe express server")
-            }
-        }
-    })
+        const expressPromise = startExpress()
+        expressPromise.catch(() => {
+            expressLogger.warn({
+                error: err,
+                message: `scribe express server ran into an issue: ${err.message}`
+            })
+            expressLogger.warn("restarting scribe express server")
+        })
 
-    await Promise.all([kafkaPromise, expressPromise])
+        await Promise.all([kafkaPromise, expressPromise])
+    }
     throw "VulcanError: scribe finished but shouldn't have"
-}).catch((err) => {
+}).catch ((err) => {
     logger.error({
         error: err,
         note: "Uhh, this shouldn't ever happen. Like, this should be impossible. Congrats for reading this!",
