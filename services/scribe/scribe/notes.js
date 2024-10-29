@@ -11,7 +11,7 @@ const notes = {
             const db = (await databases.notesDatabase()).collection("userNotes")
             var user = await db.findOne({ username: req.body.username })
 
-            if (user === undefined) {
+            if (user === null) {
                 res.sendStatus(404)
             }
             res.status(200).json({ notes: user.notes })
@@ -33,7 +33,7 @@ const notes = {
             const db = (await databases.notesDatabase()).collection("userNotes")
             var user = await db.deleteOne({ username: req.body.username })
 
-            if (user === undefined) {
+            if (user === null) {
                 res.sendStatus(404)
             }
             res.sendStatus(200)
