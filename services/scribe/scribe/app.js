@@ -141,28 +141,41 @@ async function startExpress() {
 }
 
 start().then(async () => {
-    while (true) {
-        const kafkaPromise = startKafka()
-        kafkaPromise.catch(() => {
-            kafkaLogger.warn({
-                error: err,
-                message: `error running scribe kafka consumer: ${err.message}`
-            })
-            kafkaLogger.warn("restarting scribe kafka consumer")
-        })
+    var kafkaPromise
+    var kafkaRunning = false
 
-        const expressPromise = startExpress()
-        expressPromise.catch(() => {
-            expressLogger.warn({
-                error: err,
-                message: `scribe express server ran into an issue: ${err.message}`
+    var expressPromise
+    var expressRunning = false
+
+    while (true) {
+        if (!kafkaRunning) {
+            kafkaPromise = startKafka()
+            kafkaPromise.catch(() => {
+                kafkaRunning = false
+                kafkaLogger.warn({
+                    error: err,
+                    message: `error running scribe kafka consumer: ${err.message}`
+                })
+                kafkaLogger.warn("restarting scribe kafka consumer")
             })
-            expressLogger.warn("restarting scribe express server")
-        })
+            kafkaRunning = true
+        }
+
+        if (!expressRunning) {
+            expressPromise = startExpress()
+            expressPromise.catch(() => {
+                expressRunning = false
+                expressLogger.warn({
+                    error: err,
+                    message: `scribe express server ran into an issue: ${err.message}`
+                })
+                expressLogger.warn("restarting scribe express server")
+            })
+            expressRunning = true
+        }
 
         await Promise.all([kafkaPromise, expressPromise])
     }
-    throw "VulcanError: scribe finished but shouldn't have"
 }).catch ((err) => {
     logger.error({
         error: err,
