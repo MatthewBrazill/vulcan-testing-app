@@ -171,8 +171,11 @@ start().then(async () => {
             expressRunning = true
         }
 
-        await Promise.all([kafkaPromise, expressPromise])
+        var waiter = Promise.all([kafkaPromise, expressPromise])
+        await waiter
+        
         logger.debug({ message: "promise.all() resolved", promises: [kafkaPromise, expressPromise] })
+        await new Promise(() => setTimeout(() => logger.debug("waited 100ms before retry"), 100))
     }
 }).catch((err) => {
     logger.error({
