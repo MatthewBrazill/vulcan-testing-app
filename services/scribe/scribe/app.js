@@ -102,12 +102,6 @@ async function startKafka() {
             })
         }
     })
-
-
-    kafkaLogger.debug("stopping kafka consumer")
-    await consumer.stop()
-    kafkaLogger.debug("disconnecting from kafka broker")
-    await consumer.disconnect()
 }
 
 async function startExpress() {
