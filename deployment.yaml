@@ -181,7 +181,13 @@ spec:
               value: "redis:session-store,postgresql:user-database,mongo:god-database,kafka:notes-queue"
             - name: DD_APPSEC_ENABLED
               value: "true"
+            - name: DD_APPSEC_SCA_ENABLED
+              value: "true"
             - name: DD_IAST_ENABLED
+              value: "true"
+            - name: DD_DYNAMIC_INSTRUMENTATION_ENABLED
+              value: "true"
+            - name: DD_SYMBOL_DATABASE_UPLOAD_ENABLED
               value: "true"
             - name: DD_TRACE_AGENT_URL
               value: "unix:///var/run/datadog/apm.socket"
@@ -277,9 +283,17 @@ spec:
               value: "1.3.0"
             - name: DD_TRACE_SAMPLE_RATE
               value: "1"
+            - name: DD_PROFILING_ENABLED
+              value: "true"
             - name: DD_APPSEC_ENABLED
               value: "true"
+            - name: DD_APPSEC_SCA_ENABLED
+              value: "true"
             - name: DD_IAST_ENABLED
+              value: "true"
+            - name: DD_DYNAMIC_INSTRUMENTATION_ENABLED
+              value: "true"
+            - name: DD_SYMBOL_DATABASE_UPLOAD_ENABLED
               value: "true"
             - name: DD_TRACE_AGENT_URL
               value: "unix:///var/run/datadog/apm.socket"
@@ -378,11 +392,19 @@ spec:
               value: "1.0.0"
             - name: DD_TRACE_SAMPLE_RATE
               value: "1"
+            - name: DD_PROFILING_ENABLED
+              value: "true"
             - name: DD_APPSEC_ENABLED
+              value: "true"
+            - name: DD_APPSEC_SCA_ENABLED
               value: "true"
             - name: DD_IAST_ENABLED
               value: "true"
             - name: DD_PROFILING_EXECUTION_TRACE_ENABLED
+              value: "true"
+            - name: DD_DYNAMIC_INSTRUMENTATION_ENABLED
+              value: "true"
+            - name: DD_SYMBOL_DATABASE_UPLOAD_ENABLED
               value: "true"
             - name: DD_TRACE_AGENT_URL
               value: "unix:///var/run/datadog/apm.socket"
@@ -473,11 +495,19 @@ spec:
               value: "1.2.1"
             - name: DD_TRACE_SAMPLE_RATE
               value: "1"
+            - name: DD_PROFILING_ENABLED
+              value: "true"
             - name: DD_APPSEC_ENABLED
+              value: "true"
+            - name: DD_APPSEC_SCA_ENABLED
               value: "true"
             - name: DD_IAST_ENABLED
               value: "true"
             - name: DD_LOGS_INJECTION
+              value: "true"
+            - name: DD_DYNAMIC_INSTRUMENTATION_ENABLED
+              value: "true"
+            - name: DD_SYMBOL_DATABASE_UPLOAD_ENABLED
               value: "true"
             - name: DD_TRACE_AGENT_URL
               value: "unix:///var/run/datadog/apm.socket"
@@ -566,11 +596,19 @@ spec:
               value: "0.1.0"
             - name: DD_TRACE_SAMPLE_RATE
               value: "1"
+            - name: DD_PROFILING_ENABLED
+              value: "true"
             - name: DD_APPSEC_ENABLED
+              value: "true"
+            - name: DD_APPSEC_SCA_ENABLED
               value: "true"
             - name: DD_IAST_ENABLED
               value: "true"
             - name: DD_LOGS_INJECTION
+              value: "true"
+            - name: DD_DYNAMIC_INSTRUMENTATION_ENABLED
+              value: "true"
+            - name: DD_SYMBOL_DATABASE_UPLOAD_ENABLED
               value: "true"
             - name: DD_TRACE_AGENT_URL
               value: "unix:///var/run/datadog/apm.socket"
