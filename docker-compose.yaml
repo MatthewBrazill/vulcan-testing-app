@@ -118,7 +118,7 @@ services:
     volumes:
       - ./services/databases/god-database/data:/data/db
     labels:
-      com.datadoghq.ad.checks: '{"mongo":{"instances":[{"hosts":["god-database:27017"],"username":"datadog","password":"5aae8c35f7e16245","database":"vulcan"}]}}'
+      com.datadoghq.ad.checks: '{"mongo":{"instances":[{"dbm":"true","hosts":["god-database:27017"],"username":"datadog","password":"5aae8c35f7e16245","database":"vulcan"}]}}'
       com.datadoghq.ad.logs: '[{"source":"mongodb","service":"god-database"}]'
       com.datadoghq.ad.tags: '["env:dev","service:god-database"]'
     deploy:
@@ -138,7 +138,7 @@ services:
     volumes:
       - ./services/databases/notes-database/data:/data/db
     labels:
-      com.datadoghq.ad.checks: '{"mongo":{"instances":[{"hosts":["notes-database:27017"],"username":"datadog","password":"5aae8c35f7e16245","database":"notes"}]}}'
+      com.datadoghq.ad.checks: '{"mongo":{"instances":[{"dbm":"true","hosts":["notes-database:27017"],"username":"datadog","password":"5aae8c35f7e16245","database":"notes"}]}}'
       com.datadoghq.ad.logs: '[{"source":"mongodb","service":"notes-database"}]'
       com.datadoghq.ad.tags: '["env:dev","service:notes-database"]'
     deploy:
