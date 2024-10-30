@@ -147,7 +147,7 @@ start().then(async () => {
         logger.debug("running start loop")
         if (!kafkaRunning) {
             kafkaPromise = startKafka()
-            kafkaPromise.catch(() => {
+            kafkaPromise.catch((err) => {
                 kafkaRunning = false
                 kafkaLogger.warn({
                     error: err,
@@ -160,7 +160,7 @@ start().then(async () => {
 
         if (!expressRunning) {
             expressPromise = startExpress()
-            expressPromise.catch(() => {
+            expressPromise.catch((err) => {
                 expressRunning = false
                 expressLogger.warn({
                     error: err,
