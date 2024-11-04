@@ -63,7 +63,7 @@ case $DD_SERVICE in
 
     "authenticator")
         apk update
-        apk add gcc
+        apk add build-base
         pip3 install -r requirements.txt
         ddtrace-run python3 ./authenticator/main.py
         ;;
