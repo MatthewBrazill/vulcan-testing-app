@@ -62,6 +62,8 @@ case $DD_SERVICE in
         ;;
 
     "authenticator")
+        apk update
+        apk add gcc
         pip3 install -r requirements.txt
         ddtrace-run python3 ./authenticator/main.py
         ;;
