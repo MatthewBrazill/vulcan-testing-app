@@ -478,7 +478,7 @@ spec:
             path: /var/run/datadog/
       containers:
         - name: authenticator
-          image: python:bookworm
+          image: python:3.12-alpine
           command: ["/bin/sh"]
           args: ["-c", "wget -nv -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
           volumeMounts:
