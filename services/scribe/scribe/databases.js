@@ -24,7 +24,7 @@ const databases = {
     },
 
     async notesDatabase() {
-        const mngdb = new mongodb.MongoClient("mongodb://notes-database:27017/")
+        const mngdb = new mongodb.MongoClient("mongodb://notes:96758wg54tbravp7@notes-database:27017/")
         const notesDb = mngdb.db("notes")
 
         return notesDb
