@@ -36,7 +36,7 @@ const users = {
         try {
             logger.debug("getting user: " + req.body.username)
             const db = await databases.userDatabase()
-            var result = await db.query("SELECT username, hasnotes, permissions FROM users WHERE username = $1", [req.body.username])
+            var result = await db.query("SELECT username, hasnotes FROM users WHERE username = $1", [req.body.username])
             db.end()
 
             result = result.rows[0]
@@ -57,8 +57,17 @@ const users = {
                         rejectUnauthorized: false
                     })
                 })
-                notes = await notes.json()
-                result.notes = notes.notes
+                switch (notes.status) {
+                    case 200:
+                        notes = await notes.json()
+                        result.notes = notes.notes
+                    case 404:
+                        logger.error("no notes found for user '" + req.body.username + "', but they should exists")
+                        res.sendStatus(404)
+                        return
+                    default:
+                        throw "VulcanError: unexpected response from scribe"
+                }
             }
 
             res.status(200).json(result)
