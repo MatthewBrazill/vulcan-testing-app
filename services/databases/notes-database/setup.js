@@ -18,7 +18,7 @@ db.createUser({
 })
 
 use("notes")
-db.notes.updateOne({
+db.userNotes.updateOne({
     'username': 'matthew'
 }, {
     $addToSet: {
@@ -27,7 +27,7 @@ db.notes.updateOne({
 }, {
     'upsert': true
 })
-db.notes.updateOne({
+db.userNotes.updateOne({
     'username': 'synthetics'
 
 }, {
@@ -38,7 +38,7 @@ db.notes.updateOne({
 }, {
     'upsert': true
 })
-db.notes.updateOne({
+db.userNotes.updateOne({
     'username': 'synthetics'
 
 }, {
