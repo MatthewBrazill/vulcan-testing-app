@@ -13,6 +13,7 @@ const notes = {
 
             if (user === null) {
                 res.sendStatus(404)
+                return
             }
             res.status(200).json({ notes: user.notes })
         } catch (err) {
@@ -35,6 +36,7 @@ const notes = {
 
             if (user === null) {
                 res.sendStatus(404)
+                return
             }
             res.sendStatus(200)
         } catch (err) {
