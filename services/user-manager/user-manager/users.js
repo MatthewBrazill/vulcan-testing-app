@@ -63,8 +63,6 @@ const users = {
                         result.notes = notes.notes
                     case 404:
                         logger.error("no notes found for user '" + req.body.username + "', but they should exists")
-                        res.sendStatus(404)
-                        return
                     default:
                         throw "VulcanError: unexpected response from scribe"
                 }
