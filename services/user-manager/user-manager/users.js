@@ -36,7 +36,7 @@ const users = {
         try {
             logger.debug("getting user: " + req.body.username)
             const db = await databases.userDatabase()
-            var result = await db.query("SELECT username, hasnotes FROM users WHERE username = $1", [req.body.username])
+            var result = await db.query("SELECT username, hasnotes, permissions FROM users WHERE username = $1", [req.body.username])
             db.end()
 
             result = result.rows[0]
