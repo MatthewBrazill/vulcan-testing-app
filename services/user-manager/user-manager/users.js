@@ -61,8 +61,10 @@ const users = {
                     case 200:
                         notes = await notes.json()
                         result.notes = notes.notes
+                        break
                     case 404:
                         logger.error("no notes found for user '" + req.body.username + "', but they should exists")
+                        break
                     default:
                         throw "VulcanError: unexpected response from scribe"
                 }
