@@ -114,7 +114,7 @@ async function startKafka() {
     })
 
     while (kafkaIsRunning) {
-        await new Promise(() => setTimeout(null, 1000))
+        await new Promise(() => setTimeout(() => { return true }, 1000))
     }
 
     consumer.disconnect()
@@ -192,7 +192,7 @@ start().then(async () => {
 
         var waiter = Promise.all([kafkaPromise, expressPromise])
         await waiter
-        
+
         logger.debug({ message: "promise.all() resolved", promises: [kafkaPromise, expressPromise] })
         await new Promise(() => setTimeout(() => logger.debug("waited 100ms before retry"), 100))
     }
