@@ -12,8 +12,10 @@ const handlers = {
             var message = JSON.parse(payload.message.value.toString())
 
             // Update/create user notes
-            var userNotes = (await databases.notesDatabase()).collection("userNotes")
-            var result = await userNotes.updateOne({
+            const client = await databases.notesDatabase()
+            const col = client.db("notes").collection("userNotes")
+            client.close()
+            var result = await col.updateOne({
                 username: message.username
             }, {
                 $addToSet: {
@@ -22,6 +24,7 @@ const handlers = {
             }, {
                 upsert: true
             })
+            client.close()
 
             // Handle mongo result
             if (result.acknowledged) {
@@ -34,6 +37,7 @@ const handlers = {
                     } else {
                         logger.debug(`user '${message.username}' already has notes`)
                     }
+                    userDb.end()
                 }).catch((err) => { throw err })
 
                 // Log note creation

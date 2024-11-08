@@ -29,9 +29,13 @@ const databases = {
             directConnection: true,
             authSource: "admin"
         })
-        const notesDb = mngdb.db("notes")
+        mngdb.connect()
 
-        return notesDb
+        mngdb.on("error", (err) => {
+            logger.error("mongodb connection failed with error: ", err)
+        })
+
+        return mngdb
     }
 }
 
