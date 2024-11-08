@@ -41,6 +41,7 @@ crashing the service when kafka disconnects.
 async function startKafka() {
     // Setting up Kafka Client and connect
     kafkaLogger.info("starting kafka client")
+    var kafkaIsRunning = true
     const client = new kafka.Kafka({
         clientId: process.env.KAFKA_CLIENT_ID,
         brokers: [process.env.KAFKA_BROKER],
@@ -58,6 +59,15 @@ async function startKafka() {
                     case kafka.logLevel.DEBUG:
                         return kafkaLogger.debug(log.log)
                 }
+            }
+        },
+        retry: {
+            restartOnFailure: async (err) => {
+                kafkaIsRunning = false
+                logger.error({
+                    err: err,
+                    message: `failed to restart the kafka consumer with error: ${err.message}`
+                })
             }
         }
     })
@@ -102,6 +112,13 @@ async function startKafka() {
             })
         }
     })
+
+    while (kafkaIsRunning) {
+        await new Promise(() => setTimeout(null, 1000))
+    }
+
+    consumer.disconnect()
+    return "start kafka finished"
 }
 
 async function startExpress() {
@@ -134,6 +151,8 @@ async function startExpress() {
     }, app).listen(443, () => {
         expressLogger.info("express server started")
     })
+
+    return "start express finished"
 }
 
 start().then(async () => {
@@ -154,7 +173,7 @@ start().then(async () => {
                     message: `error running scribe kafka consumer: ${err.message}`
                 })
                 kafkaLogger.debug("restarting scribe kafka consumer")
-            })
+            }).then(() => kafkaRunning = false)
             kafkaRunning = true
         }
 
@@ -167,7 +186,7 @@ start().then(async () => {
                     message: `scribe express server ran into an issue: ${err.message}`
                 })
                 expressLogger.debug("restarting scribe express server")
-            })
+            }).then(() => expressRunning = false)
             expressRunning = true
         }
 
