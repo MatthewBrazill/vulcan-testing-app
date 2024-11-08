@@ -29,7 +29,6 @@ const databases = {
             directConnection: true,
             authSource: "admin"
         })
-        mngdb.connect()
 
         mngdb.on("error", (err) => {
             logger.error("mongodb connection failed with error: ", err)
