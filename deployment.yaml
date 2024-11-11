@@ -285,6 +285,8 @@ spec:
               value: "1"
             - name: DD_PROFILING_ENABLED
               value: "true"
+            - name: DD_DBM_PROPAGATION_MODE
+              value: "full"
             - name: DD_APPSEC_ENABLED
               value: "true"
             - name: DD_APPSEC_SCA_ENABLED
@@ -394,6 +396,8 @@ spec:
               value: "1"
             - name: DD_PROFILING_ENABLED
               value: "true"
+            - name: DD_DBM_PROPAGATION_MODE
+              value: "full"
             - name: DD_APPSEC_ENABLED
               value: "true"
             - name: DD_APPSEC_SCA_ENABLED
@@ -497,6 +501,8 @@ spec:
               value: "1"
             - name: DD_PROFILING_ENABLED
               value: "true"
+            - name: DD_DBM_PROPAGATION_MODE
+              value: "full"
             - name: DD_APPSEC_ENABLED
               value: "true"
             - name: DD_APPSEC_SCA_ENABLED
@@ -598,6 +604,8 @@ spec:
               value: "1"
             - name: DD_PROFILING_ENABLED
               value: "true"
+            - name: DD_DBM_PROPAGATION_MODE
+              value: "full"
             - name: DD_APPSEC_ENABLED
               value: "true"
             - name: DD_APPSEC_SCA_ENABLED
