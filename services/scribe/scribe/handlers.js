@@ -14,7 +14,6 @@ const handlers = {
             // Update/create user notes
             const client = await databases.notesDatabase()
             const col = client.db("notes").collection("userNotes")
-            client.close()
             var result = await col.updateOne({
                 username: message.username
             }, {
