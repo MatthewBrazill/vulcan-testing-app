@@ -398,6 +398,8 @@ spec:
               value: "true"
             - name: DD_DBM_PROPAGATION_MODE
               value: "full"
+            - name: DD_SERVICE_MAPPING
+              value: "mongo:god-database"
             - name: DD_APPSEC_ENABLED
               value: "true"
             - name: DD_APPSEC_SCA_ENABLED
@@ -503,8 +505,6 @@ spec:
               value: "true"
             - name: DD_DBM_PROPAGATION_MODE
               value: "full"
-            - name: DD_SERVICE_MAPPING
-              value: "mongo:god-database"
             - name: DD_APPSEC_ENABLED
               value: "true"
             - name: DD_APPSEC_SCA_ENABLED
