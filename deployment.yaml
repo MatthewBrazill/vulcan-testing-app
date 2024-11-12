@@ -472,7 +472,7 @@ spec:
         tags.datadoghq.com/env: dev
         tags.datadoghq.com/service: authenticator
       annotations:
-        ad.datadoghq.com/authenticator.logs: '[{"type":"file","source":"vulcan-app","service":"authenticator","path":"/vulcan-data/logs/auth.log"},{"source":"startup-script","service":"authenticator"}]'
+        ad.datadoghq.com/authenticator.logs: '[{"type":"file","source":"authenticator","service":"authenticator","path":"/vulcan-data/logs/auth.log"},{"source":"startup-script","service":"authenticator"}]'
         ad.datadoghq.com/tags: '{"team":"matthew"}'
     spec:
       volumes:
