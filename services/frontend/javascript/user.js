@@ -1,4 +1,5 @@
 $(document).ready(() => {
+    console.log("getting users list")
     $.ajax({
         url: "/users/all",
         method: "GET",
@@ -36,6 +37,7 @@ $(document).ready(() => {
             $("#user-list").attr("class", "")
             $("#user-list-loader").attr("class", "ui hidden text loader")
             $("#user-list-error").attr('class', 'ui hidden error message')
+            console.log(`getting users succeeded: ${res.status}`)
         },
         error: (res) => {
             // Update content
@@ -45,21 +47,7 @@ $(document).ready(() => {
             $("#user-list").attr("class", "")
             $("#user-list-loader").attr("class", "ui hidden text loader")
             $("#user-list-error").attr('class', 'ui error message')
-        }
-    })
-
-    $.ajax({
-        url: `${window.location.pathname}/notes`,
-        method: "GET",
-        beforeSend: () => { },
-        success: (res) => {
-            // Update content
-            if (res.notes.length > 0) {
-                $("#no-user-notes").hide()
-                for (var note of res.notes) {
-                    $("#selected-user-notes").append(`<li>${note}</li>`)
-                }
-            }
+            console.error(`getting users failed: ${res.status} - ${res.message}`)
         }
     })
 })

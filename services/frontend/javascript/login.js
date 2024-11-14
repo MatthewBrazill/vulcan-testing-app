@@ -1,6 +1,7 @@
 $(document).ready(() => {
     $("#login-form").submit((e) => {
         e.preventDefault()
+        console.log("user logging in")
         $.ajax({
             url: "/login",
             method: "POST",
@@ -11,11 +12,15 @@ $(document).ready(() => {
             beforeSend: () => {
                 $("#login-wait").attr('class', 'ui message')
             },
-            success: () => window.location = "/storage",
+            success: (res) => {
+                window.location = "/storage"
+                console.log(`login succeeded: status ${res.status}`)
+            },
             error: (res) => {
                 $("#login-wait").attr('class', 'ui hidden message')
                 $("#login-form").attr('class', 'ui error form')
                 $("#login-error-message").text(res.message)
+                console.error(`login failed: status ${res.status} - ${res.message}`)
             }
         })
     })

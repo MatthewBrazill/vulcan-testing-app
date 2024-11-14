@@ -1,5 +1,6 @@
 const url = new URL(window.location)
 $(window).on("popstate", (e) => {
+    console.log("recovering previous search")
     $.ajax({
         url: "/storage/search",
         method: "POST",
@@ -13,6 +14,7 @@ $(window).on("popstate", (e) => {
 })
 
 $(document).ready(() => {
+    console.log(`matching search to url: ${url.search}`)
     $.ajax({
         url: "/storage/search",
         method: "POST",
@@ -28,6 +30,7 @@ $(document).ready(() => {
 
     $("#god-search-bar").keypress((e) => {
         if (e.which == '13') {
+            console.log(`searching for gods: ${$("#god-search-bar").val()}`)
             e.preventDefault()
             url.searchParams.set("search", $("#god-search-bar").val())
             window.history.pushState({ search: $("#god-search-bar").val() }, "", url);
@@ -64,7 +67,7 @@ $(document).ready(() => {
                     break
 
                 default:
-                    alert(`Didn't recognize logging method: ${method}`)
+                    console.error(`unrecognized logging method: ${method}`)
                     throw new Error(`Didn't recognize logging method: ${method}`)
             }
         }
@@ -73,17 +76,19 @@ $(document).ready(() => {
 
 
     $("#testing-error-button").click(() => {
+        console.log("generating testing error")
         $.ajax({
             url: "https://random-word-api.herokuapp.com/word?number=3",
             method: "GET",
             success: (res) => { throw new Error(`Example error: ${res[0]} - ${res[1]} - ${res[2]}`) },
-            error: (res) => alert(`Request failed: ${res.status} - ${res.message}`)
+            error: (res) => console.error(`error request failed: ${res.status} - ${res.message}`)
         })
     })
 
 
 
     $("#testing-custom-event-button").click(() => {
+        console.warn("warning for custom action button")
         window.DD_RUM && window.DD_RUM.addAction("custom-testing-action", { "value": "testing" })
     })
 })
@@ -105,7 +110,6 @@ function searchWait(req) {
 function searchSuccess(res) {
     // Update content
     if (res.result.length > 0) {
-
         for (var god of res.result) {
             godItem = `
             <a href="/edit?godId=${god.godId}">
@@ -127,6 +131,7 @@ function searchSuccess(res) {
     $("#god-list").attr("class", "")
     $("#god-list-loader").attr("class", "ui hidden text loader")
     $("#god-list-error").attr('class', 'ui hidden error message')
+    console.log(`search succeeded: ${res.status}`)
 }
 
 
@@ -138,4 +143,5 @@ function searchError(res) {
     $("#god-list").attr("class", "")
     $("#god-list-loader").attr("class", "ui hidden text loader")
     $("#god-list-error").attr('class', 'ui error message')
+    console.error(`search failed: ${res.status} - ${res.message}`)
 }
