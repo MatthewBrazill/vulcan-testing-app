@@ -1,3 +1,21 @@
+console.log("getting user notes")
+$.ajax({
+    url: `${window.location.pathname}/notes`,
+    method: "GET",
+    beforeSend: () => { },
+    success: (res) => {
+        // Update content
+        if (res.notes.length > 0) {
+            $("#no-user-notes").hide()
+            for (var note of res.notes) {
+                $("#selected-user-notes").append(`<li>${note}</li>`)
+            }
+        }
+        console.log(`getting notes succeeded: ${res.status}`)
+    },
+    error: (res) => console.error(`getting notes failed: ${res.status} - ${res.message}`)
+})
+
 $(document).ready(() => {
     console.log("getting users list")
     $.ajax({
