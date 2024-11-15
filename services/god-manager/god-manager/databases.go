@@ -8,7 +8,7 @@ import (
 )
 
 //dd:span resource_name:Databases.GodDatabase operation:god-manager.database
-func GodDatabase(ctx context.Context) (*mongo.Database, error) {
+func GodDatabase(ctx context.Context) (*mongo.Client, error) {
 	var client *mongo.Client
 
 	// Connect to database
@@ -20,5 +20,5 @@ func GodDatabase(ctx context.Context) (*mongo.Database, error) {
 	}
 
 	// Return new database
-	return client.Database("vulcan"), nil
+	return client, nil
 }
