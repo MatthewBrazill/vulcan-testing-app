@@ -120,7 +120,7 @@ services:
     volumes:
       - ./services/databases/god-database/data:/data/db
     labels:
-      com.datadoghq.ad.checks: '{"mongo":{"instances":[{"dbm":"true","cluster_name":"god-cluster","additional_metrics":["metrics.commands","tcmalloc","top","collection"],"hosts":["god-database:27017"],"username":"datadog","password":"5aae8c35f7e16245","database":"vulcan","options":{"authSource":"admin"}}]}}'
+      com.datadoghq.ad.checks: '{"mongo":{"init_config":{"propagate_agent_tags":"true","service":"god-database"},"instances":[{"dbm":"true","cluster_name":"god-cluster","additional_metrics":["metrics.commands","tcmalloc","top","collection"],"hosts":["god-database:27017"],"username":"datadog","password":"5aae8c35f7e16245","database":"vulcan","options":{"authSource":"admin"}}]}}'
       com.datadoghq.ad.logs: '[{"source":"mongodb","service":"god-database"}]'
       com.datadoghq.ad.tags: '["env:dev","service:god-database"]'
     deploy:
@@ -140,7 +140,7 @@ services:
     volumes:
       - ./services/databases/notes-database/data:/data/db
     labels:
-      com.datadoghq.ad.checks: '{"mongo":{"instances":[{"dbm":"true","cluster_name":"notes-cluster","additional_metrics":["metrics.commands","tcmalloc","top","collection"],"hosts":["notes-database:27017"],"username":"datadog","password":"5aae8c35f7e16245","database":"notes","options":{"authSource":"admin"}}]}}'
+      com.datadoghq.ad.checks: '{"mongo":{"init_config":{"propagate_agent_tags":"true","service":"notes-database"},"instances":[{"dbm":"true","cluster_name":"notes-cluster","additional_metrics":["metrics.commands","tcmalloc","top","collection"],"hosts":["notes-database:27017"],"username":"datadog","password":"5aae8c35f7e16245","database":"notes","options":{"authSource":"admin"}}]}}'
       com.datadoghq.ad.logs: '[{"source":"mongodb","service":"notes-database"}]'
       com.datadoghq.ad.tags: '["env:dev","service:notes-database"]'
     deploy:
@@ -162,7 +162,7 @@ services:
     volumes:
       - ./services/databases/user-database/data:/var/lib/postgresql/data
     labels:
-      com.datadoghq.ad.checks: '{"postgres":{"instances":[{"dbm":"true","host":"user-database","port":5432,"username":"datadog","password":"5aae8c35f7e16245","dbname":"vulcan_users"}]}}'
+      com.datadoghq.ad.checks: '{"postgres":{"init_config":{"propagate_agent_tags":"true","service":"user-database"},"instances":[{"dbm":"true","host":"user-database","port":5432,"username":"datadog","password":"5aae8c35f7e16245","dbname":"vulcan_users"}]}}'
       com.datadoghq.ad.logs: '[{"source":"postgresql","service":"user-database"}]'
       com.datadoghq.ad.tags: '["env:dev","service:user-database"]'
     deploy:
