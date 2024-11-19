@@ -11,6 +11,11 @@
     margin-top: 20px;
 }
 
+#user-header {
+    justify-content: space-between;
+    display: flex;
+}
+
 .user-item {
     padding: 10px 20px;
     margin-bottom: 10px;
