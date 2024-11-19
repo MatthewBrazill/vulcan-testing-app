@@ -9,6 +9,7 @@
     display: block;
     margin: auto;
     margin-top: 20px;
+    transition: all 2s linear;
 }
 
 #user-header {
