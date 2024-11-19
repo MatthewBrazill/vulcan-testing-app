@@ -45,7 +45,10 @@ $(document).ready(() => {
                     item = `
                     <a href="/user/${user.username}">
                         <div class="user-item">
-                            <h4 class="user-header">${user.username}</h4>
+                            <h4 class="user-header">
+                                <div>${user.username}</div>
+                                <button class="ui small red icon deleteUser button" username="${user.username}"><i class="ui trash icon"></i></button>
+                            </h4>
                         </div>
                     </a>`
                     $("#user-list").append(item)
