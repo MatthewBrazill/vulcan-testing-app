@@ -18,9 +18,13 @@ $.ajax({
 $(document).ready(() => {
     loadUsers()
     $(".deleteUser").click((e) => {
+        e.preventDefault()
         $.ajax({
-            url: `/user/${$(e.currentTarget).data("username")}/delete`,
-            method: "GET",
+            url: "/user/delete",
+            method: "POST",
+            data: {
+                username: $(e.currentTarget).data("username")
+            },
             success: () => {
                 console.log(`deleting user succeeded: ${res.status}`)
                 console.log("reloading users")
