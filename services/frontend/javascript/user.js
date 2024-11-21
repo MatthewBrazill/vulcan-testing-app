@@ -23,6 +23,23 @@ await new Promise((resolve, reject) => {
 })
 
 $(document).ready(() => {
+    loadUsers()
+    $(".deleteUser").click((e) => {
+        $.ajax({
+            url: `/user/${$(e.currentTarget).data("username")}/delete`,
+            method: "GET",
+            success: () => {
+                console.log(`deleting user succeeded: ${res.status}`)
+                console.log("reloading users")
+                loadUsers()
+            },
+            error: (res) => console.error(`deleting user failed: ${res.status} - ${res.message}`)
+        })
+    })
+})
+
+
+function loadUsers() {
     console.log("getting users list")
     $.ajax({
         url: "/users/all",
@@ -47,7 +64,7 @@ $(document).ready(() => {
                         <div class="user-item">
                             <h4 class="user-header">
                                 <div>${user.username}</div>
-                                <button class="ui small red icon deleteUser button" username="${user.username}"><i class="ui trash icon"></i></button>
+                                <button class="ui small red icon deleteUser button" data-username="${user.username}"><i class="ui trash icon"></i></button>
                             </h4>
                         </div>
                     </a>`
@@ -77,4 +94,4 @@ $(document).ready(() => {
             console.error(`getting users failed: ${res.status} - ${res.message}`)
         }
     })
-})
+}
