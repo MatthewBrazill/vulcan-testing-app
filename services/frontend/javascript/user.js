@@ -55,10 +55,10 @@ function loadUsers() {
                     item = `
                     <a href="/user/${user.username}">
                         <div class="user-item">
-                            <h4 class="user-header">
+                            <h3 class="user-header">
                                 <div>${user.username}</div>
                                 <button class="ui small red icon deleteUser button" data-username="${user.username}"><i class="ui trash icon"></i></button>
-                            </h4>
+                            </h3>
                         </div>
                     </a>`
                     $("#user-list").append(item)
