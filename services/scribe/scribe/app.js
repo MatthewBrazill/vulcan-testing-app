@@ -143,6 +143,7 @@ async function startExpress() {
 
     // Users
     app.route("/user/notes/get").post(notes.get)
+    app.route("/user/notes/delete").post(notes.delete)
     expressLogger.debug("registered express routes")
 
     https.createServer({

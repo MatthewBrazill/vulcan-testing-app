@@ -116,8 +116,29 @@ const users = {
         try {
             logger.debug("deleting user: " + req.body.username)
             const db = await databases.userDatabase()
-            await db.query("DELETE FROM users WHERE username = $1", [req.body.username])
+            var result = await db.query("SELECT username, hasnotes, permissions FROM users WHERE username = $1", [req.body.username])
+            db.query("DELETE FROM users WHERE username = $1", [req.body.username])
             db.end()
+
+            result = result.rows[0]
+
+            if (result === undefined) {
+                logger.info("user '" + req.body.username + "' not found")
+                res.sendStatus(404)
+                return
+            }
+
+            if (result.hasnotes) {
+                fetch("https://scribe.vulcan-application.svc.cluster.local/user/notes/delete", {
+                    method: "POST",
+                    body: JSON.stringify({ username: req.body.username }),
+                    headers: { "Content-Type": "application/json" },
+                    agent: new https.Agent({
+                        requestCert: true,
+                        rejectUnauthorized: false
+                    })
+                })
+            }
 
             res.sendStatus(200)
         } catch (err) {
