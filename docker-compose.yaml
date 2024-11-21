@@ -21,7 +21,7 @@ services:
     environment:
       - DD_ENV=dev
       - DD_SERVICE=scribe
-      - DD_VERSION=0.1.0
+      - DD_VERSION=0.2.0
       - DD_TRACE_SAMPLE_RATE=1
       - DD_PROFILING_ENABLED=true
       - DD_DBM_PROPAGATION_MODE="full"
