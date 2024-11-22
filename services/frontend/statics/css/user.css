@@ -18,6 +18,10 @@
     border-radius: 5px;
 }
 
+.user-item:hover {
+    cursor: pointer;
+}
+
 #selected-user {
     padding: 10px 20px;
     width: 300px;

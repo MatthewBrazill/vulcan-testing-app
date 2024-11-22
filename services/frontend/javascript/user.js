@@ -17,21 +17,26 @@ $.ajax({
 
 $(document).ready(() => {
     loadUsers()
-    $(".deleteUser").click((e) => {
-        e.preventDefault()
-        $.ajax({
-            url: "/user/delete",
-            method: "POST",
-            data: {
-                username: $(e.currentTarget).data("username")
-            },
-            success: () => {
-                console.log(`deleting user succeeded: ${res.status}`)
-                console.log("reloading users")
-                loadUsers()
-            },
-            error: (res) => console.error(`deleting user failed: ${res.status} - ${res.message}`)
-        })
+    $(".user-item").click((e) => {
+        var target = $(e.currentTarget).class()
+        while (!target.hasClass("user-item") && !target.hasClass("delete-user")) target = target.parent()
+        if (target.class() == "delete-user") {
+            $.ajax({
+                url: "/user/delete",
+                method: "POST",
+                data: {
+                    username: target.data("username")
+                },
+                success: () => {
+                    console.log(`deleting user succeeded: ${res.status}`)
+                    console.log("reloading users")
+                    loadUsers()
+                },
+                error: (res) => console.error(`deleting user failed: ${res.status} - ${res.message}`)
+            })
+        } else {
+            window.location = `/user/${target.data("username")}`
+        }
     })
 })
 
@@ -57,14 +62,12 @@ function loadUsers() {
             if (res.users.length > 0) {
                 for (var user of res.users) {
                     item = `
-                    <a href="/user/${user.username}">
-                        <div class="user-item">
-                            <h3 class="user-header">
-                                <div>${user.username}</div>
-                                <button class="ui small red icon deleteUser button" data-username="${user.username}"><i class="ui trash icon"></i></button>
-                            </h3>
-                        </div>
-                    </a>`
+                    <div class="user-item" data-username="${user.username}">
+                        <h3 class="user-header">
+                            <div>${user.username}</div>
+                            <button class="ui small red icon delete-user button" data-username="${user.username}"><i class="ui trash icon"></i></button>
+                        </h3>
+                    </div>`
                     $("#user-list").append(item)
                 }
             } else {
