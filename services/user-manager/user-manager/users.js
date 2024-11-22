@@ -116,10 +116,10 @@ const users = {
         try {
             logger.debug("deleting user: " + req.body.username)
             const db = await databases.userDatabase()
-            var result = await db.query("SELECT username, hasnotes, permissions FROM users WHERE username = $1", [req.body.username])
-            db.query("DELETE FROM users WHERE username = $1", [req.body.username])
-            db.end()
+            var result = db.query("SELECT username, hasnotes, permissions FROM users WHERE username = $1", [req.body.username])
+            var deleted = db.query("DELETE FROM users WHERE username = $1", [req.body.username])
 
+            await result
             result = result.rows[0]
 
             if (result === undefined) {
@@ -139,6 +139,9 @@ const users = {
                     })
                 })
             }
+
+            await deleted
+            db.end()
 
             res.sendStatus(200)
         } catch (err) {
