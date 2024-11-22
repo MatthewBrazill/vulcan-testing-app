@@ -15,32 +15,7 @@ $.ajax({
     error: (res) => console.error(`getting notes failed: ${res.status} - ${res.message}`)
 })
 
-$(document).ready(() => {
-    loadUsers()
-    $(".user-item").click((e) => {
-        var target = $(e.currentTarget).class()
-        while (!target.hasClass("user-item") && !target.hasClass("delete-user")) target = target.parent()
-        if (target.class() == "delete-user") {
-            $.ajax({
-                url: "/user/delete",
-                method: "POST",
-                data: {
-                    username: target.data("username")
-                },
-                success: () => {
-                    console.log(`deleting user succeeded: ${res.status}`)
-                    console.log("reloading users")
-                    loadUsers()
-                },
-                error: (res) => console.error(`deleting user failed: ${res.status} - ${res.message}`)
-            })
-        } else {
-            window.location = `/user/${target.data("username")}`
-        }
-    })
-})
-
-
+$(document).ready(() => loadUsers())
 function loadUsers() {
     console.log("getting users list")
     $.ajax({
@@ -76,6 +51,29 @@ function loadUsers() {
                     <h2 class="user-header">No Users Found</h2>
                 </div>`)
             }
+
+            // Attach delete button and link logic
+            $(".user-item").click((e) => {
+                var target = $(e.currentTarget)
+                while (!target.hasClass("user-item") && !target.hasClass("delete-user")) target = target.parent()
+                if (target.hasClass("delete-user")) {
+                    $.ajax({
+                        url: "/user/delete",
+                        method: "POST",
+                        data: {
+                            username: target.data("username")
+                        },
+                        success: () => {
+                            console.log(`deleting user succeeded: ${res.status}`)
+                            console.log("reloading users")
+                            loadUsers()
+                        },
+                        error: (res) => console.error(`deleting user failed: ${res.status} - ${res.message}`)
+                    })
+                } else {
+                    window.location = `/user/${target.data("username")}`
+                }
+            })
 
             // Make style adjustments
             $("#user-list").attr("class", "")
