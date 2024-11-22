@@ -643,6 +643,106 @@ spec:
               cpu: "1"
 
 
+# Delphi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: delphi
+  namespace: vulcan-application
+  labels:
+    tags.datadoghq.com/env: dev
+    tags.datadoghq.com/service: delphi
+spec:
+  ports:
+    - port: 443
+      targetPort: 443
+  selector:
+    tags.datadoghq.com/service: delphi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: delphi
+  namespace: vulcan-application
+  labels:
+    tags.datadoghq.com/env: dev
+    tags.datadoghq.com/service: delphi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tags.datadoghq.com/service: delphi
+  template:
+    metadata:
+      labels:
+        tags.datadoghq.com/env: dev
+        tags.datadoghq.com/service: delphi
+      annotations:
+        ad.datadoghq.com/delphi.logs: '[{"type":"file","source":"vulcan-app","service":"delphi","path":"/vulcan-data/logs/delphi.log"},{"source":"startup-script","service":"delphi"}]'
+        ad.datadoghq.com/tags: '{"team":"matthew"}'
+    spec:
+      volumes:
+        - name: logs
+          hostPath:
+            path: /vulcan-data/logs/
+        - name: apmsocketpath
+          hostPath:
+            path: /var/run/datadog/
+      containers:
+        - name: delphi
+          image: python:3.12-alpine
+          command: ["/bin/sh"]
+          args: ["-c", "wget -nv -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
+          volumeMounts:
+            - name: logs
+              mountPath: /logs
+            - name: apmsocketpath
+              mountPath: /var/run/datadog
+          env:
+            - name: DD_ENV
+              value: dev
+            - name: DD_SERVICE
+              value: delphi
+            - name: DD_VERSION
+              value: "0.1.0"
+            - name: DD_TRACE_SAMPLE_RATE
+              value: "1"
+            - name: DD_PROFILING_ENABLED
+              value: "true"
+            - name: DD_DBM_PROPAGATION_MODE
+              value: "full"
+            - name: DD_APPSEC_ENABLED
+              value: "true"
+            - name: DD_APPSEC_SCA_ENABLED
+              value: "true"
+            - name: DD_IAST_ENABLED
+              value: "true"
+            - name: DD_LOGS_INJECTION
+              value: "true"
+            - name: DD_DYNAMIC_INSTRUMENTATION_ENABLED
+              value: "true"
+            - name: DD_SYMBOL_DATABASE_UPLOAD_ENABLED
+              value: "true"
+            - name: DD_TRACE_AGENT_URL
+              value: "unix:///var/run/datadog/apm.socket"
+            - name: DD_DOGSTATSD_URL
+              value: "unix:///var/run/datadog/dsd.socket"
+            - name: DD_TRACE_CLIENT_IP_ENABLED
+              value: "true"
+            - name: DD_DATA_STREAMS_ENABLED
+              value: "true"
+            - name: CERT_FOLDER
+              value: /vulcan/services/delphi/
+          ports:
+            - containerPort: 443
+              protocol: TCP
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "1"
+
+
 # Kafka Queue
 ---
 apiVersion: v1

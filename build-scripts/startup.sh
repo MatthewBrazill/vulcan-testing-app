@@ -87,6 +87,13 @@ case $DD_SERVICE in
         npm install . > /dev/null
         npm start
         ;;
+
+    "delphi")
+        apk update
+        apk add build-base
+        pip3 install -r requirements.txt
+        ddtrace-run python3 ./delphi/main.py
+        ;;
 esac
 echo "looks like something went wrong"
 exit 1
