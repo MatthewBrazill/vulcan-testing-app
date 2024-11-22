@@ -116,11 +116,11 @@ const users = {
         try {
             logger.debug("deleting user: " + req.body.username)
             const db = await databases.userDatabase()
-            var result = db.query("SELECT username, hasnotes, permissions FROM users WHERE username = $1", [req.body.username])
-            var deleted = db.query("DELETE FROM users WHERE username = $1", [req.body.username])
 
-            await result
+            var result = await db.query("SELECT username, hasnotes, permissions FROM users WHERE username = $1", [req.body.username])
             result = result.rows[0]
+
+            var deleted = db.query("DELETE FROM users WHERE username = $1", [req.body.username])
 
             if (result === undefined) {
                 logger.info("user '" + req.body.username + "' not found")
