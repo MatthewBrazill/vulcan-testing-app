@@ -15,54 +15,64 @@ app = FastAPI()
 # Routes
 @app.post("/describe")
 async def describe(request: Request) -> JSONResponse:
-    span = tracer.current_span()
-    logger = structlog.get_logger("delphi")
-    try:
-        body = await request.json()
-        if await validate(body, [["god", r"^[a-zA-Z\s]{1,32}$"]]) == False:
-            return JSONResponse(status_code=400)
-        
-        gpt = OpenAI()
-        result = gpt.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                { "role": "system", "content": """
-                    You are a helpful researcher. Based on the name of a god that you are given from any pantheon 
-                    you know, provide a short, two paragraph description of what this god is famous for, what abilities
-                    or powers they had and why they are relevant to history.
-                    
-                    If there is contradictory or controversial information available for this god, mention this in your 
-                    response and add your source for all the information you used in the following format:
-                    [page name] - [url] - [source type]
-                    
-                    Do this ONLY if there is contradictory or controversial information.
-                    
-                    If you don't recognize the god, or have any kind of other issue in responding, you should say the following:
-                    "Gods come from a variety of different beliefs and cultures. As such, there are many deities that I may 
-                    not recognize or have information on. In this case, I dont know the answer because [insert your reason here]"
-                """ },
-                {
-                    "role": "user",
-                    "content": body["god"]
-                }
-            ]
-        )
-
-        if result.choices != None:
-            return JSONResponse(content={ "description": result.choices[0].message }, status_code=200)
-        else:
-            return JSONResponse(content={ "description": """
+    # Define function internally as async to reduce latency
+    @tracer.wrap(name="delphi.describe", resource="worker")
+    async def func():
+        span = tracer.current_span()
+        logger = structlog.get_logger("delphi")
+        try:
+            body = await request.json()
+            defaultMessage = """
                 Gods come from a variety of different beliefs and cultures. As such, there are many deities that I may 
                 not recognize or have information on. In this case, I dont know the answer because I seems to have
-                some issues in generating a response. Please contact and Admin! Thanks you.
-            """}, status_code=404)
+                some issues in generating a response. Please contact and Admin to correct this! Thank you.
+            """
+
+            if await validate(body, [["godId", r"^[a-zA-Z0-9]{5}$"], ["god", r"^[a-zA-Z\s]{1,32}$"]]) == True:                
+                gpt = OpenAI()
+                result = gpt.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[
+                        { "role": "system", "content": """
+                            You are a helpful researcher. Based on the name of a god that you are given from any pantheon 
+                            you know, provide a short, two paragraph, description of what this god is famous for, what abilities
+                            or powers they had and why they are relevant to history.
+                            
+                            If there is contradictory or controversial information available for this god, mention this in your 
+                            response and add your source for all the information you used in the following format:
+                            [page name] - [url] - [source type]
+                            
+                            Do this ONLY if there is contradictory or controversial information.
+                            
+                            If you don't recognize the god, or have any kind of other issue in responding, you should say the following:
+                            "Gods come from a variety of different beliefs and cultures. As such, there are many deities that I may 
+                            not recognize or have information on. In this case, I dont know the answer because [insert your reason here]"
+                        """ },
+                        {
+                            "role": "user",
+                            "content": body["god"]
+                        }
+                    ]
+                )
+
+                if result.choices == None:
+                    result = defaultMessage
+                else:
+                    result = result.choices[0].message
+            else:
+                result = defaultMessage
+            
+            #TODO Make Kafka Message
+        
+        except Exception as err:
+            logger.error("delphi encountered a critical error trying to describe '" + body["god"] + "'", god=body, error=err)
+            span = tracer.current_span()
+            span.set_tag("error.message", err)
+            span.set_tag("error.stack", traceback.format_exc())
     
-    except Exception as err:
-        logger.error("delphi encountered an error trying to describe '" + body["god"] + "'", god=body["god"], error=err)
-        span = tracer.current_span()
-        span.set_tag("error.message", err)
-        span.set_tag("error.stack", traceback.format_exc())
-        return JSONResponse(status_code=500)
+    # Run request async to reduce response time on god create
+    func()
+    return JSONResponse(status_code=202)
 
 
 @app.post("/predict")
