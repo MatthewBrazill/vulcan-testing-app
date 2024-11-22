@@ -304,18 +304,25 @@ public class Users {
 					// Handle response
 					switch (response.statusCode()) {
 						case HttpServletResponse.SC_OK:
-							res.setStatus(HttpServletResponse.SC_OK);
-							logger.info("got notes for user " + username);
-
 							// Extract JSON body
 							Gson gson = new Gson();
 							JsonObject notesJson = gson.fromJson(response.body(), JsonElement.class).getAsJsonObject();
 
-							ArrayList<String> notesArray = new ArrayList<>();
-							notesJson.getAsJsonArray("notes").asList().forEach(note -> notesArray.add(note.getAsString()));
+							if (notesJson.getAsJsonArray("notes") != null) {
+								res.setStatus(HttpServletResponse.SC_OK);
+								logger.info("got notes for user " + username);
 
-							output.put("notes", notesArray);
-							return output;
+								ArrayList<String> notesArray = new ArrayList<>();
+								notesJson.getAsJsonArray("notes").asList().forEach(note -> notesArray.add(note.getAsString()));
+
+								output.put("notes", notesArray);
+								return output;
+							} else {
+								res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+								logger.info("user not found for username " + username);
+								output.put("message", "Couldn't find a user with that username.");
+								return output;
+							}
 
 						case HttpServletResponse.SC_NOT_FOUND:
 							res.setStatus(HttpServletResponse.SC_NOT_FOUND);
