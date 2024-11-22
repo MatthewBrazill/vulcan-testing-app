@@ -32,4 +32,9 @@ openssl req -x509 -newkey rsa:4096 -keyout services/scribe/certificate/key.pem -
     -subj "/C=NL/CN=scribe" \
     -addext "subjectAltName = DNS:localhost, DNS:scribe, DNS:scribe.vulcan-application.svc.cluster.local"
 
+# Delphi
+openssl req -x509 -newkey rsa:4096 -keyout services/delphi/certificate/key.pem -out services/delphi/certificate/cert.pem -sha256 -days 365 -nodes \
+    -subj "/C=NL/CN=delphi" \
+    -addext "subjectAltName = DNS:localhost, DNS:delphi, DNS:delphi.vulcan-application.svc.cluster.local"
+
 echo "Generated new certificates for services."
