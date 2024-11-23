@@ -49,8 +49,26 @@ const handlers = {
     },
 
     async godNotesHandler(payload) {
-        logger.info("kafka god-note payload: ", payload)
-        // TODO implement handler
+        return await tracer.trace("scribe.handler", { resource: "godNotesHandler" }, async () => {
+            // Extract JSON message to object
+            var message = JSON.parse(payload.message.value.toString())
+
+            // Update/create god note
+            const client = await databases.notesDatabase()
+            const col = client.db("notes").collection("userNotes")
+            var result = await col.insertOne({
+                godId: message.godId,
+                description: message.description
+            })
+            client.close()
+
+            // Handle mongo result
+            if (result.acknowledged) {
+                logger.info(`created note for god '${message.godId}'`, message.godId)
+            } else {
+                logger.error("notes-database failed to acknowledge or didn't create note", message)
+            }
+        })
     }
 }
 
