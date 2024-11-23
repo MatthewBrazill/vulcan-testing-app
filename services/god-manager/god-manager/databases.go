@@ -29,7 +29,7 @@ func NoteDatabase(ctx context.Context) (*mongo.Client, error) {
 
 	// Connect to database
 	Log(ctx).Debug("connecting to note-database")
-	options := options.Client().ApplyURI("mongodb://note-database:27017/?connect=direct")
+	options := options.Client().ApplyURI("mongodb://notes:96758wg54tbravp7@notes-database:27017/?connect=direct&authSource=admin")
 	client, err := mongo.Connect(ctx, options)
 	if err != nil {
 		return nil, err
