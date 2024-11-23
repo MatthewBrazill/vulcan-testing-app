@@ -738,6 +738,11 @@ spec:
               value: /vulcan/services/delphi/
             - name: KAFKA_BROKER
               value: "notes-queue.vulcan-application.svc.cluster.local:9092"
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: vulcan-secrets
+                  key: OPENAI_API_KEY
           ports:
             - containerPort: 443
               protocol: TCP
