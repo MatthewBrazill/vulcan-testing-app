@@ -69,8 +69,8 @@ func GetGod(ctx *gin.Context) {
 	body := make(map[string]string)
 	ctx.ShouldBind(&body)
 
-	// Get database
-	db, err := GodDatabase(ctx)
+	// Get god database
+	godDb, err := GodDatabase(ctx)
 	if err != nil {
 		Log(ctx).WithError(err).Error(ctx.Error(err).Error())
 		ctx.JSON(http.StatusInternalServerError, err)
@@ -78,9 +78,9 @@ func GetGod(ctx *gin.Context) {
 	}
 
 	// Try to find god in database
-	var result bson.M
-	err = db.Database("vulcan").Collection("gods").FindOne(ctx.Request.Context(), bson.M{"godId": body["godId"]}).Decode(&result)
-	db.Disconnect(ctx)
+	var god bson.M
+	err = godDb.Database("vulcan").Collection("gods").FindOne(ctx.Request.Context(), bson.M{"godId": body["godId"]}).Decode(&god)
+	godDb.Disconnect(ctx)
 	if err != nil {
 		if err.Error() == "mongo: no documents in result" {
 			Log(ctx).Debug(fmt.Sprintf("no god found for %s", body["godId"]))
@@ -93,8 +93,34 @@ func GetGod(ctx *gin.Context) {
 		}
 	}
 
+	// Get note database
+	noteDb, err := NoteDatabase(ctx)
+	if err != nil {
+		Log(ctx).WithError(err).Error(ctx.Error(err).Error())
+		ctx.JSON(http.StatusInternalServerError, err)
+		return
+	}
+
+	// Collect description for god
+	var description bson.M
+	err = noteDb.Database("notes").Collection("godNotes").FindOne(ctx.Request.Context(), bson.M{"godId": god["godId"]}).Decode(&description)
+	noteDb.Disconnect(ctx)
+	if err != nil {
+		if err.Error() == "mongo: no documents in result" {
+			Log(ctx).Debug(fmt.Sprintf("no description found for god %s", god["godId"]))
+			ctx.Status(http.StatusNotFound)
+			return
+		} else {
+			Log(ctx).WithError(err).Error(ctx.Error(err).Error())
+			ctx.JSON(http.StatusInternalServerError, err)
+			return
+		}
+	}
+
+	god["description"] = description["description"]
+
 	// Return result
-	ctx.JSON(http.StatusOK, result)
+	ctx.JSON(http.StatusOK, god)
 }
 
 //dd:span resource_name:Gods.SearchGod operation:god-manager.handler
