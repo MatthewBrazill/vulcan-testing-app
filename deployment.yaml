@@ -30,6 +30,7 @@ type: generic
 stringData:
   PASSWORD_PEPPER: <password-pepper>
   SESSION_KEY: <session-key>
+  OPENAI_API_KEY: <openai-api-key>
 
 
 
