@@ -235,7 +235,7 @@ public class Users {
 
 							// Create kafka producer
 							Properties props = new Properties();
-							props.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "notes-queue:9092");
+							props.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, System.getenv("KAFKA_BROKER"));
 							props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 							props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 							KafkaProducer<String, String> kafka = new KafkaProducer<>(props);

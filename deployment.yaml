@@ -199,6 +199,8 @@ spec:
               value: "true"
             - name: CERT_FOLDER
               value: /vulcan/services/vulcan/certificate
+            - name: KAFKA_BROKER
+              value: "notes-queue.vulcan-application.svc.cluster.local:9092"
             - name: VLCN_SESSION_KEY
               valueFrom:
                 secretKeyRef:
