@@ -56,12 +56,6 @@ public class Gods {
             }
             logger.debug("generated god id " + godId);
 
-            // Generate god description
-            HashMap<String, Object> describeRequest = new HashMap<>();
-            describeRequest.put("godId", godId);
-            describeRequest.put("god", body.get("name"));
-            Helpers.httpPostRequest(new URI("https://delphi.vulcan-application.svc.cluster.local/describe"), describeRequest);
-
             // Build god object
             HashMap<String, Object> god = new HashMap<>();
             god.put("godId", godId);

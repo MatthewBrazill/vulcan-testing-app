@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"strings"
 	"fmt"
 	"net/http"
 
@@ -25,6 +26,11 @@ func CreateGod(ctx *gin.Context) {
 		"name":     body["name"],
 		"domain":   body["domain"],
 	}
+
+	// Make request to create god description
+	client := http.DefaultClient
+	descriptionRequest := fmt.Sprintf("{\"god\":\"%s\"}", god["name"])
+	client.Post("https://delphi.vulcan-application.svc.cluster.local/describe", "application/json", strings.NewReader(descriptionRequest))
 
 	// Get database
 	db, err := GodDatabase(ctx)
@@ -155,6 +161,11 @@ func UpdateGod(ctx *gin.Context) {
 			update[key] = val
 		}
 	}
+
+	// Make request to regenerate god description
+	client := http.DefaultClient
+	descriptionRequest := fmt.Sprintf("{\"god\":\"%s\"}", update["name"])
+	client.Post("https://delphi.vulcan-application.svc.cluster.local/describe", "application/json", strings.NewReader(descriptionRequest))
 
 	// Update god
 	result, err := db.Database("vulcan").Collection("gods").UpdateOne(ctx.Request.Context(), bson.M{"godId": body["godId"]}, bson.M{"$set": update})
