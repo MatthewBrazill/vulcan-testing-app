@@ -734,6 +734,8 @@ spec:
               value: "true"
             - name: CERT_FOLDER
               value: /vulcan/services/delphi/
+            - name: KAFKA_BROKER
+              value: "notes-queue.vulcan-application.svc.cluster.local:9092"
           ports:
             - containerPort: 443
               protocol: TCP

@@ -4,10 +4,12 @@
 from helpers import validate
 from fastapi import Request, FastAPI
 from fastapi.responses import JSONResponse
+from kafka import KafkaProducer
 from openai import OpenAI
 from ddtrace import tracer
 import traceback
 import structlog
+import os
 
 # Configs
 app = FastAPI()
@@ -62,8 +64,10 @@ async def describe(request: Request) -> JSONResponse:
             else:
                 result = defaultMessage
             
-            #TODO Make Kafka Message
-        
+            producer = KafkaProducer(bootstrap_servers=[os.environ["KAFKA_BROKER"]])
+            producer.send("god-notes", b"{\"godId\":\""+body["godId"]+"\",\"description\":\""+result+"\"}")
+            producer.flush()
+
         except Exception as err:
             logger.error("delphi encountered a critical error trying to describe '" + body["god"] + "'", god=body, error=err)
             span = tracer.current_span()
