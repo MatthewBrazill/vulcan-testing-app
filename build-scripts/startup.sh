@@ -47,7 +47,7 @@ case $DD_SERVICE in
         ;;
 
     "god-manager")
-        export GOPROXY=direct # use this to avoid issues with orchestrion not installing
+        #export GOPROXY=direct # use this to avoid issues with orchestrion not installing
         go install github.com/DataDog/orchestrion@v0.9.0
         go mod download && go mod verify
         orchestrion go build -o ./build/god-manager -tags appsec ./god-manager/...
