@@ -368,7 +368,7 @@ spec:
           emptyDir: {}
       initContainers:
         - name: init-god-manager
-          image: golang:latest
+          image: golang:alpine
           command: ["/bin/sh"]
           args: ["-c", "wget -nv -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
           volumeMounts:
@@ -379,7 +379,7 @@ spec:
               value: god-manager
       containers:
         - name: god-manager
-          image: golang:latest
+          image: golang:alpine
           command: ["/vulcan/services/god-manager/build/god-manager"]
           volumeMounts:
             - name: logs
