@@ -218,7 +218,7 @@ spec:
           resources:
             limits:
               memory: "512Mi"
-              cpu: "1"
+              cpu: "0.5"
 
 
 # User-Manager
@@ -313,8 +313,8 @@ spec:
               protocol: TCP
           resources:
             limits:
-              memory: "512Mi"
-              cpu: "1"
+              memory: "256Mi"
+              cpu: "0.1"
 
 
 # God-Manager
@@ -428,8 +428,8 @@ spec:
               protocol: TCP
           resources:
             limits:
-              memory: "512Mi"
-              cpu: "1"
+              memory: "256Mi"
+              cpu: "0.2"
 
 
 
@@ -539,7 +539,7 @@ spec:
           resources:
             limits:
               memory: "512Mi"
-              cpu: "1"
+              cpu: "0.1"
 
 
 # Scribe
@@ -642,8 +642,8 @@ spec:
               protocol: TCP
           resources:
             limits:
-              memory: "512Mi"
-              cpu: "1"
+              memory: "256Mi"
+              cpu: "0.2"
 
 
 # Delphi
@@ -851,7 +851,7 @@ spec:
           resources:
             limits:
               memory: "1G"
-              cpu: "0.4"
+              cpu: "0.2"
 
 
 
@@ -921,5 +921,5 @@ spec:
               protocol: TCP
           resources:
             limits:
-              memory: "1G"
+              memory: "128Mi"
               cpu: "0.2"
