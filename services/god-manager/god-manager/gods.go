@@ -1,7 +1,6 @@
 package main
 
 import (
-	"crypto/tls"
 	"errors"
 	"fmt"
 	"net/http"
@@ -29,15 +28,8 @@ func CreateGod(ctx *gin.Context) {
 	}
 
 	// Make request to create god description
-	client := http.Client{
-        Transport: &http.Transport{
-            TLSClientConfig: &tls.Config{
-                InsecureSkipVerify: true,
-            },
-        },
-	}
 	descriptionRequest := fmt.Sprintf("{\"god\":\"%s\"}", god["name"])
-	client.Post("https://delphi.vulcan-application.svc.cluster.local/describe", "application/json", strings.NewReader(descriptionRequest))
+	http.NewRequestWithContext(ctx, http.MethodPost, "https://delphi.vulcan-application.svc.cluster.local/describe", strings.NewReader(descriptionRequest))
 
 	// Get database
 	db, err := GodDatabase(ctx)
