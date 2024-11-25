@@ -4,9 +4,9 @@
 from helpers import validate
 from fastapi import Request, FastAPI
 from fastapi.responses import JSONResponse
-from kafka import KafkaProducer
 from openai import OpenAI
 from ddtrace import tracer
+import kafka
 import traceback
 import structlog
 import os
@@ -64,7 +64,7 @@ async def describe(request: Request) -> JSONResponse:
             else:
                 result = defaultMessage
             
-            producer = KafkaProducer(bootstrap_servers=[os.environ["KAFKA_BROKER"]])
+            producer = kafka.KafkaProducer(bootstrap_servers=[os.environ["KAFKA_BROKER"]])
             producer.send("god-notes", b"{\"godId\":\""+body["godId"]+"\",\"description\":\""+result+"\"}")
             producer.flush()
 
@@ -116,7 +116,7 @@ async def predict(request: Request) -> JSONResponse:
         else:
             return JSONResponse(content={ "prediction": """
                 I'm afraid that the future is foggy and ever evolving, my dear. In this case yours seems in flux! I won't be able
-                to give you and answer today, but be sure we can expect greatness from you!
+                to give you and answer today, but I'm sure we can expect greatness from you!
             """}, status_code=404)
     
     except Exception as err:
