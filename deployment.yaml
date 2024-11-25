@@ -736,7 +736,7 @@ spec:
             - name: DD_DATA_STREAMS_ENABLED
               value: "true"
             - name: CERT_FOLDER
-              value: /vulcan/services/delphi/
+              value: /vulcan/services/delphi/certificate
             - name: KAFKA_BROKER
               value: "notes-queue.vulcan-application.svc.cluster.local:9092"
             - name: OPENAI_API_KEY
