@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/sirupsen/logrus"
-	dd_logrus "gopkg.in/DataDog/dd-trace-go.v1/contrib/sirupsen/logrus"
+	//dd_logrus "gopkg.in/DataDog/dd-trace-go.v1/contrib/sirupsen/logrus"
 )
 
 // Global variables
@@ -33,7 +33,7 @@ func main() {
 
 	// Configure logrus
 	logrus.SetFormatter(&logrus.JSONFormatter{})
-	logrus.AddHook(&dd_logrus.DDContextLogHook{})
+	//logrus.AddHook(&dd_logrus.DDContextLogHook{})
 	logrus.SetOutput(file)
 
 	// Get gin engine
