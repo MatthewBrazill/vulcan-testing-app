@@ -33,6 +33,7 @@ func main() {
 
 	// Configure logrus
 	logrus.SetFormatter(&logrus.JSONFormatter{})
+	logrus.SetLevel(logrus.TraceLevel)
 	//logrus.AddHook(&dd_logrus.DDContextLogHook{})
 	logrus.SetOutput(file)
 
