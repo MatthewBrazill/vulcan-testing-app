@@ -3,6 +3,7 @@
 # Imports
 from helpers import validate
 from fastapi import Request, FastAPI
+from fastapi.responses import Response
 from fastapi.responses import JSONResponse
 from openai import OpenAI
 from ddtrace import tracer
@@ -16,7 +17,7 @@ app = FastAPI()
 
 # Routes
 @app.post("/describe")
-async def describe(request: Request) -> JSONResponse:
+async def describe(request: Request) -> Response:
     # Define function internally as async to reduce latency
     @tracer.wrap(name="delphi.describe", resource="worker")
     async def func():
@@ -76,7 +77,7 @@ async def describe(request: Request) -> JSONResponse:
     
     # Run request async to reduce response time on god create
     func()
-    return JSONResponse(status_code=202)
+    return Response(status_code=202)
 
 
 @app.post("/predict")
@@ -86,7 +87,10 @@ async def predict(request: Request) -> JSONResponse:
     try:
         body = await request.json()
         if await validate(body, [["god", r"^[a-zA-Z0-9\\!\?\.\-\s]{1,128}$"]]) == False:
-            return JSONResponse(status_code=400)
+            return JSONResponse(content={ "prediction": """
+                I'm afraid that the future is foggy and ever evolving, my dear. In this case yours seems in flux! I won't be able
+                to give you and answer today, but I'm sure we can expect greatness from you!
+            """}, status_code=400)
 
         gpt = OpenAI()
         result = gpt.chat.completions.create(
@@ -124,4 +128,7 @@ async def predict(request: Request) -> JSONResponse:
         span.set_tag("error.message", err)
         span.set_tag("error.stack", traceback.format_exc())
         
-        return JSONResponse(status_code=500)
+        return JSONResponse(content={ "prediction": """
+            I'm afraid that the future is foggy and ever evolving, my dear. In this case yours seems in flux! I won't be able
+            to give you and answer today, but I'm sure we can expect greatness from you!
+        """}, status_code=500)
