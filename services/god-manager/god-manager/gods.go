@@ -29,7 +29,7 @@ func CreateGod(ctx *gin.Context) {
 
 	// Make request to create god description
 	descriptionRequest := fmt.Sprintf("{\"god\":\"%s\"}", god["name"])
-	http.NewRequestWithContext(ctx, http.MethodPost, "https://delphi.vulcan-application.svc.cluster.local/describe", strings.NewReader(descriptionRequest))
+	http.NewRequestWithContext(ctx.Request.Context(), http.MethodPost, "https://delphi.vulcan-application.svc.cluster.local/describe", strings.NewReader(descriptionRequest))
 
 	// Get database
 	db, err := GodDatabase(ctx)
