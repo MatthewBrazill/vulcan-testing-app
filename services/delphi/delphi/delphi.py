@@ -18,7 +18,6 @@ app = FastAPI()
 # Routes
 @app.post("/describe")
 async def describe(request: Request) -> Response:
-    yield Response(status_code=202)
     span = tracer.current_span()
     logger = structlog.get_logger("delphi")
     try:
@@ -72,6 +71,8 @@ async def describe(request: Request) -> Response:
         span = tracer.current_span()
         span.set_tag("error.message", err)
         span.set_tag("error.stack", traceback.format_exc())
+
+    return Response(status_code=202)
 
 
 @app.post("/predict")
