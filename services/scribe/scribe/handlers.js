@@ -55,7 +55,7 @@ const handlers = {
 
             // Update/create god note
             const client = await databases.notesDatabase()
-            const col = client.db("notes").collection("userNotes")
+            const col = client.db("notes").collection("godNotes")
             var result = await col.insertOne({
                 godId: message.godId,
                 description: message.description
