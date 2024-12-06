@@ -29,7 +29,7 @@ func CreateGod(ctx *gin.Context) {
 	}
 
 	// Make request to create god description
-	descriptionRequest := fmt.Sprintf("{\"god\":\"%s\"}", god["name"])
+	descriptionRequest := fmt.Sprintf("{\"god\":\"%s\",\"godId\":\"%s\"}", god["name"], god["godId"])
 	req, err := http.NewRequestWithContext(ctx.Request.Context(), http.MethodPost, "https://delphi.vulcan-application.svc.cluster.local/describe", strings.NewReader(descriptionRequest))
 	if err != nil {
 		Log(ctx).WithError(err).Error(ctx.Error(err).Error())
@@ -198,7 +198,7 @@ func UpdateGod(ctx *gin.Context) {
 
 	// Make request to regenerate god description
 	client := http.DefaultClient
-	descriptionRequest := fmt.Sprintf("{\"god\":\"%s\"}", update["name"])
+	descriptionRequest := fmt.Sprintf("{\"god\":\"%s\",\"godId\":\"%s\"}", body["name"], body["godId"])
 	client.Post("https://delphi.vulcan-application.svc.cluster.local/describe", "application/json", strings.NewReader(descriptionRequest))
 
 	// Update god
