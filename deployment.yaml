@@ -682,7 +682,7 @@ spec:
         tags.datadoghq.com/env: dev
         tags.datadoghq.com/service: delphi
       annotations:
-        ad.datadoghq.com/delphi.logs: '[{"type":"file","source":"vulcan-app","service":"delphi","path":"/vulcan-data/logs/delphi.log"},{"source":"startup-script","service":"delphi"}]'
+        ad.datadoghq.com/delphi.logs: '[{"type":"file","source":"delphi","service":"delphi","path":"/vulcan-data/logs/delphi.log"},{"source":"startup-script","service":"delphi"}]'
         ad.datadoghq.com/tags: '{"team":"matthew"}'
     spec:
       volumes:
@@ -694,7 +694,7 @@ spec:
             path: /var/run/datadog/
       containers:
         - name: delphi
-          image: python:3.12-alpine
+          image: python:3.9-alpine
           command: ["/bin/sh"]
           args: ["-c", "wget -nv -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
           volumeMounts:
@@ -735,6 +735,10 @@ spec:
               value: "true"
             - name: DD_DATA_STREAMS_ENABLED
               value: "true"
+            - name: DD_LLMOBS_ENABLED
+              value: "1"
+            - name: DD_LLMOBS_ML_APP
+              value: delphi
             - name: CERT_FOLDER
               value: /vulcan/services/delphi/certificate
             - name: KAFKA_BROKER
