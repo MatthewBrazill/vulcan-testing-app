@@ -72,7 +72,7 @@ def request_description(body):
             result = defaultMessage
         
         producer = KafkaProducer(bootstrap_servers=[os.environ["KAFKA_BROKER"]])
-        producer.send("god-notes", b"{\"godId\":\""+body["godId"]+"\",\"description\":\""+result+"\"}")
+        producer.send("god-notes", "{\"godId\":\""+body["godId"]+"\",\"description\":\""+result+"\"}")
         producer.flush()
 
     except Exception as err:
