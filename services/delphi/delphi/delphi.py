@@ -17,18 +17,27 @@ app = FastAPI()
 
 # Routes
 @app.post("/describe")
-async def describe(request: Request) -> Response:
+async def describe(request: Request, background: BackgroundTasks) -> Response:
+    body = await request.json()
+    logger = structlog.get_logger("delphi")
+
+    background.add_task(request_description, body)
+    logger.info("started description creation job", god=body["god"])
+
+    return Response(status_code=202)
+
+@tracer.wrap(name="delphi.worker", resource="request_description")
+def request_description(body):
     span = tracer.current_span()
     logger = structlog.get_logger("delphi")
     try:
-        body = await request.json()
         defaultMessage = """
             Gods come from a variety of different beliefs and cultures. As such, there are many deities that I may 
             not recognize or have information on. In this case, I dont know the answer because I seems to have
             some issues in generating a response. Please contact and Admin to correct this! Thank you.
         """
 
-        if await validate(body, [["godId", r"^[a-zA-Z0-9]{5}$"], ["god", r"^[a-zA-Z\s]{1,32}$"]]) == True:                
+        if validate(body, [["godId", r"^[a-zA-Z0-9]{5}$"], ["god", r"^[a-zA-Z\s]{1,32}$"]]) == True:                
             gpt = OpenAI()
             result = gpt.chat.completions.create(
                 model="gpt-4o-mini",
@@ -71,8 +80,6 @@ async def describe(request: Request) -> Response:
         span = tracer.current_span()
         span.set_tag("error.message", err)
         span.set_tag("error.stack", traceback.format_exc())
-
-    return Response(status_code=202)
 
 
 @app.post("/predict")
