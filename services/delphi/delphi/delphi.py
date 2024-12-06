@@ -2,12 +2,12 @@
 
 # Imports
 from helpers import validate
-from fastapi import Request, FastAPI
+from fastapi import Request, FastAPI, BackgroundTasks
 from fastapi.responses import Response
 from fastapi.responses import JSONResponse
+from kafka import KafkaProducer
 from openai import OpenAI
 from ddtrace import tracer
-import kafka
 import traceback
 import structlog
 import os
@@ -71,7 +71,7 @@ def request_description(body):
         else:
             result = defaultMessage
         
-        producer = kafka.KafkaProducer(bootstrap_servers=[os.environ["KAFKA_BROKER"]])
+        producer = KafkaProducer(bootstrap_servers=[os.environ["KAFKA_BROKER"]])
         producer.send("god-notes", b"{\"godId\":\""+body["godId"]+"\",\"description\":\""+result+"\"}")
         producer.flush()
 
