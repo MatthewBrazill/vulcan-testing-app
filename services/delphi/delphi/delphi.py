@@ -19,17 +19,23 @@ app = FastAPI()
 @app.post("/describe")
 async def describe(request: Request, background: BackgroundTasks) -> Response:
     body = await request.json()
+    span = tracer.current_span()
     logger = structlog.get_logger("delphi")
 
-    background.add_task(request_description, body)
+    background.add_task(request_description, body, span.trace_id)
     logger.info("started description creation job", god=body["god"])
 
     return Response(status_code=202)
 
 @tracer.wrap(name="delphi.worker", resource="request_description")
-def request_description(body):
+def request_description(body, parent_id):
     span = tracer.current_span()
     logger = structlog.get_logger("delphi")
+
+    # This is super hacky and not really best practice, but the link between the traces seems to be lost at some
+    # point between the main and background task. This should re-add it.
+    span._parent.parent_id = parent_id
+
     try:
         defaultMessage = """
             Gods come from a variety of different beliefs and cultures. As such, there are many deities that I may 
