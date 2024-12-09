@@ -71,7 +71,7 @@ def request_description(body):
         else:
             result = defaultMessage
         
-        producer = KafkaProducer(bootstrap_servers=[os.environ["KAFKA_BROKER"]])
+        producer = KafkaProducer(bootstrap_servers=os.environ["KAFKA_BROKER"], linger_ms=10)
         producer.send("god-notes", bytes("{\"godId\":\""+body["godId"]+"\",\"description\":\""+result+"\"}", "utf-8"))
         producer.flush()
 
