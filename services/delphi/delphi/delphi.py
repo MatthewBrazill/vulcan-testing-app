@@ -30,7 +30,8 @@ async def describe(request: Request, background: BackgroundTasks) -> Response:
 async def request_description(body, parent_span):
     span = tracer.current_span()
     logger = structlog.get_logger("delphi")
-    producer = KafkaProducer(bootstrap_servers=os.environ["KAFKA_BROKER"], linger_ms=10)
+    #producer = KafkaProducer(bootstrap_servers=os.environ["KAFKA_BROKER"], linger_ms=10)
+    producer = KafkaProducer(bootstrap_servers="notes-queue.vulcan-application.svc.cluster.local:9092", linger_ms=10)
     logger.info("started description job", god=body["god"])
 
     # This is super hacky and not really best practice, but the link between the traces seems to be lost at some
