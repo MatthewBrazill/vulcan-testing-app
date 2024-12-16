@@ -26,7 +26,7 @@ async def describe(request: Request, background: BackgroundTasks) -> Response:
 
     return Response(status_code=202)
 
-@tracer.wrap(name="delphi.worker", resource="request_description")
+@tracer.wrap(name="delphi.worker", resource="requestDescription")
 async def request_description(body, parent_span):
     span = tracer.current_span()
     logger = structlog.get_logger("delphi")
