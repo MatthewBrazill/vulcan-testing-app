@@ -28,7 +28,7 @@ async def describe(request: Request, background: BackgroundTasks) -> Response:
     return Response(status_code=202)
 
 @tracer.wrap(name="delphi.worker", resource="request_description")
-def request_description(body, parent_id):
+async def request_description(body, parent_id):
     span = tracer.current_span()
     logger = structlog.get_logger("delphi")
 
@@ -43,7 +43,7 @@ def request_description(body, parent_id):
             some issues in generating a response. Please contact and Admin to correct this! Thank you.
         """
 
-        if validate(body, [["godId", r"^[a-zA-Z0-9]{5}$"], ["god", r"^[a-zA-Z\s]{1,32}$"]]) == True:                
+        if await validate(body, [["godId", r"^[a-zA-Z0-9]{5}$"], ["god", r"^[a-zA-Z\s]{1,32}$"]]) == True:                
             gpt = OpenAI()
             result = gpt.chat.completions.create(
                 model="gpt-4o-mini",
