@@ -73,7 +73,7 @@ async def request_description(body, parent_id):
             if result.choices == None:
                 result = defaultMessage
             else:
-                result = result.choices[0].message
+                result = result.choices[0].message.content
         else:
             result = defaultMessage
         
