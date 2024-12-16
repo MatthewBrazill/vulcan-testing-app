@@ -20,21 +20,21 @@ app = FastAPI()
 async def describe(request: Request, background: BackgroundTasks) -> Response:
     body = await request.json()
     span = tracer.current_span()
-    logger = structlog.get_logger("delphi")
 
-    background.add_task(request_description, body, span.trace_id)
-    logger.info("started description creation job", god=body["god"])
+    background.add_task(request_description, body, span)
 
     return Response(status_code=202)
 
 @tracer.wrap(name="delphi.worker", resource="request_description")
-async def request_description(body, parent_id):
+async def request_description(body, parent_span):
     span = tracer.current_span()
     logger = structlog.get_logger("delphi")
+    logger.info("started description job", god=body["god"])
 
     # This is super hacky and not really best practice, but the link between the traces seems to be lost at some
     # point between the main and background task. This should re-add it.
-    span._parent.parent_id = parent_id
+    logger.debug("connecting spans", parent_span=parent_span, child_span=span)
+    span._parent.parent_id = parent_span.span_id
 
     try:
         defaultMessage = """
@@ -43,6 +43,7 @@ async def request_description(body, parent_id):
             some issues in generating a response. Please contact and Admin to correct this! Thank you.
         """
 
+        logger.debug("validating request body")
         if await validate(body, [["godId", r"^[a-zA-Z0-9]{5}$"], ["god", r"^[a-zA-Z\s]{1,32}$"]]) == True:                
             gpt = OpenAI()
             result = gpt.chat.completions.create(
@@ -69,6 +70,7 @@ async def request_description(body, parent_id):
                     }
                 ]
             )
+            logger.debug("made chatgpt request", result=result)
 
             if len(result.choices) == 0:
                 result = defaultMessage
@@ -77,6 +79,7 @@ async def request_description(body, parent_id):
         else:
             result = defaultMessage
         
+        logger.info("sending message to kafka queue", message=result)
         producer = KafkaProducer(bootstrap_servers=os.environ["KAFKA_BROKER"], linger_ms=10)
         producer.send("god-notes", bytes("{\"godId\":\""+body["godId"]+"\",\"description\":\""+result+"\"}", "utf-8"))
         producer.flush()
