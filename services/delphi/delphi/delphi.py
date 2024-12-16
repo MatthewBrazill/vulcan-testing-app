@@ -10,6 +10,7 @@ from openai import OpenAI
 from ddtrace import tracer
 import traceback
 import structlog
+import json
 import os
 
 # Configs
@@ -68,17 +69,26 @@ not recognize or have information on. In this case, I dont know the answer becau
                     }
                 ]
             )
-            logger.debug("made chatgpt request", result=result)
+            logger.debug("made chatgpt request", result=json.dumps(result))
 
             if len(result.choices) == 0:
-                kafkaMessage = defaultMessage
+                kafkaMessage = {
+                    "godId": body["godId"],
+                    "description": defaultMessage
+                }
             else:
-                kafkaMessage = result.choices[0].message.content
+                kafkaMessage = {
+                    "godId": body["godId"],
+                    "description": result.choices[0].message.content
+                }
         else:
-            kafkaMessage = defaultMessage
+            kafkaMessage = {
+                "godId": body["godId"],
+                "description": defaultMessage
+            }
         
-        logger.info("sending message to kafka queue", kafka_message=kafkaMessage)
-        producer.send(topic="god-notes", value=bytes("{\"godId\":\""+body["godId"]+"\",\"description\":\""+kafkaMessage+"\"}", "utf-8"))
+        logger.info("sending message to kafka queue", kafka_message=json.dumps(kafkaMessage))
+        producer.send("god-notes", json.dumps(kafkaMessage).encode("utf-8"))
         producer.flush()
         producer.close()
 
