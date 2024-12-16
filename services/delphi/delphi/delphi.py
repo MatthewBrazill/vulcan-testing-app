@@ -38,11 +38,9 @@ async def request_description(body, parent_span):
     #logger.debug("connecting spans", parent_span=parent_span, child_span=span)
 
     try:
-        defaultMessage = """
-            Gods come from a variety of different beliefs and cultures. As such, there are many deities that I may 
-            not recognize or have information on. In this case, I dont know the answer because I seems to have
-            some issues in generating a response. Please contact and Admin to correct this! Thank you.
-        """
+        defaultMessage = """Gods come from a variety of different beliefs and cultures. As such, there are many deities that I may 
+not recognize or have information on. In this case, I dont know the answer because I seems to have 
+some issues in generating a response. Please contact and Admin to correct this! Thank you."""
 
         logger.debug("validating request body")
         if await validate(body, [["godId", r"^[a-zA-Z0-9]{5}$"], ["god", r"^[a-zA-Z\s]{1,32}$"]]) == True:                
@@ -50,21 +48,20 @@ async def request_description(body, parent_span):
             result = gpt.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[
-                    { "role": "system", "content": """
-                        You are a helpful researcher. Based on the name of a god that you are given from any pantheon 
-                        you know, provide a short, two paragraph, description of what this god is famous for, what abilities
-                        or powers they had and why they are relevant to history.
-                        
-                        If there is contradictory or controversial information available for this god, mention this in your 
-                        response and add your source for all the information you used in the following format:
-                        [page name] - [url] - [source type]
-                        
-                        Do this ONLY if there is contradictory or controversial information.
-                        
-                        If you don't recognize the god, or have any kind of other issue in responding, you should say the following:
-                        "Gods come from a variety of different beliefs and cultures. As such, there are many deities that I may 
-                        not recognize or have information on. In this case, I dont know the answer because [insert your reason here]"
-                    """ },
+                    { "role": "system", "content": """You are a helpful researcher. Based on the name of a god that you are given from any pantheon 
+you know, provide a short, two paragraph, description of what this god is famous for, what abilities
+or powers they had and why they are relevant to history.
+
+If there is contradictory or controversial information available for this god, mention this in your 
+response and add your source for all the information you used in the following format:
+[page name] - [url] - [source type]
+
+Do this ONLY if there is contradictory or controversial information.
+
+If you don't recognize the god, or have any kind of other issue in responding, you should say the following:
+"Gods come from a variety of different beliefs and cultures. As such, there are many deities that I may 
+not recognize or have information on. In this case, I dont know the answer because [insert your reason here]" """
+                    },
                     {
                         "role": "user",
                         "content": body["god"]
