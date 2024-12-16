@@ -29,6 +29,7 @@ async def describe(request: Request, background: BackgroundTasks) -> Response:
 async def request_description(body, parent_span):
     span = tracer.current_span()
     logger = structlog.get_logger("delphi")
+    producer = KafkaProducer(bootstrap_servers=os.environ["KAFKA_BROKER"], linger_ms=10)
     logger.info("started description job", god=body["god"])
 
     # This is super hacky and not really best practice, but the link between the traces seems to be lost at some
@@ -73,16 +74,16 @@ async def request_description(body, parent_span):
             logger.debug("made chatgpt request", result=result)
 
             if len(result.choices) == 0:
-                result = defaultMessage
+                kafkaMessage = defaultMessage
             else:
-                result = result.choices[0].message.content
+                kafkaMessage = result.choices[0].message.content
         else:
-            result = defaultMessage
+            kafkaMessage = defaultMessage
         
-        logger.info("sending message to kafka queue", message=result)
-        producer = KafkaProducer(bootstrap_servers=os.environ["KAFKA_BROKER"], linger_ms=10)
-        producer.send("god-notes", bytes("{\"godId\":\""+body["godId"]+"\",\"description\":\""+result+"\"}", "utf-8"))
+        logger.info("sending message to kafka queue", kafka_message=kafkaMessage)
+        producer.send(topic="god-notes", value=bytes("{\"godId\":\""+body["godId"]+"\",\"description\":\""+kafkaMessage+"\"}", "utf-8"))
         producer.flush()
+        producer.close()
 
     except Exception as err:
         logger.error("delphi encountered a critical error trying to describe '" + body["god"] + "'", god=body, error=err)
