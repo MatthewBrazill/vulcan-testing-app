@@ -70,7 +70,7 @@ not recognize or have information on. In this case, I dont know the answer becau
                     }
                 ]
             )
-            logger.debug("made chatgpt request", result=json.dumps(result))
+            logger.debug("made chatgpt request", result=result.model_dump_json())
 
             if len(result.choices) == 0:
                 kafkaMessage = {
