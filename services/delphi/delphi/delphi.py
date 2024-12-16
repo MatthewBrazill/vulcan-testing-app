@@ -34,7 +34,7 @@ async def request_description(body, parent_span):
     # This is super hacky and not really best practice, but the link between the traces seems to be lost at some
     # point between the main and background task. This should re-add it.
     logger.debug("connecting spans", parent_span=parent_span, child_span=span)
-    span._parent.parent_id = parent_span.span_id
+    span._parent = parent_span
 
     try:
         defaultMessage = """

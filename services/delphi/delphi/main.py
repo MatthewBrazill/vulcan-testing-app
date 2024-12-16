@@ -13,7 +13,7 @@ logging.getLogger("delphi").setLevel(logging.DEBUG)
 structlog.configure(
     processors=[
         structlog.processors.add_log_level,
-        structlog.processors.TimeStamper(fmt="iso"),
+        structlog.processors.TimeStamper(),
         structlog.processors.EventRenamer("message"),
         structlog.processors.StackInfoRenderer(),
         structlog.processors.JSONRenderer()
