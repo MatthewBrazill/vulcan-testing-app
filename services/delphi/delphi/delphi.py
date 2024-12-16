@@ -21,7 +21,7 @@ async def describe(request: Request, background: BackgroundTasks) -> Response:
     body = await request.json()
     span = tracer.current_span()
 
-    background.add_task(request_description, body, span)
+    await request_description(body, span)
 
     return Response(status_code=202)
 
@@ -33,8 +33,8 @@ async def request_description(body, parent_span):
 
     # This is super hacky and not really best practice, but the link between the traces seems to be lost at some
     # point between the main and background task. This should re-add it.
-    logger.debug("connecting spans", parent_span=parent_span, child_span=span)
-    span._parent = parent_span
+    #span.context. ._parent = parent_span
+    #logger.debug("connecting spans", parent_span=parent_span, child_span=span)
 
     try:
         defaultMessage = """
