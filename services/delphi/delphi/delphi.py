@@ -88,7 +88,7 @@ not recognize or have information on. In this case, I dont know the answer becau
                 "description": defaultMessage
             }
         
-        logger.info("sending message to kafka queue", kafka_message=json.dumps(kafkaMessage))
+        logger.info("sending message to kafka queue", kafka_message=kafkaMessage)
         producer.send("god-notes", json.dumps(kafkaMessage).encode("utf-8"))
         producer.flush()
         producer.close()
