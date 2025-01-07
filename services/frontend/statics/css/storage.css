@@ -8,9 +8,9 @@
 
 
 
-#testing-log-dropdown {
-    padding-top: 9.5px;
-    padding-bottom: 8px;
+select {
+    padding-top: 9.5px !important;
+    padding-bottom: 8px !important;
 }
 
 
