@@ -9,7 +9,7 @@ $(document).ready(() => {
             $("#edit-god-pantheon").val(res.pantheon)
             $("#edit-god-name").val(res.name)
             $("#edit-god-domain").val(res.domain)
-            $("#god-description").val(res.description)
+            $("#god-description").text(res.description)
             console.log(`god collection succeeded: status ${res.status}`)
         },
         error: (res) => {
