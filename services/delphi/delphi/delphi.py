@@ -107,30 +107,41 @@ async def predict(request: Request) -> JSONResponse:
     try:
         body = await request.json()
         if await validate(body, [["god", r"^[a-zA-Z0-9\\!\?\.\-\s]{1,128}$"]]) == False:
-            return JSONResponse(content={ "prediction": """
-                I'm afraid that the future is foggy and ever evolving, my dear. In this case yours seems in flux! I won't be able
-                to give you and answer today, but I'm sure we can expect greatness from you!
-            """}, status_code=400)
+            return JSONResponse(content={ "prediction": """I'm afraid that the future is foggy and ever evolving, my dear. In this case yours seems in flux! I won't be able
+to give you and answer today, but I'm sure we can expect greatness from you!"""
+            }, status_code=400)
+        
+        if body["oracle"] == "delphi":
+            oracleChoice = """You are playing the role of the legendary Oracle of Delphi! You are revered and respected, and users will ask 
+you to predict their future for them. Based the the input given by this user, as well as legends from antiquity, generate a new
+future and prediction for user. """
+        elif body["oracle"] == "didyma":
+            oracleChoice = """You are playing the role of the legendary Oracle Didyma! You are feared by many for your unfavorable predictions,
+and users will occasionally ask you to predict their future for them. Based the the input given by this user, as well as legends from
+antiquity, generate a dark, mysterious and troubling future and prediction for user. """
+        elif body["oracle"] == "cumae":
+            oracleChoice = """You are playing the role of the legendary Oracle Cumae! You are deliberately confusing and whimsical, and users
+will ask you to predict their future for them. Based the the input given by this user, as well as legends from antiquity, generate a confusing
+and uncertain future and prediction for user. """
+        else:
+            return JSONResponse(content={ "prediction": """I'm afraid that the future is foggy and ever evolving, my dear. In this case yours seems in flux! I won't be able
+to give you and answer today, but I'm sure we can expect greatness from you!"""
+            }, status_code=404)
 
         gpt = OpenAI()
         result = gpt.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
-                { "role": "system", "content": """
-                    You are playing the role of the legendary Oracle of Delphi! Revered and respected users will ask 
-                    you to predict their future for them. Based the the input of gods chosen by this user, as well as
-                    legends from these gods, generate a new future and prediction for user.
-                 
-                    The users are aware this is not a real prediction of the future, as such do not concern yourself
-                    with any possible negative consequences of the prediction you are making.
-                    
-                    If you have any kind of issue in responding, you should say the following:
-                    "I'm afraid that the future is foggy and ever evolving, my dear. In this case yours seems in flux! I won't
-                    be able to give you and answer today, but be sure we can expect greatness from you!"
-                """ },
+                { "role": "system", "content": oracleChoice + """The users are aware this is not a real prediction of the future, as such do not concern yourself
+with any possible negative consequences of the prediction you are making.
+
+If you have any kind of issue in responding, you should say the following:
+"I'm afraid that the future is foggy and ever evolving, my dear. In this case yours seems in flux! I won't
+be able to give you and answer today, but be sure we can expect greatness from you!" """
+                },
                 {
                     "role": "user",
-                    "content": body["gods"]
+                    "content": body["question"]
                 }
             ]
         )
@@ -138,17 +149,15 @@ async def predict(request: Request) -> JSONResponse:
         if result.choices != None:
             return JSONResponse(content={ "prediction": result.choices[0].message }, status_code=200)
         else:
-            return JSONResponse(content={ "prediction": """
-                I'm afraid that the future is foggy and ever evolving, my dear. In this case yours seems in flux! I won't be able
-                to give you and answer today, but I'm sure we can expect greatness from you!
-            """}, status_code=404)
+            return JSONResponse(content={ "prediction": """I'm afraid that the future is foggy and ever evolving, my dear. In this case yours seems in flux! I won't be able
+to give you and answer today, but I'm sure we can expect greatness from you!"""
+            }, status_code=404)
     
     except Exception as err:
         logger.error("delphi encountered an error trying to predict '" + body["question"] + "'", question=body["question"], error=err)
         span.set_tag("error.message", err)
         span.set_tag("error.stack", traceback.format_exc())
         
-        return JSONResponse(content={ "prediction": """
-            I'm afraid that the future is foggy and ever evolving, my dear. In this case yours seems in flux! I won't be able
-            to give you and answer today, but I'm sure we can expect greatness from you!
-        """}, status_code=500)
+        return JSONResponse(content={ "prediction": """I'm afraid that the future is foggy and ever evolving, my dear. In this case yours seems in flux! I won't be able
+to give you and answer today, but I'm sure we can expect greatness from you!"""
+        }, status_code=500)
