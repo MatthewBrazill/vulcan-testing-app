@@ -49,6 +49,40 @@ $(document).ready(() => {
 
 
 
+    $("#divination-input").keypress((e) => {
+        if (e.which == '13') {
+            console.log(`asking for a prediction for: ${$("#divination-input").val()}`)
+            e.preventDefault()
+            $.ajax({
+                url: "/storage/search",
+                method: "POST",
+                data: {
+                    question: $("#divination-input").val(),
+                    oracle: $("#divination-dropdown").val(),
+                },
+                beforeSend: () => {
+                    $("#divination-output").attr("class", "")
+                    $("#divination-output-loader").attr("class", "ui active text loader")
+                    $("#divination-output-text").attr("class", "ui hidden")
+                },
+                success: (res) => {
+                    $("#divination-output").attr("class", "")
+                    $("#divination-output-loader").attr("class", "ui hidden text loader")
+                    $("#divination-output-text").text(res.prediction)
+                    $("#divination-output-text").attr("class", "ui active")
+                },
+                error: (res) => {
+                    $("#divination-output").attr("class", "")
+                    $("#divination-output-loader").attr("class", "ui hidden text loader")
+                    $("#divination-output-text").text(res.prediction)
+                    $("#divination-output-text").attr("class", "ui active")
+                }
+            })
+        }
+    });
+
+
+
     $("#testing-log-input").keypress((e) => {
         if (e.which == '13') {
             e.preventDefault()
