@@ -58,7 +58,7 @@ if [ "$build" == 1 ]; then
     # Upload Maps to Datadog
     if which datadog-ci >/dev/null ; then
         printf "Uploading JS Maps to Datadog...\n"
-        datadog-ci sourcemaps upload services/frontend/statics/js --service vulcan-app --release-version 1.13 --minified-path-prefix /js/ | grep --line-buffered "^Uploading sourcemap*" | sed "s/^/  /"
+        datadog-ci sourcemaps upload services/frontend/statics/js --service vulcan-app --release-version 1.14 --minified-path-prefix /js/ | grep --line-buffered "^Uploading sourcemap*" | sed "s/^/  /"
         printf "Done uploading JS maps!\n\n"
     else
         printf "Missing Datadog CI tool; skipping JS Map upload.\n\n"
