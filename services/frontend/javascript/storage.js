@@ -54,7 +54,7 @@ $(document).ready(() => {
             console.log(`asking for a prediction for: ${$("#divination-input").val()}`)
             e.preventDefault()
             $.ajax({
-                url: "/storage/search",
+                url: "/oracle/predict",
                 method: "POST",
                 data: {
                     question: $("#divination-input").val(),

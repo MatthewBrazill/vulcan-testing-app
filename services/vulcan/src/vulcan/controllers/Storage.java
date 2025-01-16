@@ -198,4 +198,70 @@ public class Storage {
                 return output;
         }
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/oracle/predict", method = RequestMethod.POST)
+    public HashMap<String, Object> predictionAPI(HttpServletRequest req, HttpServletResponse res) {
+        // Function variables
+        Span span = GlobalTracer.get().activeSpan();
+        HashMap<String, Object> body = Helpers.decodeBody(req);
+        HashMap<String, Object> output = new HashMap<String, Object>();
+        Logger logger = LogManager.getLogger("vulcan");
+
+        // Authorize
+        String permissions = Helpers.authorize(req);
+        switch (permissions) {
+            case "user":
+            case "admin":
+                // Validate the user input
+                if (!Helpers.validate(body)) {
+                    res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    output.put("message", "There was an issue with your request.");
+                    return output;
+                }
+
+                try {
+                    // Prep god request
+                    HashMap<String, Object> prediction = new HashMap<String, Object>();
+                    prediction.put("question", body.get("question"));
+                    prediction.put("oracle", body.get("oracle"));
+
+                    // Make god request
+                    HttpResponse<String> response = Helpers.httpPostRequest(new URI("https://delphi.vulcan-application.svc.cluster.local/predict"), prediction);
+
+                    // Handle response
+                    res.setStatus(HttpServletResponse.SC_OK);
+                    logger.info("got prediction for question '" + body.get("question") + "'");
+
+                    // Extract ArrayList from JSON body
+                    Gson gson = new Gson();
+                    Type type = new TypeToken<HashMap<String, String>>() {
+                    }.getType();
+                    HashMap<String, String> gods = gson.fromJson(response.body(), type);
+
+                    output.put("prediction", gods.get("prediction"));
+                    return output;
+
+                } catch (Exception e) {
+                    res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    output.put("message", "There was an issue with the Server, please try again later.");
+
+                    span.setTag(Tags.ERROR, true);
+                    span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
+
+                    logger.error("vulcan encountered error during a prediction: " + e.getMessage(), e);
+                    return output;
+                }
+
+            case "none":
+                res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                output.put("message", "Your credentials are invalid.");
+                return output;
+
+            default:
+                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                output.put("message", "There was an issue with the Server, please try again later.");
+                return output;
+        }
+    }
 }
