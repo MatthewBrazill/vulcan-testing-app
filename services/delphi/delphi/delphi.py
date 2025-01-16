@@ -147,7 +147,7 @@ be able to give you and answer today, but be sure we can expect greatness from y
         )
 
         if result.choices != None:
-            return JSONResponse(content={ "prediction": result.choices[0].message }, status_code=200)
+            return JSONResponse(content={ "prediction": result.choices[0].message.content }, status_code=200)
         else:
             return JSONResponse(content={ "prediction": """I'm afraid that the future is foggy and ever evolving, my dear. In this case yours seems in flux! I won't be able
 to give you and answer today, but I'm sure we can expect greatness from you!"""
