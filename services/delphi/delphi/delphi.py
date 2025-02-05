@@ -89,7 +89,7 @@ not recognize or have information on. In this case, I dont know the answer becau
             }
         
         logger.info("sending message to kafka queue", kafka_message=kafkaMessage)
-        producer.send(topic="god-notes", value=json.dumps(kafkaMessage).encode("utf-8"), headers=[{"x-datadog-trace-id":span.trace_id.to_bytes(span.trace_id.bit_length, sys.byteorder)}, {"x-datadog-parent-id":span.parent_id.to_bytes(span.parent_id.bit_length, sys.byteorder)}])
+        producer.send(topic="god-notes", value=json.dumps(kafkaMessage).encode("utf-8"), headers=[{"x-datadog-trace-id":span.trace_id.to_bytes(span.trace_id.bit_length(), sys.byteorder)}, {"x-datadog-parent-id":span.parent_id.to_bytes(span.parent_id.bit_length(), sys.byteorder)}])
         producer.flush()
         producer.close()
 
