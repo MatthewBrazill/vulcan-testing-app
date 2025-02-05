@@ -64,6 +64,9 @@ clusterAgent:
 agents:
   annotations:
     ad.datadoghq.com/agent.logs: '[{"source":"datadog-agent","service":"datadog-agent"}]'
+  podSecurity:
+    apparmor:
+      enabled: true
   volumes:
     - name: logs
       hostPath:
