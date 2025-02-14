@@ -116,16 +116,15 @@ func GetGod(ctx *gin.Context) {
 	if err != nil {
 		if err.Error() == "mongo: no documents in result" {
 			Log(ctx).Debug(fmt.Sprintf("no description found for god %s", god["godId"]))
-			ctx.Status(http.StatusNotFound)
-			return
+			god["description"] = "No Description Found"
 		} else {
 			Log(ctx).WithError(err).Error(ctx.Error(err).Error())
 			ctx.JSON(http.StatusInternalServerError, err)
 			return
 		}
+	} else {
+		god["description"] = description["description"]
 	}
-
-	god["description"] = description["description"]
 
 	// Return result
 	ctx.JSON(http.StatusOK, god)
