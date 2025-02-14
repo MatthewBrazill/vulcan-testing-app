@@ -195,10 +195,17 @@ func UpdateGod(ctx *gin.Context) {
 		}
 	}
 
-	// Make request to regenerate god description
-	client := http.DefaultClient
+	// Make request to create god description
 	descriptionRequest := fmt.Sprintf("{\"god\":\"%s\",\"godId\":\"%s\"}", body["name"], body["godId"])
-	client.Post("https://delphi.vulcan-application.svc.cluster.local/describe", "application/json", strings.NewReader(descriptionRequest))
+	req, err := http.NewRequestWithContext(ctx.Request.Context(), http.MethodPost, "https://delphi.vulcan-application.svc.cluster.local/describe", strings.NewReader(descriptionRequest))
+	if err != nil {
+		Log(ctx).WithError(err).Error(ctx.Error(err).Error())
+		ctx.JSON(http.StatusInternalServerError, err)
+		return
+	}
+	client := http.Client{Transport: &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}}
+	client.Do(req)
+	Log(ctx).WithField("request", descriptionRequest).Debug("sent description request")
 
 	// Update god
 	result, err := db.Database("vulcan").Collection("gods").UpdateOne(ctx.Request.Context(), bson.M{"godId": body["godId"]}, bson.M{"$set": update})
