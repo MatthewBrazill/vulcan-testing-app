@@ -51,7 +51,7 @@ public class Helpers {
         patterns.put("password", Pattern.compile("^.{1,64}$", Pattern.CASE_INSENSITIVE));
         patterns.put("note", Pattern.compile("^[a-zA-Z0-9\\-\s]{1,256}$", Pattern.CASE_INSENSITIVE));
         patterns.put("oracle", Pattern.compile("^[a-zA-Z\s]{1,32}$", Pattern.CASE_INSENSITIVE));
-        patterns.put("question", Pattern.compile("^[?.\\-!a-zA-Z0-9-\s]{1,256}$", Pattern.CASE_INSENSITIVE));
+        patterns.put("question", Pattern.compile("^[?,'.\\-!a-zA-Z0-9-\s]{1,256}$", Pattern.CASE_INSENSITIVE));
 
         // Check body
         for (String key : body.keySet()) {
