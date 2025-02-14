@@ -54,16 +54,17 @@ function loadUsers() {
 
             // Attach link logic
             $(".user-item").click(function () {
-                window.location = `/user/${this.data("username")}`
+                window.location = `/user/${$(this).data("username")}`
             })
 
             // Attach delete button logic
-            $(".delete-user").click(function () {
+            $(".delete-user").click(function (e) {
+                e.stopPropagation()
                 $.ajax({
                     url: "/user/delete",
                     method: "POST",
                     data: {
-                        username: this.data("username")
+                        username: $(this).data("username")
                     },
                     success: (res) => {
                         console.log(`deleting user succeeded: ${res.status}`)
