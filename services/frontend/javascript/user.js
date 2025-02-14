@@ -52,27 +52,26 @@ function loadUsers() {
                 </div>`)
             }
 
-            // Attach delete button and link logic
-            $(".user-item").click((e) => {
-                var target = $(e.currentTarget)
-                while (!target.hasClass("user-item") && !target.hasClass("delete-user")) target = target.parent()
-                if (target.hasClass("delete-user")) {
-                    $.ajax({
-                        url: "/user/delete",
-                        method: "POST",
-                        data: {
-                            username: target.data("username")
-                        },
-                        success: () => {
-                            console.log(`deleting user succeeded: ${res.status}`)
-                            console.log("reloading users")
-                            loadUsers()
-                        },
-                        error: (res) => console.error(`deleting user failed: ${res.status} - ${res.message}`)
-                    })
-                } else {
-                    window.location = `/user/${target.data("username")}`
-                }
+            // Attach link logic
+            $(".user-item").click(function () {
+                window.location = `/user/${this.data("username")}`
+            })
+
+            // Attach delete button logic
+            $(".delete-user").click(function () {
+                $.ajax({
+                    url: "/user/delete",
+                    method: "POST",
+                    data: {
+                        username: this.data("username")
+                    },
+                    success: (res) => {
+                        console.log(`deleting user succeeded: ${res.status}`)
+                        console.log("reloading users")
+                        loadUsers()
+                    },
+                    error: (res) => console.error(`deleting user failed: ${res.status} - ${res.message}`)
+                })
             })
 
             // Make style adjustments
