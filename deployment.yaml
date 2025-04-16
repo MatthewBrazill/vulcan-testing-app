@@ -394,7 +394,7 @@ spec:
             - name: DD_SERVICE
               value: god-manager
             - name: DD_VERSION
-              value: "1.0.0"
+              value: "1.0.1"
             - name: DD_TRACE_SAMPLE_RATE
               value: "1"
             - name: DD_PROFILING_ENABLED

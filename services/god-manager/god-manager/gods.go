@@ -217,15 +217,15 @@ func UpdateGod(ctx *gin.Context) {
 	}
 
 	// Confirm result and return response
-	if result.ModifiedCount == 1 {
+	if result.MatchedCount == 1 {
 		Log(ctx).WithFields(logrus.Fields{
 			"god": body["godId"],
 		}).Info("god updated")
 		ctx.Status(http.StatusOK)
-	} else if result.ModifiedCount == 0 {
+	} else if result.MatchedCount == 0 {
 		ctx.Status(http.StatusNotFound)
 	} else {
-		err = errors.New("unexpected update: updated count isn't 0 or 1")
+		err = errors.New("unexpected update: matched count isn't 0 or 1")
 		Log(ctx).WithError(err).Error(ctx.Error(err).Error())
 		ctx.JSON(http.StatusInternalServerError, err)
 	}
