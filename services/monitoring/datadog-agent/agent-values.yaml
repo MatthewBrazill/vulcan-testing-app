@@ -57,6 +57,10 @@ datadog:
 
   containerExclude: "kube_namespace:kube-system"
 
+  env:
+    - name: DD_APM_FEATURES
+      value: 'enable_cid_stats'
+
 clusterAgent:
   enabled: true
   admissionController:
