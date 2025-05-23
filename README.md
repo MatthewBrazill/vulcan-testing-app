@@ -20,6 +20,7 @@ The following isa non-exhaustive list of the technologies that have been used in
     - Redis
 - Message Queues:
     - Kafka
+- LLMs (Specifically OpenAI)
 - Containerization with Kubernetes and Docker
 - Microservices Architecture
 - Application and System Monitoring using Datadog and OpenTelemetry
@@ -27,10 +28,14 @@ The following isa non-exhaustive list of the technologies that have been used in
     - Real User Monitoring
     - Synthetic Tests
     - Log Collection
+    - LLM Observability
 - Good Security Concepts:
     - Secure Password Handling - Including Salt and Pepper
     - Application Internal HTTPS
     - Input Sanitation
+- Use of Security Tools
+    - SAST/IAST
+    - SCA
 
 ## Architecture Overview
 | Service Name      | Kubernetes | Docker | Summary |
@@ -41,6 +46,7 @@ The following isa non-exhaustive list of the technologies that have been used in
 | Scribe            | X | X | The Notes management service handling user notes |
 | Authenticator     | X |   | The authentication and authorization service |
 | Application Proxy |   | X | NGINX Proxy for accessing the application |
+| Delphi            | X |   | A python service to access the OpenAI API to perform LLM calls |
 | Database Proxy    | X |   | Proxy for managing the connections from in the cluster to the databases |
 | God-Database      |   | X | MongoDB database for the stored gods |
 | User-Database     |   | X | PostgreSQL database to store users and passwords |
@@ -56,15 +62,15 @@ To deploy the monitoring, ensure that the API and APP keys are properly set as d
 To ensure that the Datadog Synthetics Private Location works, add the worker configs to the `datadog-synthetics` folder as `worker-config-kubernetes.json` and `worker-config-docker.json` respectively.
 
 ## Deployment Instructions
-The entire application can be deployed in a single line using the deployment script in `build-scripts/deploy.sh`! However, to ensure that the correct API keys and secrets are used, first update the `deployment.yaml`, `services/monitoring/docker-compose.yaml` and `services/monitoring/datadog-agent/agent-values.yaml` files in the project with the relevant values. This is how the secrets will be made available to the application. In that file you will need to add values for the following:
+The entire application can be deployed in a single line using the deployment script in `build-scripts/deploy.sh`! However, to ensure that the correct API keys and secrets are used, first update the `secrets.yaml` and `services/monitoring/docker-compose.yaml` files in the project with the relevant values. This is how the secrets will be made available to the application. In that file you will need to add values for the following:
 
 - `deployment.yaml`
     - `password-pepper`: The pepper used for the password hashing
     - `session-key`: The session key used for the vulcan applications sessions
-- `services/monitoring/docker-compose.yaml`
+    - `openai-api-key`: The API key for OpenAI for to use the Delphi Oracle function
     - `dd-api-key`: The API key for Datadog that is used for the Datadog agent
     - `dd-app-key`: The Datadog APP key also used for the agent
-- `services/monitoring/datadog-agent/agent-values.yaml`
+- `services/monitoring/docker-compose.yaml`
     - `dd-api-key`: The API key for Datadog that is used for the Datadog agent
     - `dd-app-key`: The Datadog APP key also used for the agent
 
