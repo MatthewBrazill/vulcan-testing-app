@@ -16,27 +16,6 @@ metadata:
 
 
 ### -------------------------------------------------- ###
-#   Secrets                                              #
-### -------------------------------------------------- ###
-
-# Vulcan Secrets
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: vulcan-secrets
-  namespace: vulcan-application
-type: generic
-stringData:
-  PASSWORD_PEPPER: <password-pepper>
-  SESSION_KEY: <session-key>
-  OPENAI_API_KEY: <openai-api-key>
-
-
-
-
-
-### -------------------------------------------------- ###
 #   Volumes                                              #
 ### -------------------------------------------------- ###
 
