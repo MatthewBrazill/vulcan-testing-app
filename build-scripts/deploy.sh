@@ -84,7 +84,7 @@ if [ "$application" == 1 ]; then
     export DD_GIT_REPOSITORY_URL="https://github.com/MatthewBrazill/vulcan-testing-app"
 
     printf "  Docker...\n"
-    docker compose up -d --quiet-pull | sed "s/^/    /"
+    docker compose pull && docker compose up -d --quiet-pull | sed "s/^/    /"
     printf "  Kubernetes...\n"
     kubectl apply -f deployment.yaml | grep -v --line-buffered ".*unchanged.*" | sed "s/^/    /"
 
@@ -108,7 +108,7 @@ if [ "$monitoring" == 1 ]; then
     printf "Deploying Monitoring Resources...\n"
 
     printf "  Docker...\n"
-    docker compose --file ./services/monitoring/docker-compose.yaml up -d --quiet-pull | sed "s/^/    /"
+    docker compose pull && docker compose --file ./services/monitoring/docker-compose.yaml up -d --quiet-pull | sed "s/^/    /"
     printf "  Kubernetes...\n"
     helm install datadog-agent -f ./services/monitoring/datadog-agent/agent-values.yaml datadog/datadog | sed "s/^/    /"
 
