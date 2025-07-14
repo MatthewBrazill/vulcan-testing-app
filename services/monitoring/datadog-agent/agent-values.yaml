@@ -48,6 +48,22 @@ datadog:
     enabled: true
     processCollection: true
 
+  securityAgent:
+    runtime:
+      enabled: true
+    compliance:
+      enabled: true
+      host_benchmarks:
+        enabled: true
+
+  sbom:
+    containerImage:
+      enabled: true
+    host:
+      enabled: true
+    containerImageCollection:
+      enabled: true
+
   clusterChecks:
     enabled: true
 
