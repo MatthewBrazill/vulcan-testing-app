@@ -87,6 +87,7 @@ if [ "$application" == 1 ]; then
     docker compose pull && docker compose up -d --quiet-pull | sed "s/^/    /"
     printf "  Kubernetes...\n"
     kubectl apply -f deployment.yaml | grep -v --line-buffered ".*unchanged.*" | sed "s/^/    /"
+    kubectl apply -f secrets.yaml | grep -v --line-buffered ".*unchanged.*" | sed "s/^/    /"
 
     printf "Finsihed deploying! You can now use the Vulcan App: https://localhost/login\n\n"
 fi
