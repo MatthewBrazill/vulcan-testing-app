@@ -32,6 +32,10 @@ datadog:
 
   networkMonitoring:
     enabled: true
+  connections_monitoring:
+    enabled: true
+  traceroute:
+    enabled: true
 
   logs:
     enabled: true
