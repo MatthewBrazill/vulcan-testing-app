@@ -64,7 +64,7 @@ services:
 
   # Application Proxy
   vulcan-proxy:
-    image: nginx:1.25-alpine
+    image: nginx:1.25.4-alpine
     container_name: vulcan-proxy
     ports:
       - 443:443
@@ -91,7 +91,7 @@ services:
       - CERT_FOLDER=/vulcan/services/vulcan-proxy/certificate
     volumes:
       - /var/run/datadog:/var/run/datadog
-    command: ["/bin/sh", "-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
+    command: ["/bin/sh", "-c", "nginx -v && curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
     labels:
       com.datadoghq.ad.checks: '{"nginx":{"instances":[{"nginx_status_url":"http://%%host%%:81/nginx_status/"}]}}'
       com.datadoghq.ad.logs: '[{"source":"nginx","service":"vulcan-proxy"}]'

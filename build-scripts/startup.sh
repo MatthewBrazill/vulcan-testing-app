@@ -73,7 +73,7 @@ case $DD_SERVICE in
     "vulcan-proxy")
         cp -a /vulcan/services/vulcan-proxy/. /etc/nginx/
         cp -a /vulcan/services/vulcan/certificate/. /certificate/
-        wget -nc -nv -O /usr/nginx-datadog-module.so.tgz https://github.com/DataDog/nginx-datadog/releases/download/v1.6.2/ngx_http_datadog_module-appsec-arm64-1.25.5.so.tgz
+        wget -nc -nv -O /usr/nginx-datadog-module.so.tgz https://github.com/DataDog/nginx-datadog/releases/download/v1.6.2/ngx_http_datadog_module-appsec-arm64-1.28.0.so.tgz
         tar -xzf /usr/nginx-datadog-module.so.tgz -C /usr/lib/nginx/modules
         nginx -g "daemon off;"
         ;;
