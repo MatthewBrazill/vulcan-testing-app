@@ -9,7 +9,7 @@ const notes = {
     async get(req, res) {
         try {
             const client = await databases.notesDatabase()
-            const col = client.db("notes").collection("userNotes")
+            const col = client.db("vulcanNotes").collection("userNotes")
             var notes = await col.findOne({ username: req.body.username })
             client.close()
 
@@ -34,7 +34,7 @@ const notes = {
     async delete(req, res) {
         try {
             const client = await databases.notesDatabase()
-            const col = client.db("notes").collection("userNotes")
+            const col = client.db("vulcanNotes").collection("userNotes")
             var result = await col.deleteOne({ username: req.body.username })
             client.close()
 

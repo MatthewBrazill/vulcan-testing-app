@@ -13,7 +13,7 @@ const handlers = {
 
             // Update/create user notes
             const client = await databases.notesDatabase()
-            const col = client.db("notes").collection("userNotes")
+            const col = client.db("vulcanNotes").collection("userNotes")
             var result = await col.updateOne({
                 username: message.username
             }, {
@@ -55,7 +55,7 @@ const handlers = {
 
             // Update/create god note
             const client = await databases.notesDatabase()
-            const col = client.db("notes").collection("godNotes")
+            const col = client.db("vulcanNotes").collection("godNotes")
             var result = await col.insertOne({
                 godId: message.godId,
                 description: message.description
