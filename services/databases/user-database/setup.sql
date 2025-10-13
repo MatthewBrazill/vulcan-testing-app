@@ -7,7 +7,7 @@ CREATE DATABASE vulcan_users;
 CREATE TABLE users (
     username varchar(32),
     pwhash varchar(64),
-    hasnotes boolean not null default 0,
+    hasnotes boolean not null default false,
     permissions varchar(32),
     PRIMARY KEY (username)
 );
@@ -38,7 +38,6 @@ CREATE SCHEMA datadog;
 GRANT USAGE ON SCHEMA datadog TO datadog;
 GRANT USAGE ON SCHEMA public TO datadog;
 GRANT pg_monitor TO datadog;
-GRANT SELECT ON ALL TABLES TO datadog;
 CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
 
 
