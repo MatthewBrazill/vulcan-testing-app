@@ -33,6 +33,7 @@ public class Storage {
     @RequestMapping(value = "/storage", method = RequestMethod.GET)
     public String storagePage(HttpServletRequest req, HttpServletResponse res, Model model) {
         // Authorize
+        model.addAttribute("env", System.getenv("DD_ENV"));
         String permissions = Helpers.authorize(req);
         switch (permissions) {
             case "user":
@@ -64,6 +65,7 @@ public class Storage {
     @RequestMapping(value = "/add", method = RequestMethod.GET)
     public String addGodPage(HttpServletRequest req, HttpServletResponse res, Model model) {
         // Authorize
+        model.addAttribute("env", System.getenv("DD_ENV"));
         String permissions = Helpers.authorize(req);
         switch (permissions) {
             case "user":
@@ -93,6 +95,7 @@ public class Storage {
     @RequestMapping(value = "/edit", method = RequestMethod.GET)
     public String editGodPage(HttpServletRequest req, HttpServletResponse res, Model model) {
         // Authorize
+        model.addAttribute("env", System.getenv("DD_ENV"));
         String permissions = Helpers.authorize(req);
         switch (permissions) {
             case "user":

@@ -36,6 +36,7 @@ public class Authenticate {
         logger.info(body.get("username") + " logged out");
 
         model.addAttribute("title", "Login Page");
+        model.addAttribute("env", System.getenv("DD_ENV"));
         return "login";
     }
 

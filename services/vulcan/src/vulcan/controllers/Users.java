@@ -50,6 +50,7 @@ public class Users {
 		Span span = GlobalTracer.get().activeSpan();
 		HashMap<String, Object> body = Helpers.decodeBody(req);
 		Logger logger = LogManager.getLogger("vulcan");
+        model.addAttribute("env", System.getenv("DD_ENV"));
 		model.addAttribute("title", "User: '" + username + "'");
 
 		// Authorize
@@ -359,6 +360,7 @@ public class Users {
 
 	@RequestMapping(value = "/user/join", method = RequestMethod.GET)
 	public String userPage(Model model) {
+        model.addAttribute("env", System.getenv("DD_ENV"));
 		model.addAttribute("title", "Join Vulcan");
 		return "join";
 	}
