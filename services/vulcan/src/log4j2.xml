@@ -4,10 +4,13 @@
         <File name="jsonFile" fileName="/logs/vulcan.log">
             <JsonLayout complete="false" compact="true" eventEol="true" properties="true" stacktraceAsString="true" />
         </File>
+        <Console name="jsonConsole" target="SYSTEM_OUT">
+            <JsonLayout complete="false" compact="true" eventEol="true" properties="true" stacktraceAsString="true" />
+        </Console>
     </Appenders>
     <Loggers>
         <Logger name="vulcan" level="ALL">
-            <AppenderRef ref="jsonFile" />
+            <AppenderRef ref="jsonConsole" />
         </Logger>
     </Loggers>
 </Configuration>

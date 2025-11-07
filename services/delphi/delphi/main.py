@@ -6,7 +6,7 @@ import os
 
 # Configs
 logging.basicConfig(
-    filename='/logs/delphi.log',
+    #filename='/logs/delphi.log',
     encoding='utf-8'
 )
 logging.getLogger("delphi").setLevel(logging.DEBUG)

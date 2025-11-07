@@ -15,8 +15,15 @@ const logger = {
     default() {
         return winston.createLogger({
             transports: [
-                new winston.transports.File({
+                /*new winston.transports.File({
                     filename: "/logs/scribe.log",
+                    level: "debug",
+                    format: winston.format.combine(
+                        winston.format.timestamp(),
+                        winston.format.json()
+                    )
+                }),*/
+                new winston,transports.Console({
                     level: "debug",
                     format: winston.format.combine(
                         winston.format.timestamp(),
