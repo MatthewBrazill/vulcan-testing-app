@@ -21,7 +21,7 @@ const logger = winston.createLogger({
                 winston.format.json()
             )
         }),*/
-        new winston,transports.Console({
+        new winston.transports.Console({
             level: "debug",
             format: winston.format.combine(
                 winston.format.timestamp(),
