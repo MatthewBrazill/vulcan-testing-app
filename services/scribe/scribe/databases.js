@@ -10,7 +10,7 @@ const databases = {
         const pgdb = new postgresql.Client({
             user: "vulcan",
             password: "yKCstvg4hrB9pmDP",
-            host: "user-database",
+            host: "pupgres.database",
             port: "5432",
             database: "vulcan_users"
         })
@@ -24,7 +24,7 @@ const databases = {
     },
 
     async notesDatabase() {
-        const mngdb = new mongodb.MongoClient("mongodb://notes:96758wg54tbravp7@notes-database:27017", {
+        const mngdb = new mongodb.MongoClient("mongodb://notes:96758wg54tbravp7@mac-mongo.database:27017", {
             authMechanism: "SCRAM-SHA-256",
             directConnection: true,
             authSource: "admin"

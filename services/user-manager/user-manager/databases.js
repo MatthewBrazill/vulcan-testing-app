@@ -9,7 +9,7 @@ const databases = {
         const pgdb = new postgresql.Client({
             user: "vulcan",
             password: "yKCstvg4hrB9pmDP",
-            host: "user-database",
+            host: "pupgres.database",
             port: "5432",
             database: "vulcan_users"
         })
