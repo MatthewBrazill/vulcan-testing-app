@@ -16,47 +16,6 @@ metadata:
 
 
 ### -------------------------------------------------- ###
-#   Volumes                                              #
-### -------------------------------------------------- ###
-
-# Logs
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: vulcan-logs-volume
-  namespace: vulcan-application
-  labels:
-    tags.datadoghq.com/env: dev
-spec:
-  storageClassName: manual
-  capacity:
-    storage: 1Gi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: "/vulcan-data/kubernetes/logs"
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: vulcan-logs-pvc
-  namespace: vulcan-application
-  labels:
-    tags.datadoghq.com/env: dev
-spec:
-  storageClassName: manual
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-
-
-
-
-
-### -------------------------------------------------- ###
 #   Vulcan Application                                   #
 ### -------------------------------------------------- ###
 
@@ -100,7 +59,7 @@ spec:
         tags.datadoghq.com/service: vulcan
       annotations:
         ad.datadoghq.com/init-vulcan.logs: '[{"source":"startup-script","service":"vulcan"}]'
-        ad.datadoghq.com/vulcan.logs: '[{"type":"file","source":"vulcan-app","service":"vulcan","path":"/vulcan-data/logs/vulcan.log"}]'
+        ad.datadoghq.com/vulcan.logs: '[{"source":"vulcan-app","service":"vulcan"}]'
         ad.datadoghq.com/tags: '{"team":"matthew"}'
     spec:
       volumes:
@@ -236,7 +195,7 @@ spec:
         tags.datadoghq.com/env: dev
         tags.datadoghq.com/service: user-manager
       annotations:
-        ad.datadoghq.com/user-manager.logs: '[{"type":"file","source":"vulcan-app","service":"user-manager","path":"/vulcan-data/logs/user-manager.log"},{"source":"startup-script","service":"user-manager"}]'
+        ad.datadoghq.com/user-manager.logs: '[{"source":"vulcan-app","service":"user-manager"}]'
         ad.datadoghq.com/tags: '{"team":"matthew"}'
     spec:
       volumes:
@@ -333,7 +292,7 @@ spec:
         tags.datadoghq.com/service: god-manager
       annotations:
         ad.datadoghq.com/init-god-manager.logs: '[{"source":"startup-script","service":"god-manager"}]'
-        ad.datadoghq.com/god-manager.logs: '[{"type":"file","source":"vulcan-app","service":"god-manager","path":"/vulcan-data/logs/god-manager.log"}]'
+        ad.datadoghq.com/god-manager.logs: '[{"source":"vulcan-app","service":"god-manager"}]'
         ad.datadoghq.com/tags: '{"team":"matthew"}'
     spec:
       volumes:
@@ -454,7 +413,7 @@ spec:
         tags.datadoghq.com/env: dev
         tags.datadoghq.com/service: authenticator
       annotations:
-        ad.datadoghq.com/authenticator.logs: '[{"type":"file","source":"authenticator","service":"authenticator","path":"/vulcan-data/logs/auth.log"},{"source":"startup-script","service":"authenticator"}]'
+        ad.datadoghq.com/authenticator.logs: '[{"source":"authenticator","service":"authenticator"}]'
         ad.datadoghq.com/tags: '{"team":"matthew"}'
     spec:
       volumes:
@@ -557,7 +516,7 @@ spec:
         tags.datadoghq.com/env: dev
         tags.datadoghq.com/service: scribe
       annotations:
-        ad.datadoghq.com/scribe.logs: '[{"type":"file","source":"vulcan-app","service":"scribe","path":"/vulcan-data/logs/scribe.log"},{"source":"startup-script","service":"scribe"}]'
+        ad.datadoghq.com/scribe.logs: '[{"source":"vulcan-app","service":"scribe"}]'
         ad.datadoghq.com/tags: '{"team":"matthew"}'
     spec:
       volumes:
@@ -661,7 +620,7 @@ spec:
         tags.datadoghq.com/env: dev
         tags.datadoghq.com/service: delphi
       annotations:
-        ad.datadoghq.com/delphi.logs: '[{"type":"file","source":"delphi","service":"delphi","path":"/vulcan-data/logs/delphi.log"},{"source":"startup-script","service":"delphi"}]'
+        ad.datadoghq.com/delphi.logs: '[{"source":"delphi","service":"delphi"}]'
         ad.datadoghq.com/tags: '{"team":"matthew"}'
     spec:
       volumes:
