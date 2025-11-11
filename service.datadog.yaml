@@ -1,204 +1,249 @@
+apiVersion: v3
+kind: system
+metadata:
+  name: vulcan-application
+  displayName: Vulcan Application
+  description: Vulcan is a mythology focused note-taking application designed to showcase microservices architecture using Go and Kubernetes.
+  tags:
+    - app:vulcan
+  links:
+    - name: Vulcan Docs
+      type: documentation
+      provider: github
+      url: https://github.com/MatthewBrazill/vulcan-testing-app/blob/main/README.md
+  contacts:
+    - name: Developer Email
+      type: email
+      contact: matthew.brazill@datadoghq.com
+    - name: Developer Slack
+      type: slack
+      contact: "@matthew.brazill"
+spec:
+  components:
+    - service:vulcan
+    - service:authenticator
+    - service:god-manager
+    - service:user-manager
+    - service:delphi
+    - service:scribe
+    - service:vulcan-ui
+    - datastore:god-database
+    - datastore:notes-database
+    - datastore:user-database
+    - datastore:session-store
+    - queue:notes-queue
 ---
-schema-version: v2
-dd-service: vulcan
-team: matthew
-repos:
-  - name: Source Code
-    provider: GitHub
-    url: https://github.com/MatthewBrazill/vulcan-testing-app
-docs:
-  - name: Vulcan Docs
-    provider: github
-    url: https://github.com/MatthewBrazill/vulcan-testing-app/blob/main/README.md
-contacts:
-  - type: email
-    contact: matthew.brazill@datadoghq.com
-tags:
-  - "app:vulcan"
+apiVersion: v3
+kind: service
+metadata:
+  name: vulcan
+  displayName: Vulcan Backend
+  description: Backend web-app service for the Vulcan application.
+  owner: retro
+spec:
+  tier: high
+  dependsOn:
+    - service:authenticator
+    - service:god-manager
+    - service:user-manager
+    - service:delphi
+  componentOf:
+    - service:vulcan-ui
+  languages:
+    - java
+  type: web
+datadog:
+  codeLocations:
+    - repositoryURL: https://github.com/MatthewBrazill/vulcan-testing-app
+      paths:
+        - services/vulcan/src/vulcan/**
 ---
-schema-version: v2
-dd-service: authenticator
-team: matthew
-repos:
-  - name: Source Code
-    provider: GitHub
-    url: https://github.com/MatthewBrazill/vulcan-testing-app
-docs:
-  - name: Vulcan Docs
-    provider: github
-    url: https://github.com/MatthewBrazill/vulcan-testing-app/blob/main/README.md
-contacts:
-  - type: email
-    contact: matthew.brazill@datadoghq.com
-tags:
-  - "app:vulcan"
+apiVersion: v3
+kind: service
+metadata:
+  name: authenticator
+  displayName: Vulcan Authenticator
+  description: Authentication service for the Vulcan application.
+  owner: retro
+spec:
+  tier: high
+  languages:
+    - python
+  type: job
+datadog:
+  codeLocations:
+    - repositoryURL: https://github.com/MatthewBrazill/vulcan-testing-app
+      paths:
+        - services/authenticator/authenticator/**
 ---
-schema-version: v2
-dd-service: god-manager
-team: matthew
-repos:
-  - name: Source Code
-    provider: GitHub
-    url: https://github.com/MatthewBrazill/vulcan-testing-app
-docs:
-  - name: Vulcan Docs
-    provider: github
-    url: https://github.com/MatthewBrazill/vulcan-testing-app/blob/main/README.md
-contacts:
-  - type: email
-    contact: matthew.brazill@datadoghq.com
-tags:
-  - "app:vulcan"
+apiVersion: v3
+kind: service
+metadata:
+  name: god-manager
+  displayName: Vulcan God-Manager
+  description: God management service for the Vulcan application.
+  owner: retro
+spec:
+  tier: medium
+  languages:
+    - go
+  type: job
+datadog:
+  codeLocations:
+    - repositoryURL: https://github.com/MatthewBrazill/vulcan-testing-app
+      paths:
+        - services/god-manager/god-manager/**
 ---
-schema-version: v2
-dd-service: user-manager
-team: matthew
-repos:
-  - name: Source Code
-    provider: GitHub
-    url: https://github.com/MatthewBrazill/vulcan-testing-app
-docs:
-  - name: Vulcan Docs
-    provider: github
-    url: https://github.com/MatthewBrazill/vulcan-testing-app/blob/main/README.md
-contacts:
-  - type: email
-    contact: matthew.brazill@datadoghq.com
-tags:
-  - "app:vulcan"
+apiVersion: v3
+kind: service
+metadata:
+  name: user-manager
+  displayName: Vulcan User-Manager
+  description: User management service for the Vulcan application.
+  owner: retro
+spec:
+  tier: low
+  languages:
+    - javascript
+  type: job
+datadog:
+  codeLocations:
+    - repositoryURL: https://github.com/MatthewBrazill/vulcan-testing-app
+      paths:
+        - services/user-manager/user-manager/**
 ---
-schema-version: v2
-dd-service: scribe
-team: matthew
-repos:
-  - name: Source Code
-    provider: GitHub
-    url: https://github.com/MatthewBrazill/vulcan-testing-app
-docs:
-  - name: Vulcan Docs
-    provider: github
-    url: https://github.com/MatthewBrazill/vulcan-testing-app/blob/main/README.md
-contacts:
-  - type: email
-    contact: matthew.brazill@datadoghq.com
-tags:
-  - "app:vulcan"
+apiVersion: v3
+kind: service
+metadata:
+  name: delphi
+  displayName: Vulcan Delphi
+  description: LLM prediction service for the Vulcan application.
+  owner: ai-therapists
+spec:
+  tier: low
+  languages:
+    - python
+  type: job
+datadog:
+  codeLocations:
+    - repositoryURL: https://github.com/MatthewBrazill/vulcan-testing-app
+      paths:
+        - services/delphi/delphi/**
 ---
-schema-version: v2
-dd-service: nginx-proxy
-team: matthew
-repos:
-  - name: Source Code
-    provider: GitHub
-    url: https://github.com/MatthewBrazill/vulcan-testing-app
-docs:
-  - name: NGINX Docs
-    provider: nginx
-    url: https://nginx.org/en/docs/
-contacts:
-  - type: email
-    contact: matthew.brazill@datadoghq.com
-tags:
-  - "app:vulcan"
+apiVersion: v3
+kind: service
+metadata:
+  name: scribe
+  displayName: Vulcan Scribe
+  description: Note management service for the Vulcan application.
+  owner: scribes
+spec:
+  tier: medium
+  languages:
+    - javascript
+  type: job
+datadog:
+  codeLocations:
+    - repositoryURL: https://github.com/MatthewBrazill/vulcan-testing-app
+      paths:
+        - services/scribe/scribe/**
 ---
-schema-version: v2
-dd-service: vulcan-ui
-team: matthew
-repos:
-  - name: Source Code
-    provider: GitHub
-    url: https://github.com/MatthewBrazill/vulcan-testing-app
-docs:
-  - name: Vulcan Docs
-    provider: github
-    url: https://github.com/MatthewBrazill/vulcan-testing-app/blob/main/README.md
-contacts:
-  - type: email
-    contact: matthew.brazill@datadoghq.com
-tags:
-  - "app:vulcan"
+apiVersion: v3
+kind: service
+metadata:
+  name: vulcan-ui
+  displayName: Vulcan UI
+  description: Frontend UI for the Vulcan application.
+  owner: frontend
+spec:
+  tier: high
+  languages:
+    - javascript
+    - css
+    - html
+  type: job
+datadog:
+  codeLocations:
+    - repositoryURL: https://github.com/MatthewBrazill/vulcan-testing-app
+      paths:
+        - services/frontend/**
 ---
-schema-version: v2
-dd-service: god-database
-team: matthew
-repos:
-  - name: Config Files
-    provider: GitHub
-    url: https://github.com/MatthewBrazill/vulcan-testing-app
-docs:
-  - name: MongoDB Docs
-    provider: mongodb
-    url: https://www.mongodb.com/docs/
-contacts:
-  - type: email
-    contact: matthew.brazill@datadoghq.com
-tags:
-  - "app:vulcan"
+apiVersion: v3
+kind: datastore
+metadata:
+  name: god-database
+  displayName: Vulcan God-Database
+  description: Database storing notes and details about Gods.
+  owner: retro
+  links:
+    - name: MongoDB Docs
+      type: documentation
+      provider: mongodb
+      url: https://www.mongodb.com/docs/
+spec:
+  tier: medium
+  type: db
 ---
-schema-version: v2
-dd-service: notes-database
-team: matthew
-repos:
-  - name: Config Files
-    provider: GitHub
-    url: https://github.com/MatthewBrazill/vulcan-testing-app
-docs:
-  - name: MongoDB Docs
-    provider: mongodb
-    url: https://www.mongodb.com/docs/
-contacts:
-  - type: email
-    contact: matthew.brazill@datadoghq.com
-tags:
-  - "app:vulcan"
+apiVersion: v3
+kind: datastore
+metadata:
+  name: notes-database
+  displayName: Vulcan Notes-Database
+  description: Database storing user notes and information.
+  owner: scribes
+  links:
+    - name: MongoDB Docs
+      type: documentation
+      provider: mongodb
+      url: https://www.mongodb.com/docs/
+spec:
+  tier: low
+  type: db
 ---
-schema-version: v2
-dd-service: user-database
-team: matthew
-repos:
-  - name: Config Files
-    provider: GitHub
-    url: https://github.com/MatthewBrazill/vulcan-testing-app
-docs:
-  - name: PostgresSQL Docs
-    provider: postgres
-    url: https://www.postgresql.org/docs/
-contacts:
-  - type: email
-    contact: matthew.brazill@datadoghq.com
-tags:
-  - "app:vulcan"
+apiVersion: v3
+kind: datastore
+metadata:
+  name: user-database
+  displayName: Vulcan User-Database
+  description: Database storing user information and credentials.
+  owner: retro
+  links:
+    - name: PostgresSQL Docs
+      type: documentation
+      provider: postgres
+      url: https://www.postgresql.org/docs/
+spec:
+  tier: low
+  type: db
 ---
-schema-version: v2
-dd-service: session-store
-team: matthew
-repos:
-  - name: Config Files
-    provider: GitHub
-    url: https://github.com/MatthewBrazill/vulcan-testing-app
-docs:
-  - name: Redis Docs
-    provider: redis
-    url: https://redis.io/docs/about/
-contacts:
-  - type: email
-    contact: matthew.brazill@datadoghq.com
-tags:
-  - "app:vulcan"
+apiVersion: v3
+kind: datastore
+metadata:
+  name: session-store
+  displayName: Vulcan Session Storage
+  description: In-memory datastore for user session management.
+  owner: retro
+  links:
+    - name: Redis Docs
+      type: documentation
+      provider: redis
+      url: https://redis.io/docs/about/
+spec:
+  tier: high
+  type: cache
 ---
-schema-version: v2
-dd-service: notes-queue
-team: matthew
-repos:
-  - name: Config Files
-    provider: GitHub
-    url: https://github.com/MatthewBrazill/vulcan-testing-app
-docs:
-  - name: Kafka Docs
-    provider: kafka
-    url: https://kafka.apache.org/documentation/
-contacts:
-  - type: email
-    contact: matthew.brazill@datadoghq.com
-tags:
-  - "app:vulcan"
+apiVersion: v3
+kind: queue
+metadata:
+  name: notes-queue
+  displayName: Vulcan Notes Kafka
+  description: Kafka queue for handling note-related events.
+  owner: scribes
+  links:
+    - name: Kafka Docs
+      type: documentation
+      provider: kafka
+      url: https://kafka.apache.org/documentation/
+spec:
+  tier: low
+  type: queue
