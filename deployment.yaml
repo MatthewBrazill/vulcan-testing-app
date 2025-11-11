@@ -315,6 +315,10 @@ spec:
           env:
             - name: DD_SERVICE
               value: god-manager
+          resources:
+            limits:
+              memory: "6G"
+              cpu: "4"
       containers:
         - name: god-manager
           image: golang:alpine
