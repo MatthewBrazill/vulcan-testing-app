@@ -17,7 +17,7 @@ metadata:
       contact: matthew.brazill@datadoghq.com
     - name: Developer Slack
       type: slack
-      contact: "@matthew.brazill"
+      contact: "https://dd.enterprise.slack.com/archives/D03HWT9Q0JF"
 spec:
   components:
     - service:vulcan
