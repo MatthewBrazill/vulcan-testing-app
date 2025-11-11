@@ -11,7 +11,7 @@ import (
 func GetGinEngine(logFile *os.File) *gin.Engine {
 	// Gin settings
 	gin.SetMode(gin.ReleaseMode)
-	gin.DefaultWriter = logFile
+	//gin.DefaultWriter = logFile
 
 	// Create new router
 	app := gin.New()
