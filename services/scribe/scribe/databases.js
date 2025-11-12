@@ -25,7 +25,7 @@ const databases = {
 
     async notesDatabase() {
         const mngdb = new mongodb.MongoClient("mongodb://notes:96758wg54tbravp7@mac-mongo.database:27017", {
-            authMechanism: "SCRAM-SHA-256",
+            //authMechanism: "SCRAM-SHA-256",
             directConnection: true,
             authSource: "admin"
         })
