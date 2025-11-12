@@ -164,11 +164,15 @@ public class Storage {
 
                             // Clean MongoDB ID out of the response
                             logger.debug("cleaning search gods result");
-                            for (HashMap<String, String> god : gods) {
-                                god.remove("_id");
+                            if (gods != null) {
+                                for (HashMap<String, String> god : gods) {
+                                    god.remove("_id");
+                                }
+                                output.put("result", gods);
+                            } else {
+                                output.put("result", "[]");
                             }
-
-                            output.put("result", gods);
+                            
                             return output;
 
                         case HttpServletResponse.SC_NOT_FOUND:
