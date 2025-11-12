@@ -84,6 +84,10 @@ spec:
               value: dev
             - name: DD_SERVICE
               value: vulcan
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "0.5"
       containers:
         - name: vulcan
           image: maven:3.9-eclipse-temurin-17
@@ -93,8 +97,7 @@ spec:
             - "-Djavax.net.ssl.trustStore=/vulcan/services/vulcan/cacert"
             - "-Dlog4j2.configurationFile=/vulcan/services/vulcan/src/log4j2.xml"
             - "-Dvulcan.session.key=$VLCN_SESSION_KEY"
-            - "-jar"
-            - "/vulcan/services/vulcan/target/vulcan.jar"
+            - "-jar /vulcan/services/vulcan/target/vulcan.jar"
             - "--logging.config=/vulcan/services/vulcan/src/log4j2.xml"
           volumeMounts:
             - name: logs
@@ -313,6 +316,8 @@ spec:
             - name: workdir
               mountPath: /vulcan
           env:
+            - name: DD_ENV
+              value: dev
             - name: DD_SERVICE
               value: god-manager
           resources:
@@ -800,7 +805,6 @@ spec:
               value: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.port=9091 -Dcom.sun.management.jmxremote.rmi.port=9091 -Djava.rmi.server.hostname=$(POD_IP)"
             - name: JMX_PORT
               value: "9091"
-
           ports:
             - containerPort: 29092
               protocol: TCP
