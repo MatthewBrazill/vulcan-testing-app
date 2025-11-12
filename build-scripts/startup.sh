@@ -3,6 +3,10 @@
 # Startup script that runs the nececary code to build and start the application
 # for each of the needed services.
 
+# add date and log level to each line of stdout and stderr
+exec > >(trap "" INT TERM; sed "s/^/$(date +%s) info: /")
+exec 2> >(trap "" INT TERM; sed "s/^/$(date +%s) error: /" >&2)
+
 echo "running service $DD_SERVICE on $DD_ENV environment"
 cd /
 
@@ -18,7 +22,7 @@ if ! command -v git >/dev/null ; then
         yup update
         yup -y install git
     else
-        echo "failed to install git"
+        echo "failed to install git" >&2
         exit 1
     fi
 fi
@@ -97,5 +101,5 @@ case $DD_SERVICE in
         ddtrace-run python3 ./delphi/main.py
         ;;
 esac
-echo "looks like something went wrong"
+echo "looks like something went wrong" >&2
 exit 1
