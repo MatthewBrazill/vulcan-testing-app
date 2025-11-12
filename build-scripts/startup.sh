@@ -4,8 +4,8 @@
 # for each of the needed services.
 
 # add date and log level to each line of stdout and stderr
-exec > >(trap "" INT TERM; sed "s/^/$(date +%s) info: /")
-exec 2> >(trap "" INT TERM; sed "s/^/$(date +%s) error: /" >&2)
+exec > >(trap "" INT TERM; sed "s/^/$(date +%s%N | cut -b1-13) info: /")
+exec 2> >(trap "" INT TERM; sed "s/^/$(date +%s%N | cut -b1-13) error: /" >&2)
 
 echo "running service $DD_SERVICE on $DD_ENV environment"
 cd /
