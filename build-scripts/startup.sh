@@ -82,12 +82,6 @@ case $DD_SERVICE in
         nginx -g "daemon off;"
         ;;
 
-    "notes-queue")
-        cp -rf /vulcan/services/message-queues/kafka/kafka.properties /etc/kafka/docker/server.properties
-        echo "done"
-        exit 0
-        ;;
-
     "scribe")
         npm config set update-notifier false
         npm install . > /dev/null
