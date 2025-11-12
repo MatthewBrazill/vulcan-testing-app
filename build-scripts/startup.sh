@@ -64,14 +64,16 @@ case $DD_SERVICE in
     "user-manager")
         npm config set update-notifier false
         npm install . > /dev/null
-        npm start
+        echo "done"
+        exit 0
         ;;
 
     "authenticator")
         apk update
         apk add build-base
         pip3 install -r requirements.txt
-        ddtrace-run python3 ./authenticator/main.py
+        echo "done"
+        exit 0
         ;;
 
     "vulcan-proxy")
@@ -85,14 +87,16 @@ case $DD_SERVICE in
     "scribe")
         npm config set update-notifier false
         npm install . > /dev/null
-        npm start
+        echo "done"
+        exit 0
         ;;
 
     "delphi")
         apk update
         apk add build-base
         pip3 install -r requirements.txt
-        ddtrace-run python3 ./delphi/main.py
+        echo "done"
+        exit 0
         ;;
 esac
 echo "looks like something went wrong" >&2

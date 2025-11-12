@@ -208,16 +208,36 @@ spec:
         - name: apmsocketpath
           hostPath:
             path: /var/run/datadog/
-      containers:
-        - name: user-manager
+        - name: workdir
+          emptyDir: {}
+      initContainers:
+        - name: init-user-manager
           image: node:18
           command: ["/bin/sh"]
           args: ["-c", "wget -nv -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
+          volumeMounts:
+            - name: workdir
+              mountPath: /vulcan
+          env:
+            - name: DD_ENV
+              value: dev
+            - name: DD_SERVICE
+              value: user-manager
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "0.5"
+      containers:
+        - name: user-manager
+          image: node:18
+          command: ["npm", "start"]
           volumeMounts:
             - name: logs
               mountPath: /logs
             - name: apmsocketpath
               mountPath: /var/run/datadog
+            - name: workdir
+              mountPath: /vulcan
           env:
             - name: DD_ENV
               value: dev
@@ -432,16 +452,36 @@ spec:
         - name: apmsocketpath
           hostPath:
             path: /var/run/datadog/
-      containers:
-        - name: authenticator
+        - name: workdir
+          emptyDir: {}
+      initContainers:
+        - name: init-authenticator
           image: python:3.12-alpine
           command: ["/bin/sh"]
           args: ["-c", "wget -nv -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
+          volumeMounts:
+            - name: workdir
+              mountPath: /vulcan
+          env:
+            - name: DD_ENV
+              value: dev
+            - name: DD_SERVICE
+              value: authenticator
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "0.5"
+      containers:
+        - name: authenticator
+          image: python:3.12-alpine
+          command: ["ddtrace-run", "python3", "./authenticator/main.py"]
           volumeMounts:
             - name: logs
               mountPath: /logs
             - name: apmsocketpath
               mountPath: /var/run/datadog
+            - name: workdir
+              mountPath: /vulcan
           env:
             - name: DD_ENV
               value: dev
@@ -535,16 +575,36 @@ spec:
         - name: apmsocketpath
           hostPath:
             path: /var/run/datadog/
-      containers:
-        - name: scribe
+        - name: workdir
+          emptyDir: {}
+      initContainers:
+        - name: init-scribe
           image: node:18
           command: ["/bin/sh"]
           args: ["-c", "wget -nv -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
+          volumeMounts:
+            - name: workdir
+              mountPath: /vulcan
+          env:
+            - name: DD_ENV
+              value: dev
+            - name: DD_SERVICE
+              value: scribe
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "0.5"
+      containers:
+        - name: scribe
+          image: node:18
+          command: ["npm", "start"]
           volumeMounts:
             - name: logs
               mountPath: /logs
             - name: apmsocketpath
               mountPath: /var/run/datadog
+            - name: workdir
+              mountPath: /vulcan
           env:
             - name: DD_ENV
               value: dev
@@ -639,16 +699,36 @@ spec:
         - name: apmsocketpath
           hostPath:
             path: /var/run/datadog/
-      containers:
-        - name: delphi
+        - name: workdir
+          emptyDir: {}
+      initContainers:
+        - name: init-delphi
           image: python:3.9-alpine
           command: ["/bin/sh"]
           args: ["-c", "wget -nv -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
+          volumeMounts:
+            - name: workdir
+              mountPath: /vulcan
+          env:
+            - name: DD_ENV
+              value: dev
+            - name: DD_SERVICE
+              value: delphi
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "0.5"
+      containers:
+        - name: delphi
+          image: python:3.9-alpine
+          command: ["ddtrace-run", "python3", "./delphi/main.py"]
           volumeMounts:
             - name: logs
               mountPath: /logs
             - name: apmsocketpath
               mountPath: /var/run/datadog
+            - name: workdir
+              mountPath: /vulcan
           env:
             - name: DD_ENV
               value: dev
