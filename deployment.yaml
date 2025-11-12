@@ -198,6 +198,7 @@ spec:
         tags.datadoghq.com/env: dev
         tags.datadoghq.com/service: user-manager
       annotations:
+        ad.datadoghq.com/init-user-manager.logs: '[{"source":"startup-script","service":"user-manager"}]'
         ad.datadoghq.com/user-manager.logs: '[{"source":"nodejs","service":"user-manager"}]'
         ad.datadoghq.com/tags: '{"team":"matthew"}'
     spec:
@@ -442,6 +443,7 @@ spec:
         tags.datadoghq.com/env: dev
         tags.datadoghq.com/service: authenticator
       annotations:
+        ad.datadoghq.com/init-authenticator.logs: '[{"source":"startup-script","service":"authenticator"}]'
         ad.datadoghq.com/authenticator.logs: '[{"source":"python","service":"authenticator"}]'
         ad.datadoghq.com/tags: '{"team":"matthew"}'
     spec:
@@ -565,6 +567,7 @@ spec:
         tags.datadoghq.com/env: dev
         tags.datadoghq.com/service: scribe
       annotations:
+        ad.datadoghq.com/init-scribe.logs: '[{"source":"startup-script","service":"scribe"}]'
         ad.datadoghq.com/scribe.logs: '[{"source":"nodejs","service":"scribe"}]'
         ad.datadoghq.com/tags: '{"team":"matthew"}'
     spec:
@@ -689,6 +692,7 @@ spec:
         tags.datadoghq.com/env: dev
         tags.datadoghq.com/service: delphi
       annotations:
+        ad.datadoghq.com/init-delphi.logs: '[{"source":"startup-script","service":"delphi"}]'
         ad.datadoghq.com/delphi.logs: '[{"source":"python","service":"delphi"}]'
         ad.datadoghq.com/tags: '{"team":"matthew"}'
     spec:
