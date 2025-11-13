@@ -73,9 +73,9 @@ spec:
           emptyDir: {}
       initContainers:
         - name: init-vulcan
-          image: maven:3.9-eclipse-temurin-17
+          image: maven:3.9
           command: ["/bin/bash"]
-          args: ["-c", "wget -nv -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | bash -s"]
+          args: ["-c", "curl -fs https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | bash -s"]
           volumeMounts:
             - name: workdir
               mountPath: /vulcan
@@ -90,7 +90,7 @@ spec:
               cpu: "0.5"
       containers:
         - name: vulcan
-          image: maven:3.9-eclipse-temurin-17
+          image: maven:3.9
           command: ["java"]
           args:
             - "-javaagent:/vulcan/services/vulcan/dd-java-agent.jar"
@@ -100,7 +100,7 @@ spec:
             - "-jar"
             - "/vulcan/services/vulcan/target/vulcan.jar"
             - "--logging.config=/vulcan/services/vulcan/src/log4j2.xml"
-          workdir: /vulcan/services/vulcan
+          workingDir: /vulcan/services/vulcan
           volumeMounts:
             - name: logs
               mountPath: /logs
@@ -234,7 +234,7 @@ spec:
         - name: user-manager
           image: node:18
           command: ["npm", "start"]
-          workdir: /vulcan/services/user-manager
+          workingDir: /vulcan/services/user-manager
           volumeMounts:
             - name: logs
               mountPath: /logs
@@ -352,7 +352,7 @@ spec:
         - name: god-manager
           image: golang:1.25
           command: ["/vulcan/services/god-manager/build/god-manager"]
-          workdir: /vulcan/services/god-manager
+          workingDir: /vulcan/services/god-manager
           volumeMounts:
             - name: logs
               mountPath: /logs
@@ -481,7 +481,7 @@ spec:
         - name: authenticator
           image: python:3.12
           command: ["ddtrace-run", "python3", "./authenticator/main.py"]
-          workdir: /vulcan/services/authenticator
+          workingDir: /vulcan/services/authenticator
           volumeMounts:
             - name: logs
               mountPath: /logs
@@ -606,7 +606,7 @@ spec:
         - name: scribe
           image: node:18
           command: ["npm", "start"]
-          workdir: /vulcan/services/scribe
+          workingDir: /vulcan/services/scribe
           volumeMounts:
             - name: logs
               mountPath: /logs
@@ -732,7 +732,7 @@ spec:
         - name: delphi
           image: python:3.12
           command: ["ddtrace-run", "python3", "./delphi/main.py"]
-          workdir: /vulcan/services/delphi
+          workingDir: /vulcan/services/delphi
           volumeMounts:
             - name: logs
               mountPath: /logs
