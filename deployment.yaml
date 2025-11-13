@@ -460,27 +460,11 @@ spec:
             path: /var/run/datadog/
         - name: workdir
           emptyDir: {}
-      initContainers:
-        - name: init-authenticator
-          image: python:3.12
-          command: ["/bin/bash"]
-          args: ["-c", "wget -nv -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | bash -s"]
-          volumeMounts:
-            - name: workdir
-              mountPath: /vulcan
-          env:
-            - name: DD_ENV
-              value: dev
-            - name: DD_SERVICE
-              value: authenticator
-          resources:
-            limits:
-              memory: "512Mi"
-              cpu: "0.5"
       containers:
         - name: authenticator
           image: python:3.12
-          command: ["/usr/local/bin/ddtrace-run", "python3", "./authenticator/main.py"]
+          command: ["/bin/bash"]
+          args: ["-c", "wget -nv -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | bash -s"]
           workingDir: /vulcan/services/authenticator
           volumeMounts:
             - name: logs
@@ -711,27 +695,11 @@ spec:
             path: /var/run/datadog/
         - name: workdir
           emptyDir: {}
-      initContainers:
-        - name: init-delphi
-          image: python:3.12
-          command: ["/bin/bash"]
-          args: ["-c", "wget -nv -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | bash -s"]
-          volumeMounts:
-            - name: workdir
-              mountPath: /vulcan
-          env:
-            - name: DD_ENV
-              value: dev
-            - name: DD_SERVICE
-              value: delphi
-          resources:
-            limits:
-              memory: "512Mi"
-              cpu: "0.5"
       containers:
         - name: delphi
           image: python:3.12
-          command: ["/usr/local/bin/ddtrace-run", "python3", "./delphi/main.py"]
+          command: ["/bin/bash"]
+          args: ["-c", "wget -nv -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | bash -s"]
           workingDir: /vulcan/services/delphi
           volumeMounts:
             - name: logs

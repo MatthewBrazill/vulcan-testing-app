@@ -72,13 +72,11 @@
 
         "authenticator")
             echo "installing datadog tracer..."
-            pip3 install ddtrace --quiet --root-user-action=ignore -t ./tracer
-            which ddtrace-run
-            python3 -m pip3 list -v
+            pip3 install ddtrace --quiet --root-user-action=ignore
             echo "installing requirements..."
             pip3 install -r requirements.txt --quiet --root-user-action=ignore
             echo "done"
-            exit 0
+            ddtrace-run python3 ./authenticator/main.py
             ;;
 
         "vulcan-proxy")
@@ -105,7 +103,7 @@
             echo "installing requirements..."
             pip3 install -r requirements.txt --quiet --root-user-action=ignore
             echo "done"
-            exit 0
+            ddtrace-run python3 ./delphi/main.py
             ;;
     esac
     echo "looks like something went wrong" >&2
