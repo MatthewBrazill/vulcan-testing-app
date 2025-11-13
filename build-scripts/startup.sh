@@ -1,6 +1,6 @@
-#! bin/bash
+#!/usr/bin/env bash
 #
-# Startup script that runs the nececary code to build and start the application
+# Startup script that runs the necessary code to build and start the application
 # for each of the needed services.
 
 {
