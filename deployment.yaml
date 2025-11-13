@@ -74,7 +74,7 @@ spec:
       initContainers:
         - name: init-vulcan
           image: maven:3.9-eclipse-temurin-17
-          command: ["/bin/sh"]
+          command: ["/bin/bash"]
           args: ["-c", "wget -nv -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
           volumeMounts:
             - name: workdir
@@ -214,7 +214,7 @@ spec:
       initContainers:
         - name: init-user-manager
           image: node:18
-          command: ["/bin/sh"]
+          command: ["/bin/bash"]
           args: ["-c", "wget -nv -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
           volumeMounts:
             - name: workdir
@@ -330,8 +330,8 @@ spec:
           emptyDir: {}
       initContainers:
         - name: init-god-manager
-          image: golang:alpine
-          command: ["/bin/sh"]
+          image: golang:1.25
+          command: ["/bin/bash"]
           args: ["-c", "wget -nv -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
           volumeMounts:
             - name: workdir
@@ -347,7 +347,7 @@ spec:
               cpu: "4"
       containers:
         - name: god-manager
-          image: golang:alpine
+          image: golang:1.25
           command: ["/vulcan/services/god-manager/build/god-manager"]
           volumeMounts:
             - name: logs
@@ -458,8 +458,8 @@ spec:
           emptyDir: {}
       initContainers:
         - name: init-authenticator
-          image: python:3.12-alpine
-          command: ["/bin/sh"]
+          image: python:3.12
+          command: ["/bin/bash"]
           args: ["-c", "wget -nv -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
           volumeMounts:
             - name: workdir
@@ -475,7 +475,7 @@ spec:
               cpu: "0.5"
       containers:
         - name: authenticator
-          image: python:3.12-alpine
+          image: python:3.12
           command: ["ddtrace-run", "python3", "./authenticator/main.py"]
           volumeMounts:
             - name: logs
@@ -583,7 +583,7 @@ spec:
       initContainers:
         - name: init-scribe
           image: node:18
-          command: ["/bin/sh"]
+          command: ["/bin/bash"]
           args: ["-c", "wget -nv -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
           volumeMounts:
             - name: workdir
@@ -707,8 +707,8 @@ spec:
           emptyDir: {}
       initContainers:
         - name: init-delphi
-          image: python:3.9-alpine
-          command: ["/bin/sh"]
+          image: python:3.12
+          command: ["/bin/bash"]
           args: ["-c", "wget -nv -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
           volumeMounts:
             - name: workdir
@@ -724,7 +724,7 @@ spec:
               cpu: "0.5"
       containers:
         - name: delphi
-          image: python:3.9-alpine
+          image: python:3.12
           command: ["ddtrace-run", "python3", "./delphi/main.py"]
           volumeMounts:
             - name: logs

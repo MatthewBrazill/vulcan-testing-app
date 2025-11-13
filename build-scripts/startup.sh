@@ -1,4 +1,4 @@
-#! bin/sh
+#! bin/bash
 #
 # Startup script that runs the nececary code to build and start the application
 # for each of the needed services.
@@ -96,6 +96,6 @@
             exit 0
             ;;
     esac
-    echo "looks like something went wrong"
+    echo "looks like something went wrong" >&2
 } > >(sed "s/^/$(date +%s%N | cut -b1-13) info: /") 2> >(sed "s/^/$(date +%s%N | cut -b1-13) error: /")
 exit 1
