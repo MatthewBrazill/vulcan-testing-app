@@ -74,7 +74,7 @@
             echo "installing datadog tracer..."
             pip3 install ddtrace --quiet --root-user-action=ignore -t ./tracer
             which ddtrace-run
-            python3 -m pip list -v
+            python3 -m pip3 list -v
             echo "installing requirements..."
             pip3 install -r requirements.txt --quiet --root-user-action=ignore
             echo "done"
