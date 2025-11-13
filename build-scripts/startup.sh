@@ -70,6 +70,8 @@
             ;;
 
         "authenticator")
+            echo "installing datadog tracer..."
+            pip install ddtrace --quiet
             echo "installing requirements..."
             pip3 install -r requirements.txt --quiet
             echo "done"
@@ -95,6 +97,8 @@
             ;;
 
         "delphi")
+            echo "installing datadog tracer..."
+            pip install ddtrace --quiet
             echo "installing requirements..."
             pip3 install -r requirements.txt --quiet
             echo "done"
