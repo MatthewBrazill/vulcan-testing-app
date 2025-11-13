@@ -73,6 +73,8 @@
         "authenticator")
             echo "installing datadog tracer..."
             pip3 install ddtrace --quiet --root-user-action=ignore
+            which ddtrace-run
+            python3 -m pip list -v
             echo "installing requirements..."
             pip3 install -r requirements.txt --quiet --root-user-action=ignore
             echo "done"
