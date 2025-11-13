@@ -3,9 +3,9 @@
 # Startup script that runs the nececary code to build and start the application
 # for each of the needed services.
 
-# add date and log level to each line of stdout and stderr
-exec > >(trap "" INT TERM; sed "s/^/$(date +%s%N | cut -b1-13) info: /")
-exec 2> >(trap "" INT TERM; sed "s/^/$(date +%s%N | cut -b1-13) error: /" >&2)
+# Add date and log level to each line of stdout and stderr
+exec > >(sed "s/^/$(date +%s%N | cut -b1-13) info: /")
+exec 2> >(sed "s/^/$(date +%s%N | cut -b1-13) error: /" >&2)
 
 echo "running service $DD_SERVICE on $DD_ENV environment"
 cd /
