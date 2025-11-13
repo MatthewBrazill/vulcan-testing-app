@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 #
 # Startup script that runs the necessary code to build and start the application
 # for each of the needed services.
@@ -42,7 +42,9 @@
             keytool -import -noprompt -alias authenticator-cert -cacerts -file /vulcan/services/authenticator/certificate/cert.pem -storepass changeit
             keytool -import -noprompt -alias delphi-cert -cacerts -file /vulcan/services/delphi/certificate/cert.pem -storepass changeit
             cp /opt/java/openjdk/lib/security/cacerts /vulcan/services/vulcan/cacert
-            wget -nc -nv -O /vulcan/services/vulcan/dd-java-agent.jar https://dtdg.co/latest-java-tracer
+            echo "configured certificates"
+            echo "installing packages..."
+            wget -nc -nv -O -q /vulcan/services/vulcan/dd-java-agent.jar https://dtdg.co/latest-java-tracer
             mvn install -q
             echo "done"
             exit 0
@@ -53,12 +55,14 @@
             echo "verified go.mod"
             GOPROXY=direct go install github.com/DataDog/orchestrion@latest
             echo "installed orchestrion"
+            echo "building application..."
             orchestrion go build -o ./build/god-manager -tags appsec ./god-manager/...
             echo "done"
             exit 0
             ;;
 
         "user-manager")
+            echo "installing packages..."
             npm config set update-notifier false
             npm install . > /dev/null
             echo "done"
@@ -66,9 +70,8 @@
             ;;
 
         "authenticator")
-            apk update
-            apk add build-base
-            pip3 install -r requirements.txt
+            echo "installing requirements..."
+            pip3 install -r requirements.txt --quiet
             echo "done"
             exit 0
             ;;
@@ -76,12 +79,15 @@
         "vulcan-proxy")
             cp -a /vulcan/services/vulcan-proxy/. /etc/nginx/
             cp -a /vulcan/services/vulcan/certificate/. /certificate/
-            wget -nc -nv -O /usr/nginx-datadog-module.so.tgz https://github.com/DataDog/nginx-datadog/releases/download/v1.6.2/ngx_http_datadog_module-appsec-arm64-1.28.0.so.tgz
+            echo "configured certificates"
+            echo "installing modules..."
+            wget -nc -nv -O -q /usr/nginx-datadog-module.so.tgz https://github.com/DataDog/nginx-datadog/releases/download/v1.6.2/ngx_http_datadog_module-appsec-arm64-1.28.0.so.tgz
             tar -xzf /usr/nginx-datadog-module.so.tgz -C /usr/lib/nginx/modules
             nginx -g "daemon off;"
             ;;
 
         "scribe")
+            echo "installing packages..."
             npm config set update-notifier false
             npm install . > /dev/null
             echo "done"
@@ -89,9 +95,8 @@
             ;;
 
         "delphi")
-            apk update
-            apk add build-base
-            pip3 install -r requirements.txt
+            echo "installing requirements..."
+            pip3 install -r requirements.txt --quiet
             echo "done"
             exit 0
             ;;
