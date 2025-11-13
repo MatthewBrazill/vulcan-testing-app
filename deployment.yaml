@@ -100,6 +100,7 @@ spec:
             - "-jar"
             - "/vulcan/services/vulcan/target/vulcan.jar"
             - "--logging.config=/vulcan/services/vulcan/src/log4j2.xml"
+          workdir: /vulcan/services/vulcan
           volumeMounts:
             - name: logs
               mountPath: /logs
@@ -233,6 +234,7 @@ spec:
         - name: user-manager
           image: node:18
           command: ["npm", "start"]
+          workdir: /vulcan/services/user-manager
           volumeMounts:
             - name: logs
               mountPath: /logs
@@ -350,6 +352,7 @@ spec:
         - name: god-manager
           image: golang:1.25
           command: ["/vulcan/services/god-manager/build/god-manager"]
+          workdir: /vulcan/services/god-manager
           volumeMounts:
             - name: logs
               mountPath: /logs
@@ -478,6 +481,7 @@ spec:
         - name: authenticator
           image: python:3.12
           command: ["ddtrace-run", "python3", "./authenticator/main.py"]
+          workdir: /vulcan/services/authenticator
           volumeMounts:
             - name: logs
               mountPath: /logs
@@ -602,6 +606,7 @@ spec:
         - name: scribe
           image: node:18
           command: ["npm", "start"]
+          workdir: /vulcan/services/scribe
           volumeMounts:
             - name: logs
               mountPath: /logs
@@ -727,6 +732,7 @@ spec:
         - name: delphi
           image: python:3.12
           command: ["ddtrace-run", "python3", "./delphi/main.py"]
+          workdir: /vulcan/services/delphi
           volumeMounts:
             - name: logs
               mountPath: /logs
