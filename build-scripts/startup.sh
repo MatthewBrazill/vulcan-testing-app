@@ -72,9 +72,9 @@
 
         "authenticator")
             echo "installing datadog tracer..."
-            pip3 install ddtrace --quiet --root-user-action
+            pip3 install ddtrace --quiet --root-user-action=ignore
             echo "installing requirements..."
-            pip3 install -r requirements.txt --quiet --root-user-action
+            pip3 install -r requirements.txt --quiet --root-user-action=ignore
             echo "done"
             exit 0
             ;;
@@ -99,9 +99,9 @@
 
         "delphi")
             echo "installing datadog tracer..."
-            pip3 install ddtrace --quiet --root-user-action
+            pip3 install ddtrace --quiet --root-user-action=ignore
             echo "installing requirements..."
-            pip3 install -r requirements.txt --quiet --root-user-action
+            pip3 install -r requirements.txt --quiet --root-user-action=ignore
             echo "done"
             exit 0
             ;;
