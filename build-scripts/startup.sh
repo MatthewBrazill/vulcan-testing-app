@@ -43,8 +43,9 @@
             keytool -import -noprompt -alias delphi-cert -cacerts -file /vulcan/services/delphi/certificate/cert.pem -storepass changeit
             cp /opt/java/openjdk/lib/security/cacerts /vulcan/services/vulcan/cacert
             echo "configured certificates"
-            echo "installing packages..."
+            echo "installing datadog tracer..."
             curl -fso /vulcan/services/vulcan/dd-java-agent.jar https://dtdg.co/latest-java-tracer
+            echo "installing packages..."
             mvn install -q
             echo "done"
             exit 0
@@ -71,9 +72,9 @@
 
         "authenticator")
             echo "installing datadog tracer..."
-            pip install ddtrace --quiet
+            pip3 install ddtrace --quiet --root-user-action
             echo "installing requirements..."
-            pip3 install -r requirements.txt --quiet
+            pip3 install -r requirements.txt --quiet --root-user-action
             echo "done"
             exit 0
             ;;
@@ -98,9 +99,9 @@
 
         "delphi")
             echo "installing datadog tracer..."
-            pip install ddtrace --quiet
+            pip3 install ddtrace --quiet --root-user-action
             echo "installing requirements..."
-            pip3 install -r requirements.txt --quiet
+            pip3 install -r requirements.txt --quiet --root-user-action
             echo "done"
             exit 0
             ;;
