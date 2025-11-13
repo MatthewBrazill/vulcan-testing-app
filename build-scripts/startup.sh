@@ -106,5 +106,5 @@
             ;;
     esac
     echo "looks like something went wrong" >&2
-} > >(sed "s/^/$(date +%s%N | cut -b1-13) info: /") 2> >(sed "s/^/$(date +%s%N | cut -b1-13) error: /")
+} > >(sed "s/^/$(date +%s%N | cut -b1-13) info: /")
 exit 1
