@@ -480,7 +480,7 @@ spec:
       containers:
         - name: authenticator
           image: python:3.12
-          command: ["ddtrace-run", "python3", "./authenticator/main.py"]
+          command: ["/usr/local/bin/ddtrace-run", "python3", "./authenticator/main.py"]
           workingDir: /vulcan/services/authenticator
           volumeMounts:
             - name: logs
@@ -731,7 +731,7 @@ spec:
       containers:
         - name: delphi
           image: python:3.12
-          command: ["ddtrace-run", "python3", "./delphi/main.py"]
+          command: ["/usr/local/bin/ddtrace-run", "python3", "./delphi/main.py"]
           workingDir: /vulcan/services/delphi
           volumeMounts:
             - name: logs
