@@ -101,6 +101,8 @@
             echo "installing datadog tracer..."
             pip3 install ddtrace --quiet --root-user-action=ignore --upgrade
             echo "installing requirements..."
+            pip3 uninstall kafka --quiet --root-user-action=ignore
+            pip3 uninstall kafka-python --quiet --root-user-action=ignore
             pip3 install -r requirements.txt --quiet --root-user-action=ignore --upgrade
             echo "done"
             ddtrace-run python3 ./delphi/main.py
