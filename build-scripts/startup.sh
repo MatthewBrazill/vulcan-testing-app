@@ -44,7 +44,7 @@
             cp /opt/java/openjdk/lib/security/cacerts /vulcan/services/vulcan/cacert
             echo "configured certificates"
             echo "installing datadog tracer..."
-            curl --output /vulcan/services/vulcan/dd-java-agent.jar https://dtdg.co/latest-java-tracer
+            curl -fLSS -o /vulcan/services/vulcan/dd-java-agent.jar https://dtdg.co/latest-java-tracer
             echo "installing packages..."
             mvn install -q
             echo "done"

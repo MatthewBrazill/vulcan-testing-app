@@ -73,7 +73,7 @@ spec:
           emptyDir: {}
       initContainers:
         - name: init-vulcan
-          image: maven:3.9
+          image: maven:3.9-eclipse-temurin-21
           command: ["/bin/bash"]
           args: ["-c", "curl -fs https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | bash -s"]
           volumeMounts:
@@ -90,7 +90,7 @@ spec:
               cpu: "0.5"
       containers:
         - name: vulcan
-          image: maven:3.9
+          image: maven:3.9-eclipse-temurin-21
           command: ["java"]
           args:
             - "-javaagent:/vulcan/services/vulcan/dd-java-agent.jar"
@@ -697,7 +697,7 @@ spec:
           emptyDir: {}
       containers:
         - name: delphi
-          image: python:3.12
+          image: python:3.9
           command: ["/bin/bash"]
           args: ["-c", "wget -nv -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | bash -s"]
           workingDir: /vulcan/services/delphi
