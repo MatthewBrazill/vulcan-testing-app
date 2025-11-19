@@ -10,14 +10,14 @@ db.createUser({
     ]
 })
 db.createUser({
-    "user": "notes",
+    "user": "vulcan-notes",
     "pwd": "96758wg54tbravp7",
     "roles": [
-        { role: "readWrite", db: "notes" }
+        { role: "readWrite", db: "vulcanNotes" }
     ]
 })
 
-use("notes")
+use("vulcanNotes")
 db.userNotes.updateOne({
     'username': 'matthew'
 }, {

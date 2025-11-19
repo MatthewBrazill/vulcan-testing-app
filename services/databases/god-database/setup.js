@@ -10,14 +10,14 @@ db.createUser({
     ]
 })
 db.createUser({
-    "user": "vulcan",
+    "user": "vulcan-gods",
     "pwd": "96758wg54tbravp7",
     "roles": [
-        { role: "readWrite", db: "vulcan" }
+        { role: "readWrite", db: "vulcanGods" }
     ]
 })
 
-use("vulcan")
+use("vulcanGods")
 db.gods.insertOne({
     "godId": "H62nd",
     "pantheon": "Roman",
