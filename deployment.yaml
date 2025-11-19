@@ -494,6 +494,8 @@ spec:
               value: "true"
             - name: DD_LOGS_INJECTION
               value: "true"
+            - name: DD_PROFILING_TIMELINE_ENABLED
+              value: "true"
             - name: DD_DYNAMIC_INSTRUMENTATION_ENABLED
               value: "true"
             - name: DD_SYMBOL_DATABASE_UPLOAD_ENABLED
@@ -730,6 +732,8 @@ spec:
             - name: DD_IAST_ENABLED
               value: "true"
             - name: DD_LOGS_INJECTION
+              value: "true"
+            - name: DD_PROFILING_TIMELINE_ENABLED
               value: "true"
             - name: DD_DYNAMIC_INSTRUMENTATION_ENABLED
               value: "true"
