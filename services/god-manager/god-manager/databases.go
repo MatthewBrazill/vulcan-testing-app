@@ -12,7 +12,7 @@ func GodDatabase(ctx context.Context) (*mongo.Client, error) {
 	var client *mongo.Client
 
 	// Connect to database
-	Log(ctx).Debug("connecting to god-database")
+	Log(ctx).Debug("connecting to vulcan-gods")
 	options := options.Client().ApplyURI("mongodb://vulcan-gods:96758wg54tbravp7@mac-mongo.database:27017/?connect=direct&authSource=admin")
 	client, err := mongo.Connect(ctx, options)
 	if err != nil {

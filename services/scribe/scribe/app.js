@@ -10,9 +10,6 @@ tracer.init({
 })
 tracer.use("dns", { enabled: false })
 tracer.use("net", { enabled: false })
-tracer.use("kafkajs", { service: "notes-queue" })
-tracer.use("pg", { dbmPropagationMode: 'full', service: "user-database" })
-tracer.use("mongodb-core", { service: "mac-mongo.database" })
 
 const express = require("express")
 const https = require("https")

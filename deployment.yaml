@@ -121,8 +121,6 @@ spec:
               value: "true"
             - name: DD_DBM_PROPAGATION_MODE
               value: "full"
-            - name: DD_SERVICE_MAPPING
-              value: "redis:session-store,postgresql:user-database,mongo:god-database,kafka:notes-queue"
             - name: DD_APPSEC_ENABLED
               value: "true"
             - name: DD_APPSEC_SCA_ENABLED
@@ -373,8 +371,6 @@ spec:
               value: "true"
             - name: DD_DBM_PROPAGATION_MODE
               value: "full"
-            - name: DD_SERVICE_MAPPING
-              value: "mongo:god-database"
             - name: DD_APPSEC_ENABLED
               value: "true"
             - name: DD_APPSEC_SCA_ENABLED
@@ -720,8 +716,6 @@ spec:
             - name: DD_TRACE_SAMPLE_RATE
               value: "1"
             - name: DD_PROFILING_ENABLED
-              value: "true"
-            - name: DD_PROFILING_TIMELINE_ENABLED
               value: "true"
             - name: DD_DBM_PROPAGATION_MODE
               value: "full"

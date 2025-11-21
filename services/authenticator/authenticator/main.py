@@ -1,12 +1,10 @@
 import uvicorn
 from auth import app
-import ddtrace
 import structlog
 import logging
 import os
 
 # Configs
-ddtrace.config.asyncpg['service'] = "user-database"
 logging.basicConfig(
     #filename='/logs/auth.log',
     encoding='utf-8'
