@@ -93,7 +93,7 @@ public class App implements WebMvcConfigurer {
 		properties.put("spring.session.store-type", "redis");
 		properties.put("spring.session.redis.flush-mode", "on_save");
 		properties.put("spring.session.redis.namespace", "vulcan:sess");
-		properties.put("spring.data.redis.host", "session-store.vulcan-application.svc.cluster.local");
+		properties.put("spring.data.redis.host", "localhost");
 		properties.put("spring.data.redis.port", 6379);
 
 		// Configure views
