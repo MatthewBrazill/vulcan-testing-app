@@ -172,8 +172,8 @@ spec:
               protocol: TCP
           resources:
             limits:
-              memory: "2Gi"
-              cpu: "0.5"
+              memory: "1Gi"
+              cpu: "0.2"
 
 
 # User-Manager
@@ -305,7 +305,7 @@ spec:
           resources:
             limits:
               memory: "256Mi"
-              cpu: "0.1"
+              cpu: "0.05"
 
 
 # God-Manager
@@ -438,8 +438,8 @@ spec:
               protocol: TCP
           resources:
             limits:
-              memory: "256Mi"
-              cpu: "0.2"
+              memory: "128Mi"
+              cpu: "0.05"
 
 
 
@@ -556,8 +556,8 @@ spec:
               protocol: TCP
           resources:
             limits:
-              memory: "512Mi"
-              cpu: "0.1"
+              memory: "256Mi"
+              cpu: "0.3"
 
 
 # Scribe
@@ -697,7 +697,7 @@ spec:
           resources:
             limits:
               memory: "256Mi"
-              cpu: "0.2"
+              cpu: "0.05"
 
 
 # Delphi
@@ -815,8 +815,8 @@ spec:
               protocol: TCP
           resources:
             limits:
-              memory: "512Mi"
-              cpu: "0.1"
+              memory: "384Mi"
+              cpu: "0.05"
 
 
 # Kafka Queue
@@ -928,7 +928,7 @@ spec:
           resources:
             limits:
               memory: "1G"
-              cpu: "0.2"
+              cpu: "0.05"
 
 
 
