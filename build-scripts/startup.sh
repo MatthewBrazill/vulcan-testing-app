@@ -34,6 +34,8 @@
     export DD_GIT_COMMIT_SHA=$(git rev-parse HEAD)
     export DD_GIT_REPOSITORY_URL=$(git config --get remote.origin.url)
 
+    echo "DD_GIT_COMMIT_SHA=$DD_GIT_COMMIT_SHA\nDD_GIT_REPOSITORY_URL=$DD_GIT_REPOSITORY_URL" > /vulcan/git-config.env
+
     echo "starting service $DD_SERVICE..."
     case $DD_SERVICE in
         "vulcan")
