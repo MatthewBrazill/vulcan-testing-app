@@ -155,20 +155,6 @@ spec:
                 secretKeyRef:
                   name: vulcan-secrets
                   key: PASSWORD_PEPPER
-            - name: DD_GIT_COMMIT_SHA
-              valueFrom:
-                fileKeyRef:
-                  path: git-config.env
-                  volumeName: workdir
-                  key: DD_GIT_COMMIT_SHA
-                  optional: false
-            - name: DD_GIT_REPOSITORY_URL
-              valueFrom:
-                fileKeyRef:
-                  path: git-config.env
-                  volumeName: workdir
-                  key: DD_GIT_REPOSITORY_URL
-                  optional: false
           ports:
             - containerPort: 443
               protocol: TCP
@@ -296,20 +282,6 @@ spec:
               value: "true"
             - name: CERT_FOLDER
               value: /vulcan/services/user-manager/certificate
-            - name: DD_GIT_COMMIT_SHA
-              valueFrom:
-                fileKeyRef:
-                  path: git-config.env
-                  volumeName: workdir
-                  key: DD_GIT_COMMIT_SHA
-                  optional: false
-            - name: DD_GIT_REPOSITORY_URL
-              valueFrom:
-                fileKeyRef:
-                  path: git-config.env
-                  volumeName: workdir
-                  key: DD_GIT_REPOSITORY_URL
-                  optional: false
           ports:
             - containerPort: 443
               protocol: TCP
@@ -430,20 +402,6 @@ spec:
               value: "true"
             - name: CERT_FOLDER
               value: /vulcan/services/god-manager/certificate
-            - name: DD_GIT_COMMIT_SHA
-              valueFrom:
-                fileKeyRef:
-                  path: git-config.env
-                  volumeName: workdir
-                  key: DD_GIT_COMMIT_SHA
-                  optional: false
-            - name: DD_GIT_REPOSITORY_URL
-              valueFrom:
-                fileKeyRef:
-                  path: git-config.env
-                  volumeName: workdir
-                  key: DD_GIT_REPOSITORY_URL
-                  optional: false
           ports:
             - containerPort: 443
               protocol: TCP
@@ -688,20 +646,6 @@ spec:
               value: "notes-queue.vulcan-application.svc.cluster.local:9092"
             - name: KAFKA_CLIENT_ID
               value: "kube-scribe"
-            - name: DD_GIT_COMMIT_SHA
-              valueFrom:
-                fileKeyRef:
-                  path: git-config.env
-                  volumeName: workdir
-                  key: DD_GIT_COMMIT_SHA
-                  optional: false
-            - name: DD_GIT_REPOSITORY_URL
-              valueFrom:
-                fileKeyRef:
-                  path: git-config.env
-                  volumeName: workdir
-                  key: DD_GIT_REPOSITORY_URL
-                  optional: false
           ports:
             - containerPort: 443
               protocol: TCP
