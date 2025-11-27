@@ -1,16 +1,6 @@
 "use strict"
 
 // Require the extensions
-const tracer = require("dd-trace")
-tracer.init({
-    logInjection: true,
-    runtimeMetrics: true,
-    profiling: true,
-    appsec: true
-})
-tracer.use("dns", { enabled: false })
-tracer.use("net", { enabled: false })
-
 const express = require("express")
 const https = require("https")
 const fs = require("fs")
@@ -93,7 +83,7 @@ async function startKafka() {
     kafkaLogger.debug("running kafka consumer handler")
     await consumer.run({
         eachMessage: async (payload) => {
-            return await tracer.trace("scribe.route", async function routeKafkaQueue() {
+            return await async function routeKafkaQueue() {
                 kafkaLogger.info({
                     payload: payload,
                     message: `scribe received message for topic ${payload.topic}`
@@ -106,7 +96,7 @@ async function startKafka() {
                         handlers.godNotesHandler(payload)
                         break
                 }
-            })
+            }
         }
     })
 

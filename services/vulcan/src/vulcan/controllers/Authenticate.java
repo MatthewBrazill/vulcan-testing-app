@@ -5,11 +5,6 @@ import java.net.http.HttpResponse;
 import java.util.Collections;
 import java.util.HashMap;
 
-import io.opentracing.Span;
-import io.opentracing.log.Fields;
-import io.opentracing.tag.Tags;
-import io.opentracing.util.GlobalTracer;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -36,7 +31,7 @@ public class Authenticate {
         logger.info(body.get("username") + " logged out");
 
         model.addAttribute("title", "Login Page");
-        model.addAttribute("env", System.getenv("DD_ENV"));
+        model.addAttribute("env", System.getenv("ENV"));
         return "login";
     }
 
@@ -44,7 +39,6 @@ public class Authenticate {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public HashMap<String, Object> loginAPI(HttpServletRequest req, HttpServletResponse res) {
         // Function variables
-        Span span = GlobalTracer.get().activeSpan();
         HashMap<String, Object> body = Helpers.decodeBody(req);
         HashMap<String, Object> output = new HashMap<String, Object>();
         Logger logger = LogManager.getLogger("vulcan");
@@ -86,10 +80,6 @@ public class Authenticate {
         } catch (Exception e) {
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             output.put("message", "There was an issue with the Server, please try again later.");
-
-            span.setTag(Tags.ERROR, true);
-            span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
-
             return output;
         }
     }

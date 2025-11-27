@@ -23,19 +23,12 @@ import org.apache.logging.log4j.ThreadContext;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import io.opentracing.Span;
-import io.opentracing.log.Fields;
-import io.opentracing.tag.Tags;
-import io.opentracing.util.GlobalTracer;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import datadog.trace.api.Trace;
-
 public class Helpers {
 
-    @Trace(operationName = "vulcan.helper", resourceName = "Helpers.validate")
     public static Boolean validate(HashMap<String, Object> body) {
         // Add logger
         Logger logger = LogManager.getLogger("vulcan");
@@ -84,11 +77,9 @@ public class Helpers {
         return true;
     }
 
-    @Trace(operationName = "vulcan.helper", resourceName = "Helpers.authorize")
     public static String authorize(HttpServletRequest req) {
         // Function variables
         HttpSession session = req.getSession();
-        Span span = GlobalTracer.get().activeSpan();
         Logger logger = LogManager.getLogger("vulcan");
 
         try {
@@ -114,12 +105,10 @@ public class Helpers {
                     }.getType();
                     HashMap<String, String> auth = gson.fromJson(res.body(), type);
 
-                    span.setTag("auth", true);
                     logger.info("user authorized as '" + auth.get("permissions") + "'");
                     return auth.get("permissions");
 
                 case HttpServletResponse.SC_UNAUTHORIZED:
-                    span.setTag("auth", false);
                     logger.info("user is not have authorized to access " + req.getRequestURI());
                     return "none";
 
@@ -127,26 +116,20 @@ public class Helpers {
                     throw new Exception("VulcanError: couldn't authorize request");
             }
         } catch (Exception e) {
-            span.setTag(Tags.ERROR, true);
-            span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
-            span.setTag("auth", false);
             logger.error("vulcan encountered error when authorizing: " + e.getMessage(), e);
             return "none";
         }
     }
 
-    @Trace(operationName = "vulcan.helper", resourceName = "Helpers.decodeBody")
     public static HashMap<String, Object> decodeBody(HttpServletRequest req) {
         // Function variables
         HashMap<String, Object> output = new HashMap<String, Object>();
-        Span span = GlobalTracer.get().activeSpan();
         Logger logger = LogManager.getLogger("vulcan");
 
         try {
             if (req.getReader().ready()) {
                 // Identify Content-Type of request
                 String contentType = req.getContentType().split(";")[0];
-                span.setTag("content_type", contentType);
                 switch (contentType) {
                     case "application/x-www-form-urlencoded":
                         String[] body = req.getReader().readLine().split("&");
@@ -157,9 +140,6 @@ public class Helpers {
                                 output.put(attribute[0], URLDecoder.decode(attribute[1], StandardCharsets.UTF_8));
                             } else if (attribute.length == 1) {
                                 output.put(attribute[0], "");
-                            } else {
-                                span.setTag(Tags.ERROR, true);
-                                span.log(Collections.singletonMap(Fields.ERROR_OBJECT, new Exception("VulcanError: unexpected attribute length of: " + attribute.length + "; value: " + attribute.toString())));
                             }
                         }
                         break;
@@ -170,22 +150,15 @@ public class Helpers {
                         logger.debug("decoding json");
                         output = gson.fromJson(json, new TypeToken<HashMap<String, Object>>() {}.getType());
                         break;
-
-                    default:
-                        span.setTag(Tags.ERROR, true);
-                        span.log(Collections.singletonMap(Fields.ERROR_OBJECT, new Exception("VulcanError: unsupported content-type " + contentType)));
                 }
             }
         } catch (Exception e) {
-            span.setTag(Tags.ERROR, true);
-            span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
             logger.error("vulcan encountered an error when decoding a request body: " + e.getMessage(), e);
         }
 
         return output;
     }
 
-    @Trace(operationName = "vulcan.helper", resourceName = "Helpers.httpPostRequest")
     public static HttpResponse<String> httpPostRequest(URI uri, HashMap<String, Object> body) throws IOException, InterruptedException {
         // Function variables
         Gson gson = new Gson();
@@ -204,7 +177,6 @@ public class Helpers {
         return res;
     }
 
-    @Trace(operationName = "vulcan.helper", resourceName = "Helpers.httpGetRequest")
     public static HttpResponse<String> httpGetRequest(URI uri) throws IOException, InterruptedException {
         // Function variables
         Logger logger = LogManager.getLogger("vulcan");

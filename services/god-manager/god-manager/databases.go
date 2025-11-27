@@ -7,7 +7,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-//dd:span resource_name:Databases.GodDatabase operation:god-manager.database
 func GodDatabase(ctx context.Context) (*mongo.Client, error) {
 	var client *mongo.Client
 
@@ -23,7 +22,6 @@ func GodDatabase(ctx context.Context) (*mongo.Client, error) {
 	return client, nil
 }
 
-//dd:span resource_name:Databases.NoteDatabase operation:god-manager.database
 func NoteDatabase(ctx context.Context) (*mongo.Client, error) {
 	var client *mongo.Client
 

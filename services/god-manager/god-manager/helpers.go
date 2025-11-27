@@ -8,10 +8,8 @@ import (
 
 func Log(ctx context.Context) *logrus.Entry {
 	return logrus.WithContext(ctx).WithFields(logrus.Fields{
-		"dd": logrus.Fields{
-			"service":  service,
-			"version":  version,
-			"env":      env,
-		},
+		"service":  service,
+		"version":  version,
+		"env":      env,
 	})
 }

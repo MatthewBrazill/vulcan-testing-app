@@ -13,14 +13,12 @@
 build=0
 taredown=0
 application=0
-monitoring=0
-while getopts "btam" flag
+while getopts "bta" flag
 do
     case $flag in
         "b") build=1;;
         "t") taredown=1;;
         "a") application=1;;
-        "m") monitoring=1;;
     esac
 done
 
@@ -54,15 +52,6 @@ if [ "$build" == 1 ]; then
         --source_map_include_content true
     done
     printf "Done minifying JS maps!\n\n"
-
-    # Upload Maps to Datadog
-    if which datadog-ci >/dev/null ; then
-        printf "Uploading JS Maps to Datadog...\n"
-        datadog-ci sourcemaps upload services/frontend/statics/js --service vulcan-app --release-version 1.14 --minified-path-prefix /js/ | grep --line-buffered "^Uploading sourcemap*" | sed "s/^/  /"
-        printf "Done uploading JS maps!\n\n"
-    else
-        printf "Missing Datadog CI tool; skipping JS Map upload.\n\n"
-    fi
 fi
 
 # Taredown Application
@@ -80,8 +69,6 @@ fi
 # Deploy Application
 if [ "$application" == 1 ]; then
     printf "Deploying Vulcan Application...\n"
-    export DD_GIT_COMMIT_SHA=$(git rev-parse HEAD)
-    export DD_GIT_REPOSITORY_URL="https://github.com/MatthewBrazill/vulcan-testing-app"
 
     printf "  Docker...\n"
     docker compose pull && docker compose up -d --quiet-pull | sed "s/^/    /"
@@ -90,28 +77,4 @@ if [ "$application" == 1 ]; then
     kubectl apply -f secrets.yaml | grep -v --line-buffered ".*unchanged.*" | sed "s/^/    /"
 
     printf "Finsihed deploying! You can now use the Vulcan App: https://localhost/login\n\n"
-fi
-
-# Taredown Monitoring
-if [ "$monitoring" == 1 ] && [ "$taredown" == 1 ]; then
-    printf "Monitoring Resources Taredown...\n"
-
-    printf "  Docker...\n"
-    docker compose --file ./services/monitoring/docker-compose.yaml down | sed "s/^/    /"
-    printf "  Kubernetes...\n"
-    helm uninstall datadog-agent | sed "s/^/    /"
-
-    printf "Done!\n"
-fi
-
-# Deploy Monitoring
-if [ "$monitoring" == 1 ]; then
-    printf "Deploying Monitoring Resources...\n"
-
-    printf "  Docker...\n"
-    docker compose pull && docker compose --file ./services/monitoring/docker-compose.yaml up -d --quiet-pull | sed "s/^/    /"
-    printf "  Kubernetes...\n"
-    helm install datadog-agent -f ./services/monitoring/datadog-agent/agent-values.yaml datadog/datadog | sed "s/^/    /"
-
-    printf "Done!\n"
 fi

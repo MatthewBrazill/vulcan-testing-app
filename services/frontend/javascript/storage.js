@@ -94,12 +94,6 @@ $(document).ready(() => {
                     $("#testing-log-input").val("")
                     break
 
-                case "datadog":
-                    $("#testing-log-input").val("")
-                    var logger = window.DD_LOGS && window.DD_LOGS.logger
-                    logger.info(log)
-                    break
-
                 default:
                     console.error(`unrecognized logging method: ${method}`)
                     throw new Error(`Didn't recognize logging method: ${method}`)
@@ -123,7 +117,6 @@ $(document).ready(() => {
 
     $("#testing-custom-event-button").click(() => {
         console.warn("warning for custom action button")
-        window.DD_RUM && window.DD_RUM.addAction("custom-testing-action", { "value": "testing" })
     })
 })
 

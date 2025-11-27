@@ -18,10 +18,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import io.opentracing.Span;
-import io.opentracing.log.Fields;
-import io.opentracing.tag.Tags;
-import io.opentracing.util.GlobalTracer;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import vulcan.Helpers;
@@ -32,7 +28,6 @@ public class Gods {
     @RequestMapping(value = "/gods/create", method = RequestMethod.POST)
     public HashMap<String, Object> godCreateAPI(HttpServletRequest req, HttpServletResponse res) {
         // Function variables
-        Span span = GlobalTracer.get().activeSpan();
         HashMap<String, Object> body = Helpers.decodeBody(req);
         HashMap<String, Object> output = new HashMap<>();
         Logger logger = LogManager.getLogger("vulcan");
@@ -80,10 +75,6 @@ public class Gods {
         } catch (Exception e) {
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             output.put("message", "There was an issue with the Server, please try again later.");
-
-            span.setTag(Tags.ERROR, true);
-            span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
-
             logger.error("vulcan encountered error during god creation: " + e.getMessage(), e);
             return output;
         }
@@ -93,7 +84,6 @@ public class Gods {
     @RequestMapping(value = "/gods/get", method = RequestMethod.POST)
     public HashMap<String, Object> godGetAPI(HttpServletRequest req, HttpServletResponse res) {
         // Function variables
-        Span span = GlobalTracer.get().activeSpan();
         HashMap<String, Object> body = Helpers.decodeBody(req);
         HashMap<String, Object> output = new HashMap<>();
         Logger logger = LogManager.getLogger("vulcan");
@@ -139,10 +129,6 @@ public class Gods {
         } catch (Exception e) {
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             output.put("message", "There was an issue with the Server, please try again later.");
-
-            span.setTag(Tags.ERROR, true);
-            span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
-
             logger.error("vulcan encountered error during god retrieval: " + e.getMessage(), e);
             return output;
         }
@@ -152,7 +138,6 @@ public class Gods {
     @RequestMapping(value = "/gods/update", method = RequestMethod.POST)
     public HashMap<String, Object> godUpdateAPI(HttpServletRequest req, HttpServletResponse res) {
         // Function variables
-        Span span = GlobalTracer.get().activeSpan();
         HashMap<String, Object> body = Helpers.decodeBody(req);
         HashMap<String, Object> output = new HashMap<>();
         Logger logger = LogManager.getLogger("vulcan");
@@ -196,10 +181,6 @@ public class Gods {
         } catch (Exception e) {
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             output.put("message", "There was an issue with the Server, please try again later.");
-
-            span.setTag(Tags.ERROR, true);
-            span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
-
             logger.error("vulcan encountered error during god update: " + e.getMessage(), e);
             return output;
         }
@@ -209,7 +190,6 @@ public class Gods {
     @RequestMapping(value = "/gods/delete", method = RequestMethod.POST)
     public HashMap<String, Object> godDeleteAPI(HttpServletRequest req, HttpServletResponse res) {
         // Function variables
-        Span span = GlobalTracer.get().activeSpan();
         HashMap<String, Object> body = Helpers.decodeBody(req);
         HashMap<String, Object> output = new HashMap<>();
         Logger logger = LogManager.getLogger("vulcan");
@@ -249,10 +229,6 @@ public class Gods {
         } catch (Exception e) {
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             output.put("message", "There was an issue with the Server, please try again later.");
-
-            span.setTag(Tags.ERROR, true);
-            span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
-
             logger.error("vulcan encountered error during god deletion: " + e.getMessage(), e);
             return output;
         }

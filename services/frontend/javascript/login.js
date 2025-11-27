@@ -13,9 +13,6 @@ $(document).ready(() => {
                 $("#login-wait").attr('class', 'ui message')
             },
             success: (res) => {
-                window.DD_RUM && window.DD_RUM.setUser({
-                    username: $("#login-username").val(),
-                })
                 console.log(`login succeeded: status ${res.status}`)
                 window.location = "/storage"
             },

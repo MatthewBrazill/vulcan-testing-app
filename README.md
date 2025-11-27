@@ -7,6 +7,8 @@ The application is just a basic application that allows some CRUD actions for go
 
 After several different approaches to managing the application, the current setup runs several services in Kubernetes, others in Docker and finally one of them (`user-manager`) in both environments. This lets me use a unified single application while still getting insights into use cases for Kubernetes, Docker and other setups.
 
+**THIS IS THE UNINSTRUMENTED BRANCH WITH NO MONITORING**
+
 ## Technologies
 The following isa non-exhaustive list of the technologies that have been used in this repository:
 - Languages:

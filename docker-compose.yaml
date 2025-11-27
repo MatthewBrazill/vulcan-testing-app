@@ -19,35 +19,14 @@ services:
       - vulcan_app
       - pupkube
     environment:
-      - DD_ENV=dev
-      - DD_SERVICE=scribe
-      - DD_VERSION=0.2.0
-      - DD_TRACE_SAMPLE_RATE=1
-      - DD_PROFILING_ENABLED=true
-      - DD_DBM_PROPAGATION_MODE="full"
-      - DD_APPSEC_ENABLED=true
-      - DD_APPSEC_SCA_ENABLED=true
-      - DD_IAST_ENABLED=true
-      # - DD_AGENT_HOST=datadog-agent
-      # - DD_TRACE_AGENT_PORT=8126
-      - DD_DYNAMIC_INSTRUMENTATION_ENABLED=true
-      - DD_SYMBOL_DATABASE_UPLOAD_ENABLED=true
-      - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
-      - DD_DOGSTATSD_URL=unix:///var/run/datadog/dsd.socket
-      - DD_TRACE_CLIENT_IP_ENABLED=true
-      - DD_TRACE_STARTUP_LOGS=true
-      - DD_DATA_STREAMS_ENABLED=true
+      - ENV=dev
+      - SERVICE=scribe
+      - VERSION=0.2.0
       - CERT_FOLDER=/vulcan/services/scribe/certificate
       - KAFKA_BROKER=pupkube:32200
       - KAFKA_CLIENT_ID=docker-scribe
     working_dir: /
-    volumes:
-      - /vulcan-data/docker/logs:/logs
-      - /var/run/datadog:/var/run/datadog
     command: ["/bin/sh", "-c", "curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
-    labels:
-      com.datadoghq.ad.logs: '[{"type":"file","source":"scribe","service":"scribe","path":"/vulcan-data/docker/logs/scribe.log"}]'
-      com.datadoghq.ad.tags: '["env:dev","service:scribe"]'
     deploy:
       resources:
         limits:
@@ -72,30 +51,11 @@ services:
       - vulcan_app
       - pupkube
     environment:
-      - DD_ENV=dev
-      - DD_SERVICE=vulcan-proxy
-      - DD_VERSION=0.1.2
-      - DD_TRACE_SAMPLE_RATE=1
-      - DD_PROFILING_ENABLED=true
-      - DD_DBM_PROPAGATION_MODE="full"
-      - DD_APPSEC_ENABLED=true
-      - DD_APPSEC_SCA_ENABLED=true
-      - DD_IAST_ENABLED=true
-      # - DD_AGENT_HOST=datadog-agent
-      # - DD_TRACE_AGENT_PORT=8126
-      - DD_DYNAMIC_INSTRUMENTATION_ENABLED=true
-      - DD_SYMBOL_DATABASE_UPLOAD_ENABLED=true
-      - DD_TRACE_AGENT_URL=unix:///var/run/datadog/apm.socket
-      - DD_DOGSTATSD_URL=unix:///var/run/datadog/dsd.socket
-      - DD_TRACE_CLIENT_IP_ENABLED=true
+      - ENV=dev
+      - SERVICE=vulcan-proxy
+      - VERSION=0.1.2
       - CERT_FOLDER=/vulcan/services/vulcan-proxy/certificate
-    volumes:
-      - /var/run/datadog:/var/run/datadog
     command: ["/bin/sh", "-c", "nginx -v && curl -s https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | sh -s"]
-    labels:
-      com.datadoghq.ad.checks: '{"nginx":{"instances":[{"nginx_status_url":"http://%%host%%:81/nginx_status/"}]}}'
-      com.datadoghq.ad.logs: '[{"source":"nginx","service":"vulcan-proxy"}]'
-      com.datadoghq.ad.tags: '["env:dev","service:vulcan-proxy"]'
     deploy:
       resources:
         limits:
@@ -119,10 +79,6 @@ services:
       - pupkube
     volumes:
       - ./services/databases/god-database/data:/data/db
-    labels:
-      com.datadoghq.ad.checks: '{"mongo":{"init_config":{"propagate_agent_tags":"true","service":"god-database"},"instances":[{"dbm":"true","cluster_name":"god-cluster","additional_metrics":["metrics.commands","tcmalloc","top","collection"],"hosts":["god-database:27017"],"username":"datadog","password":"5aae8c35f7e16245","database":"vulcan","options":{"authSource":"admin"}}]}}'
-      com.datadoghq.ad.logs: '[{"source":"mongodb","service":"god-database"}]'
-      com.datadoghq.ad.tags: '["env:dev","service:god-database"]'
     deploy:
       resources:
         limits:
@@ -139,10 +95,6 @@ services:
       - pupkube
     volumes:
       - ./services/databases/notes-database/data:/data/db
-    labels:
-      com.datadoghq.ad.checks: '{"mongo":{"init_config":{"propagate_agent_tags":"true","service":"notes-database"},"instances":[{"dbm":"true","cluster_name":"notes-cluster","additional_metrics":["metrics.commands","tcmalloc","top","collection"],"hosts":["notes-database:27017"],"username":"datadog","password":"5aae8c35f7e16245","database":"notes","options":{"authSource":"admin"}}]}}'
-      com.datadoghq.ad.logs: '[{"source":"mongodb","service":"notes-database"}]'
-      com.datadoghq.ad.tags: '["env:dev","service:notes-database"]'
     deploy:
       resources:
         limits:
@@ -161,10 +113,6 @@ services:
       - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
       - ./services/databases/user-database/data:/var/lib/postgresql/data
-    labels:
-      com.datadoghq.ad.checks: '{"postgres":{"init_config":{"propagate_agent_tags":"true","service":"user-database"},"instances":[{"dbm":"true","host":"user-database","port":5432,"username":"datadog","password":"5aae8c35f7e16245","dbname":"vulcan_users"}]}}'
-      com.datadoghq.ad.logs: '[{"source":"postgresql","service":"user-database"}]'
-      com.datadoghq.ad.tags: '["env:dev","service:user-database"]'
     deploy:
       resources:
         limits:

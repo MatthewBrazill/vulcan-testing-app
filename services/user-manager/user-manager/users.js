@@ -2,7 +2,6 @@
 
 // Imports
 const https = require("https")
-const tracer = require("dd-trace")
 const logger = require("./logger.js")
 const databases = require("./databases.js")
 
@@ -20,8 +19,6 @@ const users = {
 
             res.sendStatus(200)
         } catch (err) {
-            const span = tracer.scope().active()
-            span.setTag('error', err)
             logger.error({
                 error: err.message,
                 stack: err.stack,
@@ -72,8 +69,6 @@ const users = {
 
             res.status(200).json(result)
         } catch (err) {
-            const span = tracer.scope().active()
-            span.setTag('error', err)
             logger.error({
                 error: err.message,
                 stack: err.stack,
@@ -100,8 +95,6 @@ const users = {
                 res.status(200).json(result)
             }
         } catch (err) {
-            const span = tracer.scope().active()
-            span.setTag('error', err)
             logger.error({
                 error: err.message,
                 stack: err.stack,
@@ -145,8 +138,6 @@ const users = {
 
             res.sendStatus(200)
         } catch (err) {
-            const span = tracer.scope().active()
-            span.setTag('error', err)
             logger.error({
                 error: err.message,
                 stack: err.stack,

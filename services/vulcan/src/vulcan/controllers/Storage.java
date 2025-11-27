@@ -19,10 +19,6 @@ import com.google.gson.reflect.TypeToken;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import io.opentracing.Span;
-import io.opentracing.log.Fields;
-import io.opentracing.tag.Tags;
-import io.opentracing.util.GlobalTracer;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -33,7 +29,7 @@ public class Storage {
     @RequestMapping(value = "/storage", method = RequestMethod.GET)
     public String storagePage(HttpServletRequest req, HttpServletResponse res, Model model) {
         // Authorize
-        model.addAttribute("env", System.getenv("DD_ENV"));
+        model.addAttribute("env", System.getenv("ENV"));
         String permissions = Helpers.authorize(req);
         switch (permissions) {
             case "user":
@@ -65,7 +61,7 @@ public class Storage {
     @RequestMapping(value = "/add", method = RequestMethod.GET)
     public String addGodPage(HttpServletRequest req, HttpServletResponse res, Model model) {
         // Authorize
-        model.addAttribute("env", System.getenv("DD_ENV"));
+        model.addAttribute("env", System.getenv("ENV"));
         String permissions = Helpers.authorize(req);
         switch (permissions) {
             case "user":
@@ -95,7 +91,7 @@ public class Storage {
     @RequestMapping(value = "/edit", method = RequestMethod.GET)
     public String editGodPage(HttpServletRequest req, HttpServletResponse res, Model model) {
         // Authorize
-        model.addAttribute("env", System.getenv("DD_ENV"));
+        model.addAttribute("env", System.getenv("ENV"));
         String permissions = Helpers.authorize(req);
         switch (permissions) {
             case "user":
@@ -126,7 +122,6 @@ public class Storage {
     @RequestMapping(value = "/storage/search", method = RequestMethod.POST)
     public HashMap<String, Object> storageSearchAPI(HttpServletRequest req, HttpServletResponse res) {
         // Function variables
-        Span span = GlobalTracer.get().activeSpan();
         HashMap<String, Object> body = Helpers.decodeBody(req);
         HashMap<String, Object> output = new HashMap<String, Object>();
         Logger logger = LogManager.getLogger("vulcan");
@@ -186,10 +181,6 @@ public class Storage {
                 } catch (Exception e) {
                     res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                     output.put("message", "There was an issue with the Server, please try again later.");
-
-                    span.setTag(Tags.ERROR, true);
-                    span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
-
                     logger.error("vulcan encountered error during search for gods: " + e.getMessage(), e);
                     return output;
                 }
@@ -210,7 +201,6 @@ public class Storage {
     @RequestMapping(value = "/oracle/predict", method = RequestMethod.POST)
     public HashMap<String, Object> predictionAPI(HttpServletRequest req, HttpServletResponse res) {
         // Function variables
-        Span span = GlobalTracer.get().activeSpan();
         HashMap<String, Object> body = Helpers.decodeBody(req);
         HashMap<String, Object> output = new HashMap<String, Object>();
         Logger logger = LogManager.getLogger("vulcan");
@@ -252,10 +242,6 @@ public class Storage {
                 } catch (Exception e) {
                     res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                     output.put("message", "There was an issue with the Server, please try again later.");
-
-                    span.setTag(Tags.ERROR, true);
-                    span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
-
                     logger.error("vulcan encountered error during a prediction: " + e.getMessage(), e);
                     return output;
                 }

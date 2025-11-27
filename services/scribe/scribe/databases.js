@@ -23,8 +23,6 @@ const databases = {
 
             return pgdb
         } catch(err) {
-            const span = tracer.scope().active()
-            span.setTag('error', err)
             logger.error({
                 error: err.message,
                 stack: err.stack,
@@ -47,8 +45,6 @@ const databases = {
 
             return mngdb
         } catch (err) {
-            const span = tracer.scope().active()
-            span.setTag('error', err)
             logger.error({
                 error: err.message,
                 stack: err.stack,

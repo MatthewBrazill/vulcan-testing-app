@@ -1,9 +1,7 @@
 # Imports
 import re
-from ddtrace import tracer
 
 
-@tracer.wrap(name="delphi.helper", resource="validate")
 async def validate(params, tests):
     for test in tests:
         if test[0] in params.keys():

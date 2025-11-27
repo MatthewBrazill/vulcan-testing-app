@@ -1,7 +1,6 @@
 'use strict'
 
 // Imports
-const tracer = require("dd-trace")
 const logger = require("./logger.js").kafka()
 const databases = require("./databases.js")
 
@@ -19,8 +18,6 @@ const notes = {
             }
             res.status(200).json({ notes: notes.notes })
         } catch (err) {
-            const span = tracer.scope().active()
-            span.setTag('error', err)
             logger.error({
                 error: err.message,
                 stack: err.stack,
@@ -44,8 +41,6 @@ const notes = {
             }
             res.sendStatus(200)
         } catch (err) {
-            const span = tracer.scope().active()
-            span.setTag('error', err)
             logger.error({
                 error: err.message,
                 stack: err.stack,

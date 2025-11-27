@@ -5,8 +5,6 @@ from helpers import validate
 from helpers import userDatabase
 from fastapi import Request, FastAPI
 from fastapi.responses import JSONResponse
-from ddtrace import tracer
-import traceback
 import bcrypt
 import structlog
 import os
@@ -17,7 +15,6 @@ app = FastAPI()
 # Routes
 @app.post("/authenticate")
 async def authenticate(request: Request) -> JSONResponse:
-    span = tracer.current_span()
     logger = structlog.get_logger("auth")
     try:
         body = await request.json()
@@ -41,21 +38,16 @@ async def authenticate(request: Request) -> JSONResponse:
         if database != None:
             database.close()
         logger.error("authenticator encountered an error trying to authenticate '" + body["username"] + "'", username=body["username"], error=err)
-        span = tracer.current_span()
-        span.set_tag("error.message", err)
-        span.set_tag("error.stack", traceback.format_exc())
         return JSONResponse(content={"authenticated": False}, status_code=500)
 
 
 @app.post("/authorize")
 async def authorize(request: Request) -> JSONResponse:
-    span = tracer.current_span()
     logger = structlog.get_logger("auth")
     try:
         body = await request.json()
         database = await userDatabase()
         if "apiKey" in body.keys():
-            span.set_tag("authorized_using", "apikey")
             if await validate(body, [["apiKey", r"^[a-f0-9]{32}$"]]) == False:
                 return JSONResponse(content={"permissions": "none"}, status_code=400)
             
@@ -67,7 +59,6 @@ async def authorize(request: Request) -> JSONResponse:
             logger.warn("authorization failed for key '" + "****" + body["apiKey"][-4:] + "'", api_key="****" + body["apiKey"][-4:])
 
         if "username" in body.keys():
-            span.set_tag("authorized_using", "username")
             if await validate(body, [["username", r"^[a-zA-Z0-9-]{1,32}$"]]) == False:
                 return JSONResponse(content={"permissions": "none"}, status_code=400)
             
@@ -84,8 +75,6 @@ async def authorize(request: Request) -> JSONResponse:
     except Exception as err:
         if database != None:
             database.close()
-        span.set_tag("error.message", err)
-        span.set_tag("error.stack", traceback.format_exc())
         if "apiKey" in body.keys():
             logger.error("authenticator encountered an error trying to authorize key '" + "****" + body["apiKey"][-4:] + "'", api_key="****" + body["apiKey"][-4:], error=err)
         if "username" in body.keys():

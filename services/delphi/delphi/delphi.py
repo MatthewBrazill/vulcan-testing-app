@@ -7,8 +7,6 @@ from fastapi.responses import Response
 from fastapi.responses import JSONResponse
 from kafka import KafkaProducer
 from openai import OpenAI
-from ddtrace import tracer
-import traceback
 import structlog
 import json
 import sys
@@ -20,24 +18,16 @@ app = FastAPI()
 @app.post("/describe")
 async def describe(request: Request, background: BackgroundTasks) -> Response:
     body = await request.json()
-    span = tracer.current_span()
 
-    await request_description(body, span)
+    await request_description(body)
 
     return Response(status_code=202)
 
-@tracer.wrap(name="delphi.worker", resource="requestDescription")
-async def request_description(body, parent_span):
-    span = tracer.current_span()
+async def request_description(body):
     logger = structlog.get_logger("delphi")
     #producer = KafkaProducer(bootstrap_servers=os.environ["KAFKA_BROKER"], linger_ms=10)
     producer = KafkaProducer(bootstrap_servers="notes-queue.vulcan-application.svc.cluster.local:9092", linger_ms=10)
     logger.info("started description job", god=body["god"])
-
-    # This is super hacky and not really best practice, but the link between the traces seems to be lost at some
-    # point between the main and background task. This should re-add it.
-    #span.context. ._parent = parent_span
-    #logger.debug("connecting spans", parent_span=parent_span, child_span=span)
 
     try:
         defaultMessage = """Gods come from a variety of different beliefs and cultures. As such, there are many deities that I may 
@@ -89,20 +79,16 @@ not recognize or have information on. In this case, I dont know the answer becau
             }
         
         logger.info("sending message to kafka queue", kafka_message=kafkaMessage)
-        producer.send(topic="god-notes", value=json.dumps(kafkaMessage).encode("utf-8"), headers=[("x-datadog-trace-id", str(span.trace_id).encode("utf-8")), ("x-datadog-parent-id", str(span.parent_id).encode("utf-8"))])
+        producer.send(topic="god-notes", value=json.dumps(kafkaMessage).encode("utf-8"))
         producer.flush()
         producer.close()
 
     except Exception as err:
         logger.error("delphi encountered a critical error trying to describe '" + body["god"] + "'", god=body, error=err)
-        span = tracer.current_span()
-        span.set_tag("error.message", err)
-        span.set_tag("error.stack", traceback.format_exc())
 
 
 @app.post("/predict")
 async def predict(request: Request) -> JSONResponse:
-    span = tracer.current_span()
     logger = structlog.get_logger("delphi")
     try:
         body = await request.json()
@@ -155,8 +141,6 @@ to give you and answer today, but I'm sure we can expect greatness from you!"""
     
     except Exception as err:
         logger.error("delphi encountered an error trying to predict '" + body["question"] + "'", question=body["question"], error=err)
-        span.set_tag("error.message", err)
-        span.set_tag("error.stack", traceback.format_exc())
         
         return JSONResponse(content={ "prediction": """I'm afraid that the future is foggy and ever evolving, my dear. In this case yours seems in flux! I won't be able
 to give you and answer today, but I'm sure we can expect greatness from you!"""

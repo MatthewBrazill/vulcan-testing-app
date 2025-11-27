@@ -4,7 +4,7 @@
 # for each of the needed services.
 
 {
-    echo "running service $DD_SERVICE on $DD_ENV environment"
+    echo "running service $SERVICE on $ENV environment"
     cd /
 
     if ! command -v git >/dev/null ; then
@@ -29,15 +29,10 @@
     rm -rf /vulcan/.* 2> /dev/null
     git clone https://github.com/MatthewBrazill/vulcan-testing-app.git /vulcan
 
-    cd /vulcan/services/$DD_SERVICE
+    cd /vulcan/services/$SERVICE
 
-    export DD_GIT_COMMIT_SHA=$(git rev-parse HEAD)
-    export DD_GIT_REPOSITORY_URL=$(git config --get remote.origin.url)
-
-    echo "DD_GIT_COMMIT_SHA=$DD_GIT_COMMIT_SHA\nDD_GIT_REPOSITORY_URL=$DD_GIT_REPOSITORY_URL" > /vulcan/git-config.env
-
-    echo "starting service $DD_SERVICE..."
-    case $DD_SERVICE in
+    echo "starting service $SERVICE..."
+    case $SERVICE in
         "vulcan")
             keytool -import -noprompt -alias user-manager-cert -cacerts -file /vulcan/services/user-manager/certificate/cert.pem -storepass changeit
             keytool -import -noprompt -alias god-manager-cert -cacerts -file /vulcan/services/god-manager/certificate/cert.pem -storepass changeit
@@ -45,8 +40,6 @@
             keytool -import -noprompt -alias delphi-cert -cacerts -file /vulcan/services/delphi/certificate/cert.pem -storepass changeit
             cp /opt/java/openjdk/lib/security/cacerts /vulcan/services/vulcan/cacert
             echo "configured certificates"
-            echo "installing datadog tracer..."
-            curl -fLSS -o /vulcan/services/vulcan/dd-java-agent.jar https://dtdg.co/latest-java-tracer
             echo "installing packages..."
             mvn install -q
             echo "done"
@@ -56,10 +49,8 @@
         "god-manager")
             go mod download && go mod verify
             echo "verified go.mod"
-            GOPROXY=direct go install github.com/DataDog/orchestrion@latest
-            echo "installed orchestrion"
             echo "building application..."
-            orchestrion go build -o ./build/god-manager -tags appsec ./god-manager/...
+            go build -o ./build/god-manager ./god-manager/...
             echo "done"
             exit 0
             ;;
@@ -73,21 +64,16 @@
             ;;
 
         "authenticator")
-            echo "installing datadog tracer..."
-            pip3 install ddtrace --quiet --root-user-action=ignore --upgrade
             echo "installing requirements..."
             pip3 install -r requirements.txt --quiet --root-user-action=ignore --upgrade
             echo "done"
-            ddtrace-run python3 ./authenticator/main.py
+            python3 ./authenticator/main.py
             ;;
 
         "vulcan-proxy")
             cp -a /vulcan/services/vulcan-proxy/. /etc/nginx/
             cp -a /vulcan/services/vulcan/certificate/. /certificate/
             echo "configured certificates"
-            echo "installing modules..."
-            wget -nc -nv -O -q /usr/nginx-datadog-module.so.tgz https://github.com/DataDog/nginx-datadog/releases/download/v1.6.2/ngx_http_datadog_module-appsec-arm64-1.28.0.so.tgz
-            tar -xzf /usr/nginx-datadog-module.so.tgz -C /usr/lib/nginx/modules
             nginx -g "daemon off;"
             ;;
 
@@ -100,14 +86,12 @@
             ;;
 
         "delphi")
-            echo "installing datadog tracer..."
-            pip3 install ddtrace --quiet --root-user-action=ignore --upgrade
             echo "installing requirements..."
             pip3 uninstall kafka --quiet --root-user-action=ignore
             pip3 uninstall kafka-python --quiet --root-user-action=ignore
             pip3 install -r requirements.txt --quiet --root-user-action=ignore --upgrade
             echo "done"
-            ddtrace-run python3 ./delphi/main.py
+            python3 ./delphi/main.py
             ;;
     esac
     echo "looks like something went wrong" >&2

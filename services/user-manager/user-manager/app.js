@@ -1,16 +1,6 @@
 "use strict"
 
 // Require the extensions
-const tracer = require("dd-trace")
-tracer.init({
-    logInjection: true,
-    runtimeMetrics: true,
-    profiling: true,
-    appsec: true
-})
-tracer.use("dns", { enabled: false })
-tracer.use("net", { enabled: false })
-
 const express = require("express")
 const https = require("https")
 const fs = require("fs")

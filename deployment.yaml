@@ -9,7 +9,7 @@ apiVersion: v1
 metadata:
   name: vulcan-application
   labels:
-    tags.datadoghq.com/env: dev
+    env: dev
 
 
 
@@ -27,8 +27,8 @@ metadata:
   name: vulcan
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: dev
-    tags.datadoghq.com/service: vulcan
+    env: dev
+    service: vulcan
 spec:
   type: NodePort
   externalTrafficPolicy: Local
@@ -37,7 +37,7 @@ spec:
       targetPort: 443
       nodePort: 32100
   selector:
-    tags.datadoghq.com/service: vulcan
+    service: vulcan
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -45,32 +45,20 @@ metadata:
   name: vulcan
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: dev
-    tags.datadoghq.com/service: vulcan
+    env: dev
+    service: vulcan
 spec:
   replicas: 1
   selector:
     matchLabels:
-      tags.datadoghq.com/service: vulcan
+      service: vulcan
   template:
     metadata:
       labels:
-        tags.datadoghq.com/env: dev
-        tags.datadoghq.com/service: vulcan
-      annotations:
-        ad.datadoghq.com/init-vulcan.logs: '[{"source":"startup-script","service":"vulcan"}]'
-        ad.datadoghq.com/vulcan.logs: '[{"source":"java","service":"vulcan"}]'
-        ad.datadoghq.com/vulcan-sessions.logs: '[{"source":"redis","service":"vulcan-sessions"}]'
-        ad.datadoghq.com/redisdb.checks: '{"redisdb":{"instances":[{"host":"vulcan-sessions","port":"6379","password":""}]}}'
-        ad.datadoghq.com/tags: '{"team":"matthew"}'
+        env: dev
+        service: vulcan
     spec:
       volumes:
-        - name: logs
-          hostPath:
-            path: /vulcan-data/logs/
-        - name: apmsocketpath
-          hostPath:
-            path: /var/run/datadog/
         - name: workdir
           emptyDir: {}
       initContainers:
@@ -82,9 +70,9 @@ spec:
             - name: workdir
               mountPath: /vulcan
           env:
-            - name: DD_ENV
+            - name: ENV
               value: dev
-            - name: DD_SERVICE
+            - name: SERVICE
               value: vulcan
           resources:
             limits:
@@ -104,43 +92,15 @@ spec:
             - "--logging.config=/vulcan/services/vulcan/src/log4j2.xml"
           workingDir: /vulcan/services/vulcan
           volumeMounts:
-            - name: logs
-              mountPath: /logs
-            - name: apmsocketpath
-              mountPath: /var/run/datadog
             - name: workdir
               mountPath: /vulcan
           env:
-            - name: DD_ENV
+            - name: ENV
               value: dev
-            - name: DD_SERVICE
+            - name: SERVICE
               value: vulcan
-            - name: DD_VERSION
+            - name: VERSION
               value: "1.3.0"
-            - name: DD_TRACE_SAMPLE_RATE
-              value: "1"
-            - name: DD_PROFILING_ENABLED
-              value: "true"
-            - name: DD_DBM_PROPAGATION_MODE
-              value: "full"
-            - name: DD_APPSEC_ENABLED
-              value: "true"
-            - name: DD_APPSEC_SCA_ENABLED
-              value: "true"
-            - name: DD_IAST_ENABLED
-              value: "true"
-            - name: DD_DYNAMIC_INSTRUMENTATION_ENABLED
-              value: "true"
-            - name: DD_SYMBOL_DATABASE_UPLOAD_ENABLED
-              value: "true"
-            - name: DD_TRACE_AGENT_URL
-              value: "unix:///var/run/datadog/apm.socket"
-            - name: DD_DOGSTATSD_URL
-              value: "unix:///var/run/datadog/dsd.socket"
-            - name: DD_TRACE_CLIENT_IP_ENABLED
-              value: "true"
-            - name: DD_DATA_STREAMS_ENABLED
-              value: "true"
             - name: CERT_FOLDER
               value: /vulcan/services/vulcan/certificate
             - name: KAFKA_BROKER
@@ -181,14 +141,14 @@ metadata:
   name: user-manager
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: dev
-    tags.datadoghq.com/service: user-manager
+    env: dev
+    service: user-manager
 spec:
   ports:
     - port: 443
       targetPort: 443
   selector:
-    tags.datadoghq.com/service: user-manager
+    service: user-manager
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -196,30 +156,20 @@ metadata:
   name: user-manager
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: dev
-    tags.datadoghq.com/service: user-manager
+    env: dev
+    service: user-manager
 spec:
   replicas: 1
   selector:
     matchLabels:
-      tags.datadoghq.com/service: user-manager
+      service: user-manager
   template:
     metadata:
       labels:
-        tags.datadoghq.com/env: dev
-        tags.datadoghq.com/service: user-manager
-      annotations:
-        ad.datadoghq.com/init-user-manager.logs: '[{"source":"startup-script","service":"user-manager"}]'
-        ad.datadoghq.com/user-manager.logs: '[{"source":"nodejs","service":"user-manager"}]'
-        ad.datadoghq.com/tags: '{"team":"matthew"}'
+        env: dev
+        service: user-manager
     spec:
       volumes:
-        - name: logs
-          hostPath:
-            path: /vulcan-data/logs/
-        - name: apmsocketpath
-          hostPath:
-            path: /var/run/datadog/
         - name: workdir
           emptyDir: {}
       initContainers:
@@ -231,9 +181,9 @@ spec:
             - name: workdir
               mountPath: /vulcan
           env:
-            - name: DD_ENV
+            - name: ENV
               value: dev
-            - name: DD_SERVICE
+            - name: SERVICE
               value: user-manager
           resources:
             limits:
@@ -245,41 +195,15 @@ spec:
           command: ["npm", "start"]
           workingDir: /vulcan/services/user-manager
           volumeMounts:
-            - name: logs
-              mountPath: /logs
-            - name: apmsocketpath
-              mountPath: /var/run/datadog
             - name: workdir
               mountPath: /vulcan
           env:
-            - name: DD_ENV
+            - name: ENV
               value: dev
-            - name: DD_SERVICE
+            - name: SERVICE
               value: user-manager
-            - name: DD_VERSION
+            - name: VERSION
               value: "1.4.0"
-            - name: DD_TRACE_SAMPLE_RATE
-              value: "1"
-            - name: DD_PROFILING_ENABLED
-              value: "true"
-            - name: DD_DBM_PROPAGATION_MODE
-              value: "full"
-            - name: DD_APPSEC_ENABLED
-              value: "true"
-            - name: DD_APPSEC_SCA_ENABLED
-              value: "true"
-            - name: DD_IAST_ENABLED
-              value: "true"
-            - name: DD_DYNAMIC_INSTRUMENTATION_ENABLED
-              value: "true"
-            - name: DD_SYMBOL_DATABASE_UPLOAD_ENABLED
-              value: "true"
-            - name: DD_TRACE_AGENT_URL
-              value: "unix:///var/run/datadog/apm.socket"
-            - name: DD_DOGSTATSD_URL
-              value: "unix:///var/run/datadog/dsd.socket"
-            - name: DD_TRACE_CLIENT_IP_ENABLED
-              value: "true"
             - name: CERT_FOLDER
               value: /vulcan/services/user-manager/certificate
           ports:
@@ -299,14 +223,14 @@ metadata:
   name: god-manager
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: dev
-    tags.datadoghq.com/service: god-manager
+    env: dev
+    service: god-manager
 spec:
   ports:
     - port: 443
       targetPort: 443
   selector:
-    tags.datadoghq.com/service: god-manager
+    service: god-manager
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -314,30 +238,20 @@ metadata:
   name: god-manager
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: dev
-    tags.datadoghq.com/service: god-manager
+    env: dev
+    service: god-manager
 spec:
   replicas: 1
   selector:
     matchLabels:
-      tags.datadoghq.com/service: god-manager
+      service: god-manager
   template:
     metadata:
       labels:
-        tags.datadoghq.com/env: dev
-        tags.datadoghq.com/service: god-manager
-      annotations:
-        ad.datadoghq.com/init-god-manager.logs: '[{"source":"startup-script","service":"god-manager"}]'
-        ad.datadoghq.com/god-manager.logs: '[{"source":"golang","service":"god-manager"}]'
-        ad.datadoghq.com/tags: '{"team":"matthew"}'
+        env: dev
+        service: god-manager
     spec:
       volumes:
-        - name: logs
-          hostPath:
-            path: /vulcan-data/logs/
-        - name: apmsocketpath
-          hostPath:
-            path: /var/run/datadog/
         - name: workdir
           emptyDir: {}
       initContainers:
@@ -349,9 +263,9 @@ spec:
             - name: workdir
               mountPath: /vulcan
           env:
-            - name: DD_ENV
+            - name: ENV
               value: dev
-            - name: DD_SERVICE
+            - name: SERVICE
               value: god-manager
           resources:
             limits:
@@ -363,43 +277,15 @@ spec:
           command: ["/vulcan/services/god-manager/build/god-manager"]
           workingDir: /vulcan/services/god-manager
           volumeMounts:
-            - name: logs
-              mountPath: /logs
-            - name: apmsocketpath
-              mountPath: /var/run/datadog
             - name: workdir
               mountPath: /vulcan
           env:
-            - name: DD_ENV
+            - name: ENV
               value: dev
-            - name: DD_SERVICE
+            - name: SERVICE
               value: god-manager
-            - name: DD_VERSION
+            - name: VERSION
               value: "1.0.1"
-            - name: DD_TRACE_SAMPLE_RATE
-              value: "1"
-            - name: DD_PROFILING_ENABLED
-              value: "true"
-            - name: DD_DBM_PROPAGATION_MODE
-              value: "full"
-            - name: DD_APPSEC_ENABLED
-              value: "true"
-            - name: DD_APPSEC_SCA_ENABLED
-              value: "true"
-            - name: DD_IAST_ENABLED
-              value: "true"
-            - name: DD_PROFILING_EXECUTION_TRACE_ENABLED
-              value: "true"
-            - name: DD_DYNAMIC_INSTRUMENTATION_ENABLED
-              value: "true"
-            - name: DD_SYMBOL_DATABASE_UPLOAD_ENABLED
-              value: "true"
-            - name: DD_TRACE_AGENT_URL
-              value: "unix:///var/run/datadog/apm.socket"
-            - name: DD_DOGSTATSD_URL
-              value: "unix:///var/run/datadog/dsd.socket"
-            - name: DD_TRACE_CLIENT_IP_ENABLED
-              value: "true"
             - name: CERT_FOLDER
               value: /vulcan/services/god-manager/certificate
           ports:
@@ -426,14 +312,14 @@ metadata:
   name: authenticator
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: dev
-    tags.datadoghq.com/service: authenticator
+    env: dev
+    service: authenticator
 spec:
   ports:
     - port: 443
       targetPort: 443
   selector:
-    tags.datadoghq.com/service: authenticator
+    service: authenticator
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -441,30 +327,20 @@ metadata:
   name: authenticator
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: dev
-    tags.datadoghq.com/service: authenticator
+    env: dev
+    service: authenticator
 spec:
   replicas: 1
   selector:
     matchLabels:
-      tags.datadoghq.com/service: authenticator
+      service: authenticator
   template:
     metadata:
       labels:
-        tags.datadoghq.com/env: dev
-        tags.datadoghq.com/service: authenticator
-      annotations:
-        ad.datadoghq.com/init-authenticator.logs: '[{"source":"startup-script","service":"authenticator"}]'
-        ad.datadoghq.com/authenticator.logs: '[{"source":"python","service":"authenticator"}]'
-        ad.datadoghq.com/tags: '{"team":"matthew"}'
+        env: dev
+        service: authenticator
     spec:
       volumes:
-        - name: logs
-          hostPath:
-            path: /vulcan-data/logs/
-        - name: apmsocketpath
-          hostPath:
-            path: /var/run/datadog/
         - name: workdir
           emptyDir: {}
       containers:
@@ -474,45 +350,15 @@ spec:
           args: ["-c", "wget -nv -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | bash -s"]
           workingDir: /vulcan/services/authenticator
           volumeMounts:
-            - name: logs
-              mountPath: /logs
-            - name: apmsocketpath
-              mountPath: /var/run/datadog
             - name: workdir
               mountPath: /vulcan
           env:
-            - name: DD_ENV
+            - name: ENV
               value: dev
-            - name: DD_SERVICE
+            - name: SERVICE
               value: authenticator
-            - name: DD_VERSION
+            - name: VERSION
               value: "1.2.1"
-            - name: DD_TRACE_SAMPLE_RATE
-              value: "1"
-            - name: DD_PROFILING_ENABLED
-              value: "true"
-            - name: DD_DBM_PROPAGATION_MODE
-              value: "full"
-            - name: DD_APPSEC_ENABLED
-              value: "true"
-            - name: DD_APPSEC_SCA_ENABLED
-              value: "true"
-            - name: DD_IAST_ENABLED
-              value: "true"
-            - name: DD_LOGS_INJECTION
-              value: "true"
-            - name: DD_PROFILING_TIMELINE_ENABLED
-              value: "true"
-            - name: DD_DYNAMIC_INSTRUMENTATION_ENABLED
-              value: "true"
-            - name: DD_SYMBOL_DATABASE_UPLOAD_ENABLED
-              value: "true"
-            - name: DD_TRACE_AGENT_URL
-              value: "unix:///var/run/datadog/apm.socket"
-            - name: DD_DOGSTATSD_URL
-              value: "unix:///var/run/datadog/dsd.socket"
-            - name: DD_TRACE_CLIENT_IP_ENABLED
-              value: "true"
             - name: CERT_FOLDER
               value: /vulcan/services/authenticator/certificate
             - name: PW_PEPPER
@@ -537,14 +383,14 @@ metadata:
   name: scribe
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: dev
-    tags.datadoghq.com/service: scribe
+    env: dev
+    service: scribe
 spec:
   ports:
     - port: 443
       targetPort: 443
   selector:
-    tags.datadoghq.com/service: scribe
+    service: scribe
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -552,30 +398,20 @@ metadata:
   name: scribe
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: dev
-    tags.datadoghq.com/service: scribe
+    env: dev
+    service: scribe
 spec:
   replicas: 1
   selector:
     matchLabels:
-      tags.datadoghq.com/service: scribe
+      service: scribe
   template:
     metadata:
       labels:
-        tags.datadoghq.com/env: dev
-        tags.datadoghq.com/service: scribe
-      annotations:
-        ad.datadoghq.com/init-scribe.logs: '[{"source":"startup-script","service":"scribe"}]'
-        ad.datadoghq.com/scribe.logs: '[{"source":"nodejs","service":"scribe"}]'
-        ad.datadoghq.com/tags: '{"team":"matthew"}'
+        env: dev
+        service: scribe
     spec:
       volumes:
-        - name: logs
-          hostPath:
-            path: /vulcan-data/logs/
-        - name: apmsocketpath
-          hostPath:
-            path: /var/run/datadog/
         - name: workdir
           emptyDir: {}
       initContainers:
@@ -587,9 +423,9 @@ spec:
             - name: workdir
               mountPath: /vulcan
           env:
-            - name: DD_ENV
+            - name: ENV
               value: dev
-            - name: DD_SERVICE
+            - name: SERVICE
               value: scribe
           resources:
             limits:
@@ -601,45 +437,15 @@ spec:
           command: ["npm", "start"]
           workingDir: /vulcan/services/scribe
           volumeMounts:
-            - name: logs
-              mountPath: /logs
-            - name: apmsocketpath
-              mountPath: /var/run/datadog
             - name: workdir
               mountPath: /vulcan
           env:
-            - name: DD_ENV
+            - name: ENV
               value: dev
-            - name: DD_SERVICE
+            - name: SERVICE
               value: scribe
-            - name: DD_VERSION
+            - name: VERSION
               value: "0.2.0"
-            - name: DD_TRACE_SAMPLE_RATE
-              value: "1"
-            - name: DD_PROFILING_ENABLED
-              value: "true"
-            - name: DD_DBM_PROPAGATION_MODE
-              value: "full"
-            - name: DD_APPSEC_ENABLED
-              value: "true"
-            - name: DD_APPSEC_SCA_ENABLED
-              value: "true"
-            - name: DD_IAST_ENABLED
-              value: "true"
-            - name: DD_LOGS_INJECTION
-              value: "true"
-            - name: DD_DYNAMIC_INSTRUMENTATION_ENABLED
-              value: "true"
-            - name: DD_SYMBOL_DATABASE_UPLOAD_ENABLED
-              value: "true"
-            - name: DD_TRACE_AGENT_URL
-              value: "unix:///var/run/datadog/apm.socket"
-            - name: DD_DOGSTATSD_URL
-              value: "unix:///var/run/datadog/dsd.socket"
-            - name: DD_TRACE_CLIENT_IP_ENABLED
-              value: "true"
-            - name: DD_DATA_STREAMS_ENABLED
-              value: "true"
             - name: CERT_FOLDER
               value: /vulcan/services/scribe/certificate
             - name: KAFKA_BROKER
@@ -663,14 +469,14 @@ metadata:
   name: delphi
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: dev
-    tags.datadoghq.com/service: delphi
+    env: dev
+    service: delphi
 spec:
   ports:
     - port: 443
       targetPort: 443
   selector:
-    tags.datadoghq.com/service: delphi
+    service: delphi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -678,30 +484,20 @@ metadata:
   name: delphi
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: dev
-    tags.datadoghq.com/service: delphi
+    env: dev
+    service: delphi
 spec:
   replicas: 1
   selector:
     matchLabels:
-      tags.datadoghq.com/service: delphi
+      service: delphi
   template:
     metadata:
       labels:
-        tags.datadoghq.com/env: dev
-        tags.datadoghq.com/service: delphi
-      annotations:
-        ad.datadoghq.com/init-delphi.logs: '[{"source":"startup-script","service":"delphi"}]'
-        ad.datadoghq.com/delphi.logs: '[{"source":"python","service":"delphi"}]'
-        ad.datadoghq.com/tags: '{"team":"matthew"}'
+        env: dev
+        service: delphi
     spec:
       volumes:
-        - name: logs
-          hostPath:
-            path: /vulcan-data/logs/
-        - name: apmsocketpath
-          hostPath:
-            path: /var/run/datadog/
         - name: workdir
           emptyDir: {}
       containers:
@@ -711,51 +507,15 @@ spec:
           args: ["-c", "wget -nv -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | bash -s"]
           workingDir: /vulcan/services/delphi
           volumeMounts:
-            - name: logs
-              mountPath: /logs
-            - name: apmsocketpath
-              mountPath: /var/run/datadog
             - name: workdir
               mountPath: /vulcan
           env:
-            - name: DD_ENV
+            - name: ENV
               value: dev
-            - name: DD_SERVICE
+            - name: SERVICE
               value: delphi
-            - name: DD_VERSION
+            - name: VERSION
               value: "0.2.0"
-            - name: DD_TRACE_SAMPLE_RATE
-              value: "1"
-            - name: DD_PROFILING_ENABLED
-              value: "true"
-            - name: DD_DBM_PROPAGATION_MODE
-              value: "full"
-            - name: DD_APPSEC_ENABLED
-              value: "true"
-            - name: DD_APPSEC_SCA_ENABLED
-              value: "true"
-            - name: DD_IAST_ENABLED
-              value: "true"
-            - name: DD_LOGS_INJECTION
-              value: "true"
-            - name: DD_PROFILING_TIMELINE_ENABLED
-              value: "true"
-            - name: DD_DYNAMIC_INSTRUMENTATION_ENABLED
-              value: "true"
-            - name: DD_SYMBOL_DATABASE_UPLOAD_ENABLED
-              value: "true"
-            - name: DD_TRACE_AGENT_URL
-              value: "unix:///var/run/datadog/apm.socket"
-            - name: DD_DOGSTATSD_URL
-              value: "unix:///var/run/datadog/dsd.socket"
-            - name: DD_TRACE_CLIENT_IP_ENABLED
-              value: "true"
-            - name: DD_DATA_STREAMS_ENABLED
-              value: "true"
-            - name: DD_LLMOBS_ENABLED
-              value: "1"
-            - name: DD_LLMOBS_ML_APP
-              value: delphi
             - name: CERT_FOLDER
               value: /vulcan/services/delphi/certificate
             - name: KAFKA_BROKER
@@ -782,8 +542,8 @@ metadata:
   name: notes-queue
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: dev
-    tags.datadoghq.com/service: notes-queue
+    env: dev
+    service: notes-queue
 spec:
   type: NodePort
   externalTrafficPolicy: Local
@@ -796,7 +556,7 @@ spec:
       port: 9092
       targetPort: 9092
   selector:
-    tags.datadoghq.com/service: notes-queue
+    service: notes-queue
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -804,46 +564,30 @@ metadata:
   name: notes-queue
   namespace: vulcan-application
   labels:
-    tags.datadoghq.com/env: dev
-    tags.datadoghq.com/service: notes-queue
+    env: dev
+    service: notes-queue
 spec:
   replicas: 1
   selector:
     matchLabels:
-      tags.datadoghq.com/service: notes-queue
+      service: notes-queue
   template:
     metadata:
       labels:
-        tags.datadoghq.com/env: dev
-        tags.datadoghq.com/service: notes-queue
-      annotations:
-        ad.datadoghq.com/notes-queue.checks: '{"kafka":{"init_config":{"is_jmx":true,"collect_default_metrics":true},"instances":[{"host":"%%host%%","port":"9091"}]}}'
-        ad.datadoghq.com/notes-queue.logs: '[{"source":"kafka","service":"notes-queue","log_processing_rules":[{"type":"multi_line","name":"log_date_start","pattern":"\\[\\d{4}-(0[1-9]|1[012])-([012][0-9]|3[01]) ([01][1-9]|2[0123]):([012345][0-9]):([012345][0-9]),\\d{3}\\]"}]}]'
-        ad.datadoghq.com/tags: '{"team":"matthew"}'
+        env: dev
+        service: notes-queue
     spec:
-      volumes:
-        - name: logs
-          hostPath:
-            path: /vulcan-data/logs/
-        - name: apmsocketpath
-          hostPath:
-            path: /var/run/datadog/
       containers:
         - name: notes-queue
           image: apache/kafka:3.7.2
-          volumeMounts:
-            - name: logs
-              mountPath: /logs
-            - name: apmsocketpath
-              mountPath: /var/run/datadog
           env:
             - name: POD_IP
               valueFrom:
                 fieldRef:
                   fieldPath: status.podIP
-            - name: DD_ENV
+            - name: ENV
               value: dev
-            - name: DD_SERVICE
+            - name: SERVICE
               value: notes-queue
             - name: KAFKA_PROCESS_ROLES
               value: "broker,controller"

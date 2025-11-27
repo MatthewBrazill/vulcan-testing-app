@@ -9,12 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
-import io.opentracing.Span;
-import io.opentracing.Tracer;
-import io.opentracing.log.Fields;
-import io.opentracing.tag.Tags;
-import io.opentracing.util.GlobalTracer;
-
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -36,7 +30,6 @@ import com.password4j.BcryptFunction;
 import com.password4j.Password;
 import com.password4j.types.Bcrypt;
 
-import datadog.trace.api.DDTags;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import vulcan.Helpers;
@@ -47,10 +40,9 @@ public class Users {
 	@RequestMapping(value = "/user/{username}", method = RequestMethod.GET)
 	public String userPage(HttpServletRequest req, HttpServletResponse res, @PathVariable String username, Model model) {
 		// Function variables
-		Span span = GlobalTracer.get().activeSpan();
 		HashMap<String, Object> body = Helpers.decodeBody(req);
 		Logger logger = LogManager.getLogger("vulcan");
-        model.addAttribute("env", System.getenv("DD_ENV"));
+        model.addAttribute("env", System.getenv("ENV"));
 		model.addAttribute("title", "User: '" + username + "'");
 
 		// Authorize
@@ -99,10 +91,6 @@ public class Users {
 				} catch (Exception e) {
 					res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 					model.addAttribute("message", "There was an issue with the Server, please try again later.");
-
-					span.setTag(Tags.ERROR, true);
-					span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
-
 					logger.error("vulcan encountered error during user retrieval: " + e.getMessage(), e);
 					return "error";
 				}
@@ -130,7 +118,6 @@ public class Users {
 	@RequestMapping(value = "/users/all", method = RequestMethod.GET)
 	public HashMap<String, Object> getAllUserAPI(HttpServletRequest req, HttpServletResponse res) {
 		// Function variables
-		Span span = GlobalTracer.get().activeSpan();
 		HashMap<String, Object> body = Helpers.decodeBody(req);
 		HashMap<String, Object> output = new HashMap<>();
 		Logger logger = LogManager.getLogger("vulcan");
@@ -177,10 +164,6 @@ public class Users {
 				} catch (Exception e) {
 					res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 					output.put("message", "There was an issue with the Server, please try again later.");
-
-					span.setTag(Tags.ERROR, true);
-					span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
-
 					logger.error("vulcan encountered error during user retrieval: " + e.getMessage(), e);
 					return output;
 				}
@@ -202,7 +185,6 @@ public class Users {
 	@RequestMapping(value = "/user/{username}/note/create", method = RequestMethod.POST)
 	public HashMap<String, Object> userAddNoteAPI(HttpServletRequest req, HttpServletResponse res, @PathVariable String username) {
 		// Function variables
-		Span span = GlobalTracer.get().activeSpan();
 		HashMap<String, Object> body = Helpers.decodeBody(req);
 		HashMap<String, Object> output = new HashMap<>();
 		Logger logger = LogManager.getLogger("vulcan");
@@ -222,13 +204,6 @@ public class Users {
 					// Run kafka message prep, creation and send in new thread
 					new Thread(null, null, "Kafka-Producer") {
 						public void run() {
-							Tracer tracer = GlobalTracer.get();
-							Span kafkaSpan = tracer.buildSpan("vulcan.kafka")
-								.withTag(DDTags.RESOURCE_NAME, "Users.sendKafkaMessage")
-								.asChildOf(span)
-								.start();
-							tracer.activateSpan(kafkaSpan);
-
 							// Prep note object
 							HashMap<String, Object> note = new HashMap<String, Object>();
 							note.put("username", username);
@@ -249,8 +224,6 @@ public class Users {
 							kafka.send(message);
 							kafka.flush();
 							kafka.close();
-
-							kafkaSpan.finish();
 						}
 					}.start();
 
@@ -261,10 +234,6 @@ public class Users {
 				} catch (Exception e) {
 					res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 					output.put("message", "There was an issue with the Server, please try again later.");
-
-					span.setTag(Tags.ERROR, true);
-					span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
-
 					logger.error("vulcan encountered error during user retrieval: " + e.getMessage(), e);
 					return output;
 				}
@@ -286,7 +255,6 @@ public class Users {
 	@RequestMapping(value = "/user/{username}/notes", method = RequestMethod.GET)
 	public HashMap<String, Object> userGetNotesAPI(HttpServletRequest req, HttpServletResponse res, @PathVariable String username) {
 		// Function variables
-		Span span = GlobalTracer.get().activeSpan();
 		HashMap<String, Object> output = new HashMap<>();
 		Logger logger = LogManager.getLogger("vulcan");
 
@@ -337,10 +305,6 @@ public class Users {
 				} catch (Exception e) {
 					res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 					output.put("message", "There was an issue with the Server, please try again later.");
-
-					span.setTag(Tags.ERROR, true);
-					span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
-
 					logger.error("vulcan encountered error during user retrieval: " + e.getMessage(), e);
 					return output;
 				}
@@ -360,7 +324,7 @@ public class Users {
 
 	@RequestMapping(value = "/user/join", method = RequestMethod.GET)
 	public String userPage(Model model) {
-        model.addAttribute("env", System.getenv("DD_ENV"));
+        model.addAttribute("env", System.getenv("ENV"));
 		model.addAttribute("title", "Join Vulcan");
 		return "join";
 	}
@@ -369,7 +333,6 @@ public class Users {
 	@RequestMapping(value = "/user/create", method = RequestMethod.POST)
 	public HashMap<String, Object> userCreateAPI(HttpServletRequest req, HttpServletResponse res) {
 		// Function variables
-		Span span = GlobalTracer.get().activeSpan();
 		HashMap<String, Object> body = Helpers.decodeBody(req);
 		HashMap<String, Object> output = new HashMap<>();
 		Logger logger = LogManager.getLogger("vulcan");
@@ -415,10 +378,6 @@ public class Users {
 		} catch (Exception e) {
 			res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			output.put("message", "There was an issue with the Server, please try again later.");
-
-			span.setTag(Tags.ERROR, true);
-			span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
-
 			logger.error("vulcan encountered error during user creation: " + e.getMessage(), e);
 			return output;
 		}
@@ -428,7 +387,6 @@ public class Users {
 	@RequestMapping(value = "/user/delete", method = RequestMethod.POST)
 	public HashMap<String, Object> userDeleteAPI(HttpServletRequest req, HttpServletResponse res) {
 		// Function variables
-		Span span = GlobalTracer.get().activeSpan();
 		HashMap<String, Object> body = Helpers.decodeBody(req);
 		HashMap<String, Object> output = new HashMap<>();
 		Logger logger = LogManager.getLogger("vulcan");
@@ -472,10 +430,6 @@ public class Users {
 				} catch (Exception e) {
 					res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 					output.put("message", "There was an issue with the Server, please try again later.");
-
-					span.setTag(Tags.ERROR, true);
-					span.log(Collections.singletonMap(Fields.ERROR_OBJECT, e));
-
 					logger.error("vulcan encountered error during user deletion: " + e.getMessage(), e);
 					return output;
 				}

@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/sirupsen/logrus"
-	//dd_logrus "gopkg.in/DataDog/dd-trace-go.v1/contrib/sirupsen/logrus"
 )
 
 // Global variables
@@ -16,9 +15,9 @@ var env string
 
 func main() {
 	// Change settings based on environment
-	service = os.Getenv("DD_SERVICE")
-	version = os.Getenv("DD_VERSION")
-	env = os.Getenv("DD_ENV")
+	service = os.Getenv("SERVICE")
+	version = os.Getenv("VERSION")
+	env = os.Getenv("ENV")
 
 	// Define default context
 	ctx := context.Background()
@@ -34,7 +33,6 @@ func main() {
 	// Configure logrus
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 	logrus.SetLevel(logrus.TraceLevel)
-	//logrus.AddHook(&dd_logrus.DDContextLogHook{})
 	//logrus.SetOutput(file)
 
 	// Get gin engine
