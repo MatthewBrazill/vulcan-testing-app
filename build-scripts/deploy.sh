@@ -1,24 +1,22 @@
 #! bin/bash
 #
-# Deploy script for Vulcan App that starts the application in both kubernets
+# Deploy script for Vulcan App that starts the application in both kubernetes
 # and docker. The script has a few options, specifically:
 #   -d -- Deploys the application on Docker
 #   -k -- Deploys the application on Kubernetes (uses default cluster)
-#      `- Ommitting both of these options will deploy on both Kubernetes
+#      `- Omitting both of these options will deploy on both Kubernetes
 #         and Docker
-#   -t -- Taredown any exitsing configs before deploying. Usefull to makes
+#   -t -- Teardown any existing configs before deploying. Useful to makes
 #         sure code changes are applied and theres a fresh start. Database
 #         content is preserved.
 
-build=0
-taredown=0
+teardown=0
 application=0
 monitoring=0
-while getopts "btam" flag
+while getopts "tam" flag
 do
     case $flag in
-        "b") build=1;;
-        "t") taredown=1;;
+        "t") teardown=1;;
         "a") application=1;;
         "m") monitoring=1;;
     esac
@@ -35,46 +33,16 @@ if [ $(basename ${PWD}) != "vulcan-testing-app" ]; then
     exit 1
 fi
 
-# Build JS Files and Maps
-if [ "$build" == 1 ]; then
-    printf "Miniying JS maps...\n"
-
-    if which wget >/dev/null ; then
-        wget -nc -nv -O build-scripts/closure-compiler.jar https://repo1.maven.org/maven2/com/google/javascript/closure-compiler/v20240317/closure-compiler-v20240317.jar
-    elif which curl >/dev/null ; then
-        curl -s -o build-scripts/closure-compiler.jar https://repo1.maven.org/maven2/com/google/javascript/closure-compiler/v20240317/closure-compiler-v20240317.jar
-    fi
-
-    for jsFile in services/frontend/javascript/*.js; do
-        printf "  Minifying $(basename $jsFile)\n"
-        java -jar build-scripts/closure-compiler.jar \
-        --js $jsFile \
-        --js_output_file services/frontend/statics/js/$(basename $jsFile .js).min.js \
-        --create_source_map services/frontend/statics/js/$(basename $jsFile .js).min.js.map \
-        --source_map_include_content true
-    done
-    printf "Done minifying JS maps!\n\n"
-
-    # Upload Maps to Datadog
-    if which datadog-ci >/dev/null ; then
-        printf "Uploading JS Maps to Datadog...\n"
-        datadog-ci sourcemaps upload services/frontend/statics/js --service vulcan-app --release-version 1.14 --minified-path-prefix /js/ | grep --line-buffered "^Uploading sourcemap*" | sed "s/^/  /"
-        printf "Done uploading JS maps!\n\n"
-    else
-        printf "Missing Datadog CI tool; skipping JS Map upload.\n\n"
-    fi
-fi
-
-# Taredown Application
-if [ "$taredown" == 1 ]; then
-    printf "Vulcan Application Taredown...\n"
+# Teardown Application
+if [ "$teardown" == 1 ]; then
+    printf "Vulcan Application teardown...\n"
 
     printf "  Docker...\n"
     docker compose down | sed "s/^/    /"
     printf "  Kubernetes...\n"
     kubectl delete -f deployment.yaml | sed "s/^/    /"
 
-    printf "Finished taredown!\n\n"
+    printf "Finished teardown!\n\n"
 fi
 
 # Deploy Application
@@ -92,9 +60,9 @@ if [ "$application" == 1 ]; then
     printf "Finsihed deploying! You can now use the Vulcan App: https://localhost/login\n\n"
 fi
 
-# Taredown Monitoring
-if [ "$monitoring" == 1 ] && [ "$taredown" == 1 ]; then
-    printf "Monitoring Resources Taredown...\n"
+# Teardown Monitoring
+if [ "$monitoring" == 1 ] && [ "$teardown" == 1 ]; then
+    printf "Monitoring Resources teardown...\n"
 
     printf "  Docker...\n"
     docker compose --file ./services/monitoring/docker-compose.yaml down | sed "s/^/    /"

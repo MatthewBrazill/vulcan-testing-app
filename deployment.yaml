@@ -65,9 +65,6 @@ spec:
         ad.datadoghq.com/tags: '{"team":"matthew"}'
     spec:
       volumes:
-        - name: logs
-          hostPath:
-            path: /vulcan-data/logs/
         - name: apmsocketpath
           hostPath:
             path: /var/run/datadog/
@@ -104,8 +101,6 @@ spec:
             - "--logging.config=/vulcan/services/vulcan/src/log4j2.xml"
           workingDir: /vulcan/services/vulcan
           volumeMounts:
-            - name: logs
-              mountPath: /logs
             - name: apmsocketpath
               mountPath: /var/run/datadog
             - name: workdir
@@ -141,6 +136,8 @@ spec:
               value: "true"
             - name: DD_DATA_STREAMS_ENABLED
               value: "true"
+            - name: FRONTEND_VERSION
+              value: "1.14.0"
             - name: CERT_FOLDER
               value: /vulcan/services/vulcan/certificate
             - name: KAFKA_BROKER
@@ -214,9 +211,6 @@ spec:
         ad.datadoghq.com/tags: '{"team":"matthew"}'
     spec:
       volumes:
-        - name: logs
-          hostPath:
-            path: /vulcan-data/logs/
         - name: apmsocketpath
           hostPath:
             path: /var/run/datadog/
@@ -245,8 +239,6 @@ spec:
           command: ["npm", "start"]
           workingDir: /vulcan/services/user-manager
           volumeMounts:
-            - name: logs
-              mountPath: /logs
             - name: apmsocketpath
               mountPath: /var/run/datadog
             - name: workdir
@@ -332,9 +324,6 @@ spec:
         ad.datadoghq.com/tags: '{"team":"matthew"}'
     spec:
       volumes:
-        - name: logs
-          hostPath:
-            path: /vulcan-data/logs/
         - name: apmsocketpath
           hostPath:
             path: /var/run/datadog/
@@ -363,8 +352,6 @@ spec:
           command: ["/vulcan/services/god-manager/build/god-manager"]
           workingDir: /vulcan/services/god-manager
           volumeMounts:
-            - name: logs
-              mountPath: /logs
             - name: apmsocketpath
               mountPath: /var/run/datadog
             - name: workdir
@@ -459,9 +446,6 @@ spec:
         ad.datadoghq.com/tags: '{"team":"matthew"}'
     spec:
       volumes:
-        - name: logs
-          hostPath:
-            path: /vulcan-data/logs/
         - name: apmsocketpath
           hostPath:
             path: /var/run/datadog/
@@ -474,8 +458,6 @@ spec:
           args: ["-c", "wget -nv -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | bash -s"]
           workingDir: /vulcan/services/authenticator
           volumeMounts:
-            - name: logs
-              mountPath: /logs
             - name: apmsocketpath
               mountPath: /var/run/datadog
             - name: workdir
@@ -570,9 +552,6 @@ spec:
         ad.datadoghq.com/tags: '{"team":"matthew"}'
     spec:
       volumes:
-        - name: logs
-          hostPath:
-            path: /vulcan-data/logs/
         - name: apmsocketpath
           hostPath:
             path: /var/run/datadog/
@@ -601,8 +580,6 @@ spec:
           command: ["npm", "start"]
           workingDir: /vulcan/services/scribe
           volumeMounts:
-            - name: logs
-              mountPath: /logs
             - name: apmsocketpath
               mountPath: /var/run/datadog
             - name: workdir
@@ -696,9 +673,6 @@ spec:
         ad.datadoghq.com/tags: '{"team":"matthew"}'
     spec:
       volumes:
-        - name: logs
-          hostPath:
-            path: /vulcan-data/logs/
         - name: apmsocketpath
           hostPath:
             path: /var/run/datadog/
@@ -711,8 +685,6 @@ spec:
           args: ["-c", "wget -nv -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | bash -s"]
           workingDir: /vulcan/services/delphi
           volumeMounts:
-            - name: logs
-              mountPath: /logs
             - name: apmsocketpath
               mountPath: /var/run/datadog
             - name: workdir
@@ -822,9 +794,6 @@ spec:
         ad.datadoghq.com/tags: '{"team":"matthew"}'
     spec:
       volumes:
-        - name: logs
-          hostPath:
-            path: /vulcan-data/logs/
         - name: apmsocketpath
           hostPath:
             path: /var/run/datadog/
@@ -832,8 +801,6 @@ spec:
         - name: notes-queue
           image: apache/kafka:3.7.2
           volumeMounts:
-            - name: logs
-              mountPath: /logs
             - name: apmsocketpath
               mountPath: /var/run/datadog
           env:
