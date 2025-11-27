@@ -34,6 +34,19 @@
     echo "starting service $SERVICE..."
     case $SERVICE in
         "vulcan")
+            # Minify JS Files
+            echo "minifying js maps..."
+            curl -s -o /vulcan/build-scripts/closure-compiler.jar https://repo1.maven.org/maven2/com/google/javascript/closure-compiler/v20240317/closure-compiler-v20240317.jar
+            for jsFile in /vulcan/services/frontend/javascript/*.js; do
+                echo "minifying $(basename $jsFile)"
+                java -jar build-scripts/closure-compiler.jar \
+                --js $jsFile \
+                --js_output_file /vulcan/services/frontend/statics/js/$(basename $jsFile .js).min.js \
+                --create_source_map /vulcan/services/frontend/statics/js/$(basename $jsFile .js).min.js.map \
+                --source_map_include_content true
+            done
+            echo "done minifying JS maps"
+
             keytool -import -noprompt -alias user-manager-cert -cacerts -file /vulcan/services/user-manager/certificate/cert.pem -storepass changeit
             keytool -import -noprompt -alias god-manager-cert -cacerts -file /vulcan/services/god-manager/certificate/cert.pem -storepass changeit
             keytool -import -noprompt -alias authenticator-cert -cacerts -file /vulcan/services/authenticator/certificate/cert.pem -storepass changeit
