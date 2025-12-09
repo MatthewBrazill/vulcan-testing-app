@@ -62,18 +62,18 @@ $(document).ready(() => {
                 },
                 beforeSend: () => {
                     $("#divination-output").attr("class", "")
-                    $("#divination-output-loader").attr("class", "ui active text loader")
+                    $("#divination-output-loader").attr("class", "ui active centered inline text loader")
                     $("#divination-output-text").attr("class", "ui hidden")
                 },
                 success: (res) => {
                     $("#divination-output").attr("class", "")
-                    $("#divination-output-loader").attr("class", "ui hidden text loader")
+                    $("#divination-output-loader").attr("class", "ui hidden centered inline text loader")
                     $("#divination-output-text").text(res.prediction)
                     $("#divination-output-text").attr("class", "ui active")
                 },
                 error: (res) => {
                     $("#divination-output").attr("class", "")
-                    $("#divination-output-loader").attr("class", "ui hidden text loader")
+                    $("#divination-output-loader").attr("class", "ui hidden centered inline text loader")
                     $("#divination-output-text").text(res.prediction)
                     $("#divination-output-text").attr("class", "ui active")
                 }
@@ -136,7 +136,7 @@ function searchWait(req) {
 
     // Make style adjustments
     $("#god-list").attr("class", "")
-    $("#god-list-loader").attr("class", "ui active text loader")
+    $("#god-list-loader").attr("class", "ui active centered inline text loader")
     $("#god-list-error").attr('class', 'ui hidden error message')
 }
 
@@ -163,7 +163,7 @@ function searchSuccess(res) {
 
     // Make style adjustments
     $("#god-list").attr("class", "")
-    $("#god-list-loader").attr("class", "ui hidden text loader")
+    $("#god-list-loader").attr("class", "ui hidden centered inline text loader")
     $("#god-list-error").attr('class', 'ui hidden error message')
     console.log(`search succeeded: ${res.status}`)
 }
@@ -175,7 +175,7 @@ function searchError(res) {
 
     // Make style adjustments
     $("#god-list").attr("class", "")
-    $("#god-list-loader").attr("class", "ui hidden text loader")
+    $("#god-list-loader").attr("class", "ui hidden centered inline text loader")
     $("#god-list-error").attr('class', 'ui error message')
     console.error(`search failed: ${res.status} - ${res.message}`)
 }

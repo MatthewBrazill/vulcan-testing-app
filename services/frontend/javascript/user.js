@@ -29,7 +29,7 @@ function loadUsers() {
 
             // Make style adjustments
             $("#user-list").attr("class", "")
-            $("#user-list-loader").attr("class", "ui active text loader")
+            $("#user-list-loader").attr("class", "ui active centered inline text loader")
             $("#user-list-error").attr('class', 'ui hidden error message')
         },
         success: (res) => {
@@ -77,7 +77,7 @@ function loadUsers() {
 
             // Make style adjustments
             $("#user-list").attr("class", "")
-            $("#user-list-loader").attr("class", "ui hidden text loader")
+            $("#user-list-loader").attr("class", "ui hidden centered inline text loader")
             $("#user-list-error").attr('class', 'ui hidden error message')
             console.log(`getting users succeeded: ${res.status}`)
         },
@@ -87,7 +87,7 @@ function loadUsers() {
 
             // Make style adjustments
             $("#user-list").attr("class", "")
-            $("#user-list-loader").attr("class", "ui hidden text loader")
+            $("#user-list-loader").attr("class", "ui hidden centered inline text loader")
             $("#user-list-error").attr('class', 'ui error message')
             console.error(`getting users failed: ${res.status} - ${res.message}`)
         }

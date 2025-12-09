@@ -10,6 +10,7 @@ $(document).ready(() => {
                 name: $("#add-god-name").val(),
                 domain: $("#add-god-domain").val()
             },
+            beforeSend: () => $("#add-god-loader").attr("class", "ui active centered inline text loader"),
             success: (res) => {
                 window.location = "/storage"
                 console.log(`god addition succeeded: status ${res.status}`)
@@ -17,6 +18,7 @@ $(document).ready(() => {
             error: (res) => {
                 $("#add-god-form").attr('class', 'ui error form')
                 $("#add-god-error-message").text(res.message)
+                $("#add-god-loader").attr("class", "ui hidden centered inline text loader")
                 console.error(`god addition failed: ${res.status} - ${res.message}`)
             }
         })
