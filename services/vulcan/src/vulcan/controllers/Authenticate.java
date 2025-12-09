@@ -37,6 +37,7 @@ public class Authenticate {
 
         model.addAttribute("title", "Login Page");
         model.addAttribute("env", System.getenv("DD_ENV"));
+        model.addAttribute("version", System.getenv("FRONTEND_VERSION"));
         return "login";
     }
 

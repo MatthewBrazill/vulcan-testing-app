@@ -137,7 +137,7 @@ spec:
             - name: DD_DATA_STREAMS_ENABLED
               value: "true"
             - name: FRONTEND_VERSION
-              value: "1.14.0"
+              value: "1.15"
             - name: CERT_FOLDER
               value: /vulcan/services/vulcan/certificate
             - name: KAFKA_BROKER
