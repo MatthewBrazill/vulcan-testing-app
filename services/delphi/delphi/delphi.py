@@ -107,8 +107,9 @@ async def predict(request: Request) -> JSONResponse:
     try:
         body = await request.json()
         if await validate(body, [["god", r"^[a-zA-Z0-9\\!\?\.\-\s]{1,128}$"]]) == False:
-            return JSONResponse(content={ "prediction": """I'm afraid that the future is foggy and ever evolving, my dear. In this case yours seems in flux! I won't be able
-to give you and answer today, but I'm sure we can expect greatness from you!"""
+            return JSONResponse(content={ "prediction": """I'm afraid that the future is foggy and ever evolving, my dear. In this case your 
+question seems too complex for the oracles to answer right now! I won't be able to give you and answer today, but I'm sure we can expect 
+greatness from you!"""
             }, status_code=400)
         
         if body["oracle"] == "delphi":
@@ -124,8 +125,8 @@ antiquity, generate a dark, mysterious and troubling future and prediction for u
 will ask you to predict their future for them. Based the the input given by this user, as well as legends from antiquity, generate a confusing
 and uncertain future and prediction for user. """
         else:
-            return JSONResponse(content={ "prediction": """I'm afraid that the future is foggy and ever evolving, my dear. In this case yours seems in flux! I won't be able
-to give you and answer today, but I'm sure we can expect greatness from you!"""
+            return JSONResponse(content={ "prediction": """I'm afraid that the future is foggy and ever evolving, my dear. In this case your oracle 
+seems to not be responding. I won't be able to give you and answer today, but I'm sure we can expect greatness from you!"""
             }, status_code=404)
 
         gpt = OpenAI()
@@ -149,7 +150,7 @@ be able to give you and answer today, but be sure we can expect greatness from y
         if result.choices != None:
             return JSONResponse(content={ "prediction": result.choices[0].message.content }, status_code=200)
         else:
-            return JSONResponse(content={ "prediction": """I'm afraid that the future is foggy and ever evolving, my dear. In this case yours seems in flux! I won't be able
+            return JSONResponse(content={ "prediction": """I'm afraid that the future is foggy and ever evolving, my dear. In this case yours seems most occluded! I won't be able
 to give you and answer today, but I'm sure we can expect greatness from you!"""
             }, status_code=404)
     
@@ -158,6 +159,6 @@ to give you and answer today, but I'm sure we can expect greatness from you!"""
         span.set_tag("error.message", err)
         span.set_tag("error.stack", traceback.format_exc())
         
-        return JSONResponse(content={ "prediction": """I'm afraid that the future is foggy and ever evolving, my dear. In this case yours seems in flux! I won't be able
+        return JSONResponse(content={ "prediction": """I'm afraid that the future is foggy and ever evolving, my dear. In this case yours is tricky to decern! I won't be able
 to give you and answer today, but I'm sure we can expect greatness from you!"""
         }, status_code=500)
