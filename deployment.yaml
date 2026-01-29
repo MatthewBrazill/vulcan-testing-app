@@ -737,6 +737,11 @@ spec:
                 secretKeyRef:
                   name: vulcan-secrets
                   key: OPENAI_API_KEY
+            - name: DD_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: datadog-api-key
+                  key: api-key
           ports:
             - containerPort: 443
               protocol: TCP
