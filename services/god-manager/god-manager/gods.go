@@ -29,6 +29,7 @@ func CreateGod(ctx *gin.Context) {
 	}
 
 	// Make request to create god description
+	var res *http.Response
 	descriptionRequest := fmt.Sprintf("{\"god\":\"%s\",\"godId\":\"%s\"}", god["name"], god["godId"])
 	req, err := http.NewRequestWithContext(ctx.Request.Context(), http.MethodPost, "https://delphi.vulcan-application.svc.cluster.local/describe", strings.NewReader(descriptionRequest))
 	if err != nil {
@@ -36,9 +37,27 @@ func CreateGod(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, err)
 		return
 	}
+
 	client := http.Client{Transport: &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}}
-	client.Do(req)
-	Log(ctx).WithField("request", descriptionRequest).Debug("sent description request")
+	for i := 0; i < 3; i++ {
+		res, err = client.Do(req)
+		if err == nil {
+			break
+		}
+		Log(ctx).WithError(err).Warnf("description request attempt %d failed", i+1)
+	}
+
+	if err != nil {
+		Log(ctx).WithError(err).Error("failed to connect to description service")
+		ctx.JSON(http.StatusInternalServerError, err)
+		return
+	}
+	if res != nil {
+		defer res.Body.Close()
+	}
+	Log(ctx).WithFields(logrus.Fields{
+		"request": descriptionRequest,
+	}).Debug("sent description request")
 
 	// Get database
 	db, err := GodDatabase(ctx)
@@ -196,6 +215,7 @@ func UpdateGod(ctx *gin.Context) {
 	}
 
 	// Make request to create god description
+	var res *http.Response
 	descriptionRequest := fmt.Sprintf("{\"god\":\"%s\",\"godId\":\"%s\"}", body["name"], body["godId"])
 	req, err := http.NewRequestWithContext(ctx.Request.Context(), http.MethodPost, "https://delphi.vulcan-application.svc.cluster.local/describe", strings.NewReader(descriptionRequest))
 	if err != nil {
@@ -203,9 +223,27 @@ func UpdateGod(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, err)
 		return
 	}
+
 	client := http.Client{Transport: &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}}
-	client.Do(req)
-	Log(ctx).WithField("request", descriptionRequest).Debug("sent description request")
+	for i := 0; i < 3; i++ {
+		res, err = client.Do(req)
+		if err == nil {
+			break
+		}
+		Log(ctx).WithError(err).Warnf("description request attempt %d failed", i+1)
+	}
+
+	if err != nil {
+		Log(ctx).WithError(err).Error("failed to connect to description service")
+		ctx.JSON(http.StatusInternalServerError, err)
+		return
+	}
+	if res != nil {
+		defer res.Body.Close()
+	}
+	Log(ctx).WithFields(logrus.Fields{
+		"request": descriptionRequest,
+	}).Debug("sent description request")
 
 	// Update god
 	result, err := db.Database("vulcanGods").Collection("gods").UpdateOne(ctx.Request.Context(), bson.M{"godId": body["godId"]}, bson.M{"$set": update})
