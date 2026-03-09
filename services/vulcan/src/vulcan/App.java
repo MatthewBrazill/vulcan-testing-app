@@ -91,7 +91,7 @@ public class App implements WebMvcConfigurer {
 		properties.put("server.servlet.session.timeout", 86400);
 		properties.put("server.servlet.session.cookie.name", "vulcan");
 		properties.put("server.servlet.session.cookie.secure", "true");
-		properties.put("server.servlet.session.cookie.same-site", "true");
+		properties.put("server.servlet.session.cookie.same-site", "strict");
 		properties.put("spring.session.store-type", "redis");
 		properties.put("spring.session.redis.flush-mode", "on_save");
 		properties.put("spring.session.redis.namespace", "vulcan:sess");
