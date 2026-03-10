@@ -1,0 +1,204 @@
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+
+jobs:
+  build-authenticator:
+    name: "Test Authenticator"
+    runs-on: pupmac-runner
+    steps:
+    - name: "Checkout Repo"
+      uses: actions/checkout@v6
+      with:
+        sparse-checkout: |
+          services/authenticator
+    - name: "Setup Python"
+      uses: actions/setup-python@v6
+      with:
+        python-version: '3.12'
+    - name: "Install DDTrace"
+      run: pip3 install ddtrace --quiet --root-user-action=ignore --upgrade
+    - name: "Install Dependencies"
+      run: pip3 install -r services/authenticator/requirements.txt --quiet --root-user-action=ignore --upgrade 
+    - name: "Run Authenticator"
+      run: ddtrace-run python3 services/authenticator/authenticator/main.py
+    - name: "Check Health Endpoint"
+      run: curl --fail https://localhost/health
+
+  build-delphi:
+    name: "Test Delphi"
+    runs-on: pupmac-runner
+    steps:
+    - name: "Checkout Repo"
+      uses: actions/checkout@v6
+      with:
+        sparse-checkout: |
+          services/delphi
+    - name: "Setup Python"
+      uses: actions/setup-python@v6
+      with:
+        python-version: '3.12'
+    - name: "Install Datadog Tracer"
+      run: pip3 install ddtrace --quiet --root-user-action=ignore --upgrade
+    - name: "Install Dependencies"
+      run: |
+        pip3 uninstall kafka --quiet --root-user-action=ignore
+        pip3 uninstall kafka-python --quiet --root-user-action=ignore
+        pip3 install -r services/delphi/requirements.txt --quiet --root-user-action=ignore --upgrade 
+    - name: "Run Delphi"
+      run: ddtrace-run python3 services/delphi/delphi/main.py
+    - name: "Check Health Endpoint"
+      run: curl --fail https://localhost/health
+
+  build-god-manager:
+    name: "Test God-Manager"
+    runs-on: pupmac-runner
+    steps:
+    - name: "Checkout Repo"
+      uses: actions/checkout@v6
+      with:
+        sparse-checkout: |
+          services/god-manager
+    - name: "Setup Golang"
+      uses: actions/setup-go@v6
+      with:
+        go-version: '1.25'
+    - name: "Verify go.mod"
+      run: go mod download && go mod verify
+    - name: "Install Orchestrion"
+      run: GOPROXY=direct go install github.com/DataDog/orchestrion@latest
+    - name: "Build Binary"
+      run: orchestrion go build -o build/god-manager -tags appsec services/god-manager/god-manager/...
+    - name: "Run God-Manager"
+      run: build/god-manager
+    - name: "Check Health Endpoint"
+      run: curl --fail https://localhost/health
+
+  build-scribe:
+    name: "Test Scribe"
+    runs-on: pupmac-runner
+    steps:
+    - name: "Checkout Repo"
+      uses: actions/checkout@v6
+      with:
+        sparse-checkout: |
+          services/scribe
+    - name: "Setup Node"
+      uses: actions/setup-node@v6
+      with:
+        node-version: '18'
+    - name: "Install Dependencies"
+      run: |
+        cd services/scribe
+        npm install .'
+    - name: "Run Scribe"
+      run: npm start
+    - name: "Check Health Endpoint"
+      run: curl --fail https://localhost/health
+
+  build-user-manager:
+    name: "Test User-Manager"
+    runs-on: pupmac-runner
+    steps:
+    - name: "Checkout Repo"
+      uses: actions/checkout@v6
+      with:
+        sparse-checkout: |
+          services/user-manager
+    - name: "Setup Node"
+      uses: actions/setup-node@v6
+      with:
+        node-version: '18'
+    - name: "Install Dependencies"
+      run: |
+        cd services/user-manager
+        npm install .'
+    - name: "Run User Manager"
+      run: npm start
+    - name: "Check Health Endpoint"
+      run: curl --fail https://localhost/health
+
+  build-vulcan:
+    name: "Test Vulcan"
+    runs-on: pupmac-runner
+    steps:
+    - name: "Checkout Repo"
+      uses: actions/checkout@v6
+      with:
+        sparse-checkout: |
+          services/vulcan
+    - name: "Setup Golang"
+      uses: actions/setup-java@v5
+      with:
+        java-version: '21'
+    - name: "Install Datadog Tracer"
+      run: curl -fLSS -o dd-java-agent.jar https://dtdg.co/latest-java-tracer
+    - name: "Install Dependencies"
+      run: mvn install -q
+    - name: "Configure Certificates"
+      run: |
+        keytool -import -noprompt -alias user-manager-cert -cacerts -file /vulcan/services/user-manager/certificate/cert.pem -storepass changeit
+        keytool -import -noprompt -alias god-manager-cert -cacerts -file /vulcan/services/god-manager/certificate/cert.pem -storepass changeit
+        keytool -import -noprompt -alias authenticator-cert -cacerts -file /vulcan/services/authenticator/certificate/cert.pem -storepass changeit
+        keytool -import -noprompt -alias delphi-cert -cacerts -file /vulcan/services/delphi/certificate/cert.pem -storepass changeit
+        cp /opt/java/openjdk/lib/security/cacerts /vulcan/services/vulcan/cacert
+    - name: "Run Vulcan"
+      run: |
+        java -javaagent:dd-java-agent.jar \
+          -Djavax.net.ssl.trustStore=services/vulcan/cacert \
+          -Dlog4j2.configurationFile=services/vulcan/src/log4j2.xml \
+          -Dvulcan.session.key={{ secret.VULCAN_SESSION_KEY }} \
+          -jar services/vulcan/target/vulcan.jar \
+          --logging.config=services/vulcan/src/log4j2.xml \
+    - name: "Check Health Endpoint"
+      run: curl --fail https://localhost/health
+
+  deploy:
+    name: "Deploy to Cluster"
+    runs-on: pupmac-runner
+    needs: [ build-authenticator, build-delphi, build-god-manager, build-scribe, build-user-manager, build-vulcan ]
+    steps:
+    - name: "Download kubectl"
+      run: |
+        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    - name: "Validate kubectl"
+      run: |
+        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+        echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+    - name: "Install kubectl"
+      run: |
+        sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+    - name: "Configure kubectl"
+      run: |
+        mkdir -p $HOME/.kube
+        echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > $HOME/.kube/config
+        chmod 600 $HOME/.kube/config
+    - name: "Deploy Secrets"
+      run: |
+        sed -i -e s/<dd-api-key>/{{ secrets.DD_API_KEY }}/g secrets.yaml
+        sed -i -e s/<openai-api-key>/{{ secrets.OPENAI_API_KEY }}/g secrets.yaml
+        sed -i -e s/<password-pepper>/{{ secrets.VULCAN_PASSWORD_PEPPER }}/g secrets.yaml
+        sed -i -e s/<session-key>/{{ secrets.VULCAN_SESSION_KEY }}/g secrets.yaml
+        kubectl apply -f secrets.yaml
+    - name: "Deploy Application"
+      run: |
+        kubectl apply -f deployment.yaml
+
+  test:
+    name: "End to End Testing"
+    runs-on: pupmac-runner
+    needs: deploy
+    steps:
+    - name: "Run Synthetic Tests"
+      uses: DataDog/synthetics-ci-github-action@v3.8.2
+      with:
+        api-key: ${{secrets.DD_API_KEY}}
+        app-key: ${{secrets.DD_APP_KEY}}
+        public-ids: |
+          abc-d3f-ghi
+          jkl-mn0-pqr
+    
