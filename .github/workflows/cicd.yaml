@@ -10,16 +10,13 @@ jobs:
   build-authenticator:
     name: "Test Authenticator"
     runs-on: pupmac-runner
+    container: python:3.12
     steps:
     - name: "Checkout Repo"
       uses: actions/checkout@v6
       with:
         sparse-checkout: |
           services/authenticator
-    - name: "Setup Python"
-      uses: actions/setup-python@v6
-      with:
-        python-version: '3.12'
     - name: "Install DDTrace"
       run: pip3 install ddtrace --quiet --root-user-action=ignore --upgrade
     - name: "Install Dependencies"
@@ -32,16 +29,13 @@ jobs:
   build-delphi:
     name: "Test Delphi"
     runs-on: pupmac-runner
+    container: python:3.12
     steps:
     - name: "Checkout Repo"
       uses: actions/checkout@v6
       with:
         sparse-checkout: |
           services/delphi
-    - name: "Setup Python"
-      uses: actions/setup-python@v6
-      with:
-        python-version: '3.12'
     - name: "Install Datadog Tracer"
       run: pip3 install ddtrace --quiet --root-user-action=ignore --upgrade
     - name: "Install Dependencies"
@@ -57,16 +51,13 @@ jobs:
   build-god-manager:
     name: "Test God-Manager"
     runs-on: pupmac-runner
+    container: golang:1.25
     steps:
     - name: "Checkout Repo"
       uses: actions/checkout@v6
       with:
         sparse-checkout: |
           services/god-manager
-    - name: "Setup Golang"
-      uses: actions/setup-go@v6
-      with:
-        go-version: '1.25'
     - name: "Verify go.mod"
       run: go mod download && go mod verify
     - name: "Install Orchestrion"
@@ -81,16 +72,13 @@ jobs:
   build-scribe:
     name: "Test Scribe"
     runs-on: pupmac-runner
+    container: node:18
     steps:
     - name: "Checkout Repo"
       uses: actions/checkout@v6
       with:
         sparse-checkout: |
           services/scribe
-    - name: "Setup Node"
-      uses: actions/setup-node@v6
-      with:
-        node-version: '18'
     - name: "Install Dependencies"
       run: |
         cd services/scribe
@@ -103,16 +91,13 @@ jobs:
   build-user-manager:
     name: "Test User-Manager"
     runs-on: pupmac-runner
+    container: node:18
     steps:
     - name: "Checkout Repo"
       uses: actions/checkout@v6
       with:
         sparse-checkout: |
           services/user-manager
-    - name: "Setup Node"
-      uses: actions/setup-node@v6
-      with:
-        node-version: '18'
     - name: "Install Dependencies"
       run: |
         cd services/user-manager
@@ -125,16 +110,13 @@ jobs:
   build-vulcan:
     name: "Test Vulcan"
     runs-on: pupmac-runner
+    container: maven:3.9-eclipse-temurin-21
     steps:
     - name: "Checkout Repo"
       uses: actions/checkout@v6
       with:
         sparse-checkout: |
           services/vulcan
-    - name: "Setup Golang"
-      uses: actions/setup-java@v5
-      with:
-        java-version: '21'
     - name: "Install Datadog Tracer"
       run: curl -fLSS -o dd-java-agent.jar https://dtdg.co/latest-java-tracer
     - name: "Install Dependencies"
@@ -160,6 +142,7 @@ jobs:
   deploy:
     name: "Deploy to Cluster"
     runs-on: pupmac-runner
+    container: ubuntu:24
     needs: [ build-authenticator, build-delphi, build-god-manager, build-scribe, build-user-manager, build-vulcan ]
     steps:
     - name: "Download kubectl"
@@ -191,6 +174,7 @@ jobs:
   test:
     name: "End to End Testing"
     runs-on: pupmac-runner
+    container: ubuntu:24
     needs: deploy
     steps:
     - name: "Run Synthetic Tests"
