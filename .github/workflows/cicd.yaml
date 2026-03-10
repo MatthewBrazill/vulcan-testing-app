@@ -17,6 +17,13 @@ jobs:
       with:
         sparse-checkout: |
           services/authenticator
+    - name: "Set Environment Variables"
+      run: |
+        echo "DD_ENV=cicd" >> $GITHUB_ENV
+        echo "DD_SERVICE=authenticator" >> $GITHUB_ENV
+        echo "DD_VERSION=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+        echo "CERT_FOLDER=$(pwd)/services/authenticator/certificate" >> $GITHUB_ENV
+        echo "PW_PEPPER=${{ secrets.VULCAN_PASSWORD_PEPPER }}" >> $GITHUB_ENV
     - name: "Install DDTrace"
       run: pip3 install ddtrace --quiet --root-user-action=ignore --upgrade
     - name: "Install Dependencies"
@@ -36,6 +43,14 @@ jobs:
       with:
         sparse-checkout: |
           services/delphi
+    - name: "Set Environment Variables"
+      run: |
+        echo "DD_ENV=cicd" >> $GITHUB_ENV
+        echo "DD_SERVICE=delphi" >> $GITHUB_ENV
+        echo "DD_VERSION=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+        echo "CERT_FOLDER=$(pwd)/services/delphi/certificate" >> $GITHUB_ENV
+        echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> $GITHUB_ENV
+        echo "DD_API_KEY=${{ secrets.DD_API_KEY }}" >> $GITHUB_ENV
     - name: "Install Datadog Tracer"
       run: pip3 install ddtrace --quiet --root-user-action=ignore --upgrade
     - name: "Install Dependencies"
@@ -58,6 +73,12 @@ jobs:
       with:
         sparse-checkout: |
           services/god-manager
+    - name: "Set Environment Variables"
+      run: |
+        echo "DD_ENV=cicd" >> $GITHUB_ENV
+        echo "DD_SERVICE=god-manager" >> $GITHUB_ENV
+        echo "DD_VERSION=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+        echo "CERT_FOLDER=$(pwd)/services/god-manager/certificate" >> $GITHUB_ENV
     - name: "Verify go.mod"
       run: go mod download && go mod verify
     - name: "Install Orchestrion"
@@ -79,10 +100,16 @@ jobs:
       with:
         sparse-checkout: |
           services/scribe
+    - name: "Set Environment Variables"
+      run: |
+        echo "DD_ENV=cicd" >> $GITHUB_ENV
+        echo "DD_SERVICE=scribe" >> $GITHUB_ENV
+        echo "DD_VERSION=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+        echo "CERT_FOLDER=$(pwd)/services/scribe/certificate" >> $GITHUB_ENV
     - name: "Install Dependencies"
       run: |
         cd services/scribe
-        npm install .'
+        npm install .
     - name: "Run Scribe"
       run: npm start
     - name: "Check Health Endpoint"
@@ -98,10 +125,16 @@ jobs:
       with:
         sparse-checkout: |
           services/user-manager
+    - name: "Set Environment Variables"
+      run: |
+        echo "DD_ENV=cicd" >> $GITHUB_ENV
+        echo "DD_SERVICE=user-manager" >> $GITHUB_ENV
+        echo "DD_VERSION=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+        echo "CERT_FOLDER=$(pwd)/services/user-manager/certificate" >> $GITHUB_ENV
     - name: "Install Dependencies"
       run: |
         cd services/user-manager
-        npm install .'
+        npm install .
     - name: "Run User Manager"
       run: npm start
     - name: "Check Health Endpoint"
@@ -117,10 +150,20 @@ jobs:
       with:
         sparse-checkout: |
           services/vulcan
+    - name: "Set Environment Variables"
+      run: |
+        echo "DD_ENV=cicd" >> $GITHUB_ENV
+        echo "DD_SERVICE=vulcan" >> $GITHUB_ENV
+        echo "DD_VERSION=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+        echo "CERT_FOLDER=$(pwd)/services/vulcan/certificate" >> $GITHUB_ENV
+        echo "FRONTEND_VERSION=fe-$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+        echo "KAFKA_BROKER=notes-queue.vulcan-application.svc.cluster.local:9092" >> $GITHUB_ENV
+        echo "VLCN_SESSION_KEY=${{ secrets.VULCAN_SESSION_KEY }}" >> $GITHUB_ENV
+        echo "PW_PEPPER=${{ secrets.VULCAN_PASSWORD_PEPPER }}" >> $GITHUB_ENV
     - name: "Install Datadog Tracer"
       run: curl -fLSS -o dd-java-agent.jar https://dtdg.co/latest-java-tracer
     - name: "Install Dependencies"
-      run: mvn install -q
+      run: mvn install -q -f services/vulcan/pom.xml
     - name: "Configure Certificates"
       run: |
         keytool -import -noprompt -alias user-manager-cert -cacerts -file /vulcan/services/user-manager/certificate/cert.pem -storepass changeit
@@ -162,10 +205,10 @@ jobs:
         chmod 600 $HOME/.kube/config
     - name: "Deploy Secrets"
       run: |
-        sed -i -e s/<dd-api-key>/{{ secrets.DD_API_KEY }}/g secrets.yaml
-        sed -i -e s/<openai-api-key>/{{ secrets.OPENAI_API_KEY }}/g secrets.yaml
-        sed -i -e s/<password-pepper>/{{ secrets.VULCAN_PASSWORD_PEPPER }}/g secrets.yaml
-        sed -i -e s/<session-key>/{{ secrets.VULCAN_SESSION_KEY }}/g secrets.yaml
+        sed -i -e s/<dd-api-key>/${{ secrets.DD_API_KEY }}/g secrets.yaml
+        sed -i -e s/<openai-api-key>/${{ secrets.OPENAI_API_KEY }}/g secrets.yaml
+        sed -i -e s/<password-pepper>/${{ secrets.VULCAN_PASSWORD_PEPPER }}/g secrets.yaml
+        sed -i -e s/<session-key>/${{ secrets.VULCAN_SESSION_KEY }}/g secrets.yaml
         kubectl apply -f secrets.yaml
     - name: "Deploy Application"
       run: |
@@ -180,8 +223,8 @@ jobs:
     - name: "Run Synthetic Tests"
       uses: DataDog/synthetics-ci-github-action@v3.8.2
       with:
-        api-key: ${{secrets.DD_API_KEY}}
-        app-key: ${{secrets.DD_APP_KEY}}
+        api-key: ${{ secrets.DD_API_KEY }}
+        app-key: ${{ secrets.DD_APP_KEY }}
         public-ids: |
           abc-d3f-ghi
           jkl-mn0-pqr
