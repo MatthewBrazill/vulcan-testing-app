@@ -48,6 +48,9 @@ async function start() {
     app.route("/all").get(users.getAllUsers)
     app.route("/delete").post(users.deleteUser)
 
+    // Health Endpoint
+    app.route("/health").get((_, res) => res.sendStatus(200))
+
     // Allow insecure connections
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
 

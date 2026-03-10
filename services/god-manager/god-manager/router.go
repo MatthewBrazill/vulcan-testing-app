@@ -35,5 +35,9 @@ func GetGinEngine(logFile *os.File) *gin.Engine {
 	app.POST("/update", UpdateGod)
 	app.POST("/delete", DeleteGod)
 
+	app.GET("/health", func(ctx *gin.Context) {
+		ctx.JSON(200, gin.H{"status": "ok"})
+	})
+
 	return app
 }

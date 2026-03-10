@@ -37,4 +37,10 @@ public class Utility {
         resBody.put("message", "This is an error testing endpoint. It will always return a 500 error.");
         return resBody;
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/health", method = RequestMethod.GET)
+    public void health(HttpServletResponse res) {
+        res.setStatus(HttpServletResponse.SC_OK);
+    }
 }

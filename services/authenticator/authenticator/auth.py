@@ -92,3 +92,8 @@ async def authorize(request: Request) -> JSONResponse:
             logger.error("authenticator encountered an error trying to authorize '" + body["username"] + "'", username=body["username"], error=err)
         
         return JSONResponse(content={"permissions": "none"}, status_code=500)
+
+
+@app.get("/health")
+async def health(request: Request) -> JSONResponse:
+    return JSONResponse(status_code=200)

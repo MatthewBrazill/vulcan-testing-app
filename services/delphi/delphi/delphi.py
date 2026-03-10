@@ -162,3 +162,8 @@ to give you and answer today, but I'm sure we can expect greatness from you!"""
         return JSONResponse(content={ "prediction": """I'm afraid that the future is foggy and ever evolving, my dear. In this case yours is tricky to decern! I won't be able
 to give you and answer today, but I'm sure we can expect greatness from you!"""
         }, status_code=500)
+
+
+@app.get("/health")
+async def health(request: Request) -> JSONResponse:
+    return JSONResponse(status_code=200)
