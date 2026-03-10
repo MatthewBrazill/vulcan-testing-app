@@ -79,8 +79,11 @@ jobs:
         echo "DD_SERVICE=god-manager" >> $GITHUB_ENV
         echo "DD_VERSION=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
         echo "CERT_FOLDER=$(pwd)/services/god-manager/certificate" >> $GITHUB_ENV
-    - name: "Verify go.mod"
-      run: go mod download && go mod verify
+    - name: "Install Dependencies"
+      run: |
+        cd services/god-manager
+        go mod download && go mod verify
+        cd ../..
     - name: "Install Orchestrion"
       run: GOPROXY=direct go install github.com/DataDog/orchestrion@latest
     - name: "Build Binary"
