@@ -163,7 +163,7 @@ jobs:
     - name: "Run Scribe"
       run: |
         cd services/scribe
-        npm start &
+        node scribe/app.js &
         pid=$!
         count=0
         while [ "$count" -lt 12 ]; do
@@ -203,7 +203,7 @@ jobs:
     - name: "Run User Manager"
       run: |
         cd services/user-manager
-        npm start &
+        node user-manager/app.js &
         pid=$!
         count=0
         while [ "$count" -lt 12 ]; do
