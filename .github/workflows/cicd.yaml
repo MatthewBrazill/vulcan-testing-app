@@ -292,10 +292,10 @@ jobs:
         chmod 600 $HOME/.kube/config
     - name: "Deploy Secrets"
       run: |
-        sed -i -e s/<dd-api-key>/${{ secrets.DD_API_KEY }}/g secrets.yaml
-        sed -i -e s/<openai-api-key>/${{ secrets.OPENAI_API_KEY }}/g secrets.yaml
-        sed -i -e s/<password-pepper>/${{ secrets.VULCAN_PASSWORD_PEPPER }}/g secrets.yaml
-        sed -i -e s/<session-key>/${{ secrets.VULCAN_SESSION_KEY }}/g secrets.yaml
+        sed -i -e s/\<dd-api-key\>/${{ secrets.DD_API_KEY }}/g secrets.yaml
+        sed -i -e s/\<openai-api-key\>/${{ secrets.OPENAI_API_KEY }}/g secrets.yaml
+        sed -i -e s/\<password-pepper\>/${{ secrets.VULCAN_PASSWORD_PEPPER }}/g secrets.yaml
+        sed -i -e s/\<session-key\>/${{ secrets.VULCAN_SESSION_KEY }}/g secrets.yaml
         kubectl apply -f secrets.yaml
     - name: "Deploy Application"
       run: |
