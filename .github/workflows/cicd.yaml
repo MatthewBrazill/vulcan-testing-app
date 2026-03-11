@@ -318,6 +318,13 @@ jobs:
         api-key: ${{ secrets.DD_API_KEY }}
         app-key: ${{ secrets.DD_APP_KEY }}
         public-ids: |
-          abc-d3f-ghi
-          jkl-mn0-pqr
+          sad-68y-yra
+          hyc-x5v-uwu
+          9n4-wqc-jzr
+          ygv-kte-fem
+          pcd-m85-myt
+          vmq-p99-eu2
+          tee-bny-7i6
+          3ch-f2v-4iu
+          
     
