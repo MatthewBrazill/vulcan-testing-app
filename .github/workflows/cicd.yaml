@@ -284,7 +284,7 @@ jobs:
         echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
     - name: "Install kubectl"
       run: |
-        sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+        install -m 0755 kubectl /usr/local/bin/kubectl
     - name: "Configure kubectl"
       run: |
         mkdir -p $HOME/.kube
