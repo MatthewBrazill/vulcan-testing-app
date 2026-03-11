@@ -1,3 +1,5 @@
+name: "CI/CD Pipeline"
+run-name: "CI/CD deployment of ${{ github.ref }} by @${{ github.actor }}"
 on:
   push:
     branches:
