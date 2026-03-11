@@ -40,7 +40,10 @@ public class Utility {
 
     @ResponseBody
     @RequestMapping(value = "/health", method = RequestMethod.GET)
-    public void health(HttpServletResponse res) {
+    public HashMap<String, Object> health(HttpServletResponse res) {
+        HashMap<String, Object> resBody = new HashMap<String, Object>();
         res.setStatus(HttpServletResponse.SC_OK);
+        resBody.put("status", "ok");
+        return resBody;
     }
 }

@@ -166,4 +166,4 @@ to give you and answer today, but I'm sure we can expect greatness from you!"""
 
 @app.get("/health")
 async def health(request: Request) -> JSONResponse:
-    return JSONResponse(status_code=200)
+    return JSONResponse(content={"status": "ok"}, status_code=200)

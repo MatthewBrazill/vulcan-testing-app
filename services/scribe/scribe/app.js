@@ -144,7 +144,7 @@ async function startExpress() {
     expressLogger.debug("registered express routes")
 
     //Health Endpoint
-    app.route("/health").get((_, res) => res.sendStatus(200))
+    app.route("/health").get((_, res) => res.status(200).json({ status: "ok" }))
 
     https.createServer({
         key: fs.readFileSync(`${process.env.CERT_FOLDER}/key.pem`),

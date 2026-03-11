@@ -96,4 +96,4 @@ async def authorize(request: Request) -> JSONResponse:
 
 @app.get("/health")
 async def health(request: Request) -> JSONResponse:
-    return JSONResponse(status_code=200)
+    return JSONResponse(content={"status": "ok"}, status_code=200)
