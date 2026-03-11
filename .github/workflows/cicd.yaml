@@ -120,7 +120,7 @@ jobs:
     - name: "Build Binary"
       run: |
         cd services/god-manager
-        orchestrion go build -o ./build/god-manager -tags appsec ./god-manager/...
+        orchestrion go build -buildvcs=false -o ./build/god-manager -tags appsec ./god-manager/...
     - name: "Run God-Manager"
       run: |
         build/god-manager &
