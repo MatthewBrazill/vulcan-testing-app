@@ -160,7 +160,6 @@ jobs:
         echo "DD_VERSION=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
         echo "CERT_FOLDER=$(pwd)/services/vulcan/certificate" >> $GITHUB_ENV
         echo "FRONTEND_VERSION=fe-$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-        echo "KAFKA_BROKER=notes-queue.vulcan-application.svc.cluster.local:9092" >> $GITHUB_ENV
         echo "VLCN_SESSION_KEY=${{ secrets.VULCAN_SESSION_KEY }}" >> $GITHUB_ENV
         echo "PW_PEPPER=${{ secrets.VULCAN_PASSWORD_PEPPER }}" >> $GITHUB_ENV
     - name: "Install Datadog Tracer"
