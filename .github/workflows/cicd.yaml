@@ -218,17 +218,9 @@ jobs:
       run: curl -fLSS -o dd-java-agent.jar https://dtdg.co/latest-java-tracer
     - name: "Install Dependencies"
       run: mvn install -q -f services/vulcan/pom.xml
-    - name: "Configure Certificates"
-      run: |
-        keytool -import -noprompt -alias user-manager-cert -cacerts -file services/user-manager/certificate/cert.pem -storepass changeit
-        keytool -import -noprompt -alias god-manager-cert -cacerts -file services/god-manager/certificate/cert.pem -storepass changeit
-        keytool -import -noprompt -alias authenticator-cert -cacerts -file services/authenticator/certificate/cert.pem -storepass changeit
-        keytool -import -noprompt -alias delphi-cert -cacerts -file services/delphi/certificate/cert.pem -storepass changeit
-        cp /opt/java/openjdk/lib/security/cacerts services/vulcan/cacert
     - name: "Run Vulcan"
       run: |
         java -javaagent:dd-java-agent.jar \
-          -Djavax.net.ssl.trustStore=services/vulcan/cacert \
           -Dlog4j2.configurationFile=services/vulcan/src/log4j2.xml \
           -Dvulcan.session.key={{ secret.VULCAN_SESSION_KEY }} \
           -jar services/vulcan/target/vulcan.jar \
