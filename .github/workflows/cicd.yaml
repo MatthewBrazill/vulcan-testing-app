@@ -29,9 +29,18 @@ jobs:
     - name: "Install Dependencies"
       run: pip3 install -r services/authenticator/requirements.txt --quiet --root-user-action=ignore --upgrade 
     - name: "Run Authenticator"
-      run: ddtrace-run python3 services/authenticator/authenticator/main.py
-    - name: "Check Health Endpoint"
-      run: curl --fail https://localhost/health
+      run: |
+        ddtrace-run python3 services/authenticator/authenticator/main.py &
+        for i in {1..12}; do
+          if curl --fail --silent --insecure https://localhost/health; then
+            echo "Health check succeeded";
+            exit 0;
+          fi
+          echo "Waiting for health endpoint... ($i)";
+          sleep 5;
+        done
+        echo "Health check failed after retries";
+        exit 1
 
   build-delphi:
     name: "Test Delphi"
@@ -59,9 +68,18 @@ jobs:
         pip3 uninstall kafka-python --quiet --root-user-action=ignore
         pip3 install -r services/delphi/requirements.txt --quiet --root-user-action=ignore --upgrade 
     - name: "Run Delphi"
-      run: ddtrace-run python3 services/delphi/delphi/main.py
-    - name: "Check Health Endpoint"
-      run: curl --fail https://localhost/health
+      run: |
+        ddtrace-run python3 services/delphi/delphi/main.py &
+        for i in {1..12}; do
+          if curl --fail --silent --insecure https://localhost/health; then
+            echo "Health check succeeded";
+            exit 0;
+          fi
+          echo "Waiting for health endpoint... ($i)";
+          sleep 5;
+        done
+        echo "Health check failed after retries";
+        exit 1
 
   build-god-manager:
     name: "Test God-Manager"
@@ -90,9 +108,18 @@ jobs:
     - name: "Build Binary"
       run: orchestrion go build -o build/god-manager -tags appsec services/god-manager/god-manager/...
     - name: "Run God-Manager"
-      run: build/god-manager
-    - name: "Check Health Endpoint"
-      run: curl --fail https://localhost/health
+      run: |
+        build/god-manager &
+        for i in {1..12}; do
+          if curl --fail --silent --insecure https://localhost/health; then
+            echo "Health check succeeded";
+            exit 0;
+          fi
+          echo "Waiting for health endpoint... ($i)";
+          sleep 5;
+        done
+        echo "Health check failed after retries";
+        exit 1
 
   build-scribe:
     name: "Test Scribe"
@@ -117,9 +144,17 @@ jobs:
     - name: "Run Scribe"
       run: |
         cd services/scribe
-        npm start
-    - name: "Check Health Endpoint"
-      run: curl --fail https://localhost/health
+        npm start &
+        for i in {1..12}; do
+          if curl --fail --silent --insecure https://localhost/health; then
+            echo "Health check succeeded";
+            exit 0;
+          fi
+          echo "Waiting for health endpoint... ($i)";
+          sleep 5;
+        done
+        echo "Health check failed after retries";
+        exit 1
 
   build-user-manager:
     name: "Test User-Manager"
@@ -144,9 +179,17 @@ jobs:
     - name: "Run User Manager"
       run: |
         cd services/user-manager
-        npm start
-    - name: "Check Health Endpoint"
-      run: curl --fail https://localhost/health
+        npm start &
+        for i in {1..12}; do
+          if curl --fail --silent --insecure https://localhost/health; then
+            echo "Health check succeeded";
+            exit 0;
+          fi
+          echo "Waiting for health endpoint... ($i)";
+          sleep 5;
+        done
+        echo "Health check failed after retries";
+        exit 1
 
   build-vulcan:
     name: "Test Vulcan"
@@ -185,9 +228,17 @@ jobs:
           -Dlog4j2.configurationFile=services/vulcan/src/log4j2.xml \
           -Dvulcan.session.key={{ secret.VULCAN_SESSION_KEY }} \
           -jar services/vulcan/target/vulcan.jar \
-          --logging.config=services/vulcan/src/log4j2.xml \
-    - name: "Check Health Endpoint"
-      run: curl --fail https://localhost/health
+          --logging.config=services/vulcan/src/log4j2.xml &
+        for i in {1..12}; do
+          if curl --fail --silent --insecure https://localhost/health; then
+            echo "Health check succeeded";
+            exit 0;
+          fi
+          echo "Waiting for health endpoint... ($i)";
+          sleep 5;
+        done
+        echo "Health check failed after retries";
+        exit 1
 
   deploy:
     name: "Deploy to Cluster"
