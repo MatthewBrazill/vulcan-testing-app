@@ -123,7 +123,7 @@ jobs:
         orchestrion go build -buildvcs=false -o ./build/god-manager -tags appsec ./god-manager/...
     - name: "Run God-Manager"
       run: |
-        build/god-manager &
+        services/god-manager/build/god-manager &
         pid=$!
         count=0
         while [ "$count" -lt 12 ]; do
