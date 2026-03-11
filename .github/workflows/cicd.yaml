@@ -83,9 +83,10 @@ jobs:
       run: |
         cd services/god-manager
         go mod download && go mod verify
-        cd ../..
     - name: "Install Orchestrion"
-      run: GOPROXY=direct go install github.com/DataDog/orchestrion@latest
+      run: |
+        cd services/god-manager
+        GOPROXY=direct go install github.com/DataDog/orchestrion@latest
     - name: "Build Binary"
       run: orchestrion go build -o build/god-manager -tags appsec services/god-manager/god-manager/...
     - name: "Run God-Manager"
@@ -114,7 +115,9 @@ jobs:
         cd services/scribe
         npm install .
     - name: "Run Scribe"
-      run: npm start
+      run: |
+        cd services/scribe
+        npm start
     - name: "Check Health Endpoint"
       run: curl --fail https://localhost/health
 
@@ -139,7 +142,9 @@ jobs:
         cd services/user-manager
         npm install .
     - name: "Run User Manager"
-      run: npm start
+      run: |
+        cd services/user-manager
+        npm start
     - name: "Check Health Endpoint"
       run: curl --fail https://localhost/health
 
@@ -168,11 +173,11 @@ jobs:
       run: mvn install -q -f services/vulcan/pom.xml
     - name: "Configure Certificates"
       run: |
-        keytool -import -noprompt -alias user-manager-cert -cacerts -file /vulcan/services/user-manager/certificate/cert.pem -storepass changeit
-        keytool -import -noprompt -alias god-manager-cert -cacerts -file /vulcan/services/god-manager/certificate/cert.pem -storepass changeit
-        keytool -import -noprompt -alias authenticator-cert -cacerts -file /vulcan/services/authenticator/certificate/cert.pem -storepass changeit
-        keytool -import -noprompt -alias delphi-cert -cacerts -file /vulcan/services/delphi/certificate/cert.pem -storepass changeit
-        cp /opt/java/openjdk/lib/security/cacerts /vulcan/services/vulcan/cacert
+        keytool -import -noprompt -alias user-manager-cert -cacerts -file services/user-manager/certificate/cert.pem -storepass changeit
+        keytool -import -noprompt -alias god-manager-cert -cacerts -file services/god-manager/certificate/cert.pem -storepass changeit
+        keytool -import -noprompt -alias authenticator-cert -cacerts -file services/authenticator/certificate/cert.pem -storepass changeit
+        keytool -import -noprompt -alias delphi-cert -cacerts -file services/delphi/certificate/cert.pem -storepass changeit
+        cp /opt/java/openjdk/lib/security/cacerts services/vulcan/cacert
     - name: "Run Vulcan"
       run: |
         java -javaagent:dd-java-agent.jar \
