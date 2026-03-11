@@ -33,12 +33,14 @@ jobs:
     - name: "Run Authenticator"
       run: |
         ddtrace-run python3 services/authenticator/authenticator/main.py &
-        for ((n=0;n<12;n++)); do
+        count=0
+        while [ "$count" -lt 12 ]; do
           if curl --fail --silent --insecure https://0.0.0.0/health; then
             echo "Health check succeeded";
             exit 0;
           fi
-          echo "Waiting for health endpoint... ($i)";
+          count=`expr $count + 1`
+          echo "Waiting for health endpoint... ($count)";
           sleep 5;
         done
         echo "Health check failed after retries";
@@ -72,12 +74,14 @@ jobs:
     - name: "Run Delphi"
       run: |
         ddtrace-run python3 services/delphi/delphi/main.py &
-        for ((n=0;n<12;n++)); do
+        count=0
+        while [ "$count" -lt 12 ]; do
           if curl --fail --silent --insecure https://0.0.0.0/health; then
             echo "Health check succeeded";
             exit 0;
           fi
-          echo "Waiting for health endpoint... ($i)";
+          count=`expr $count + 1`
+          echo "Waiting for health endpoint... ($count)";
           sleep 5;
         done
         echo "Health check failed after retries";
@@ -114,12 +118,14 @@ jobs:
     - name: "Run God-Manager"
       run: |
         build/god-manager &
-        for ((n=0;n<12;n++)); do
+        count=0
+        while [ "$count" -lt 12 ]; do
           if curl --fail --silent --insecure https://0.0.0.0/health; then
             echo "Health check succeeded";
             exit 0;
           fi
-          echo "Waiting for health endpoint... ($i)";
+          count=`expr $count + 1`
+          echo "Waiting for health endpoint... ($count)";
           sleep 5;
         done
         echo "Health check failed after retries";
@@ -149,12 +155,14 @@ jobs:
       run: |
         cd services/scribe
         npm start &
-        for ((n=0;n<12;n++)); do
+        count=0
+        while [ "$count" -lt 12 ]; do
           if curl --fail --silent --insecure https://0.0.0.0/health; then
             echo "Health check succeeded";
             exit 0;
           fi
-          echo "Waiting for health endpoint... ($i)";
+          count=`expr $count + 1`
+          echo "Waiting for health endpoint... ($count)";
           sleep 5;
         done
         echo "Health check failed after retries";
@@ -184,12 +192,14 @@ jobs:
       run: |
         cd services/user-manager
         npm start &
-        for ((n=0;n<12;n++)); do
+        count=0
+        while [ "$count" -lt 12 ]; do
           if curl --fail --silent --insecure https://0.0.0.0/health; then
             echo "Health check succeeded";
             exit 0;
           fi
-          echo "Waiting for health endpoint... ($i)";
+          count=`expr $count + 1`
+          echo "Waiting for health endpoint... ($count)";
           sleep 5;
         done
         echo "Health check failed after retries";
@@ -225,12 +235,14 @@ jobs:
           -Dvulcan.session.key={{ secret.VULCAN_SESSION_KEY }} \
           -jar services/vulcan/target/vulcan.jar \
           --logging.config=services/vulcan/src/log4j2.xml &
-        for ((n=0;n<12;n++)); do
+        count=0
+        while [ "$count" -lt 12 ]; do
           if curl --fail --silent --insecure https://0.0.0.0/health; then
             echo "Health check succeeded";
             exit 0;
           fi
-          echo "Waiting for health endpoint... ($i)";
+          count=`expr $count + 1`
+          echo "Waiting for health endpoint... ($count)";
           sleep 5;
         done
         echo "Health check failed after retries";
