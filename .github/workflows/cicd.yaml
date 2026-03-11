@@ -269,7 +269,7 @@ jobs:
   deploy:
     name: "Deploy to Cluster"
     runs-on: pupmac-runner
-    container: debian:slim
+    container: debian:bookworm-slim
     needs: [ build-authenticator, build-delphi, build-god-manager, build-scribe, build-user-manager, build-vulcan ]
     steps:
     - name: "Prep Container"
@@ -304,7 +304,7 @@ jobs:
   test:
     name: "Datadog End to End"
     runs-on: pupmac-runner
-    container: debian:slim
+    container: debian:bookworm-slim
     needs: deploy
     steps:
     - name: Upload coverage reports to Datadog
@@ -326,5 +326,5 @@ jobs:
           vmq-p99-eu2
           tee-bny-7i6
           3ch-f2v-4iu
-          
+
     
