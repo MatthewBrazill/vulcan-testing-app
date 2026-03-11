@@ -269,7 +269,7 @@ jobs:
   deploy:
     name: "Deploy to Cluster"
     runs-on: pupmac-runner
-    container: ubuntu:24
+    container: ubuntu:noble
     needs: [ build-authenticator, build-delphi, build-god-manager, build-scribe, build-user-manager, build-vulcan ]
     steps:
     - name: "Download kubectl"
@@ -301,7 +301,7 @@ jobs:
   test:
     name: "Datadog End to End"
     runs-on: pupmac-runner
-    container: ubuntu:24
+    container: ubuntu:noble
     needs: deploy
     steps:
     - name: Upload coverage reports to Datadog
