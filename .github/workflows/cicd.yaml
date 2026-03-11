@@ -33,10 +33,12 @@ jobs:
     - name: "Run Authenticator"
       run: |
         ddtrace-run python3 services/authenticator/authenticator/main.py &
+        pid=$!
         count=0
         while [ "$count" -lt 12 ]; do
           if curl --fail --silent --insecure https://0.0.0.0/health; then
             echo "Health check succeeded";
+            kill $pid
             exit 0;
           fi
           count=`expr $count + 1`
@@ -44,6 +46,7 @@ jobs:
           sleep 5;
         done
         echo "Health check failed after retries";
+        kill $pid
         exit 1
 
   build-delphi:
@@ -74,10 +77,12 @@ jobs:
     - name: "Run Delphi"
       run: |
         ddtrace-run python3 services/delphi/delphi/main.py &
+        pid=$!
         count=0
         while [ "$count" -lt 12 ]; do
           if curl --fail --silent --insecure https://0.0.0.0/health; then
             echo "Health check succeeded";
+            kill $pid
             exit 0;
           fi
           count=`expr $count + 1`
@@ -85,6 +90,7 @@ jobs:
           sleep 5;
         done
         echo "Health check failed after retries";
+        kill $pid
         exit 1
 
   build-god-manager:
@@ -118,10 +124,12 @@ jobs:
     - name: "Run God-Manager"
       run: |
         build/god-manager &
+        pid=$!
         count=0
         while [ "$count" -lt 12 ]; do
           if curl --fail --silent --insecure https://0.0.0.0/health; then
             echo "Health check succeeded";
+            kill $pid
             exit 0;
           fi
           count=`expr $count + 1`
@@ -129,6 +137,7 @@ jobs:
           sleep 5;
         done
         echo "Health check failed after retries";
+        kill $pid
         exit 1
 
   build-scribe:
@@ -155,10 +164,12 @@ jobs:
       run: |
         cd services/scribe
         npm start &
+        pid=$!
         count=0
         while [ "$count" -lt 12 ]; do
           if curl --fail --silent --insecure https://0.0.0.0/health; then
             echo "Health check succeeded";
+            kill $pid
             exit 0;
           fi
           count=`expr $count + 1`
@@ -166,6 +177,7 @@ jobs:
           sleep 5;
         done
         echo "Health check failed after retries";
+        kill $pid
         exit 1
 
   build-user-manager:
@@ -192,10 +204,12 @@ jobs:
       run: |
         cd services/user-manager
         npm start &
+        pid=$!
         count=0
         while [ "$count" -lt 12 ]; do
           if curl --fail --silent --insecure https://0.0.0.0/health; then
             echo "Health check succeeded";
+            kill $pid
             exit 0;
           fi
           count=`expr $count + 1`
@@ -203,6 +217,7 @@ jobs:
           sleep 5;
         done
         echo "Health check failed after retries";
+        kill $pid
         exit 1
 
   build-vulcan:
@@ -235,10 +250,12 @@ jobs:
           -Dvulcan.session.key={{ secret.VULCAN_SESSION_KEY }} \
           -jar services/vulcan/target/vulcan.jar \
           --logging.config=services/vulcan/src/log4j2.xml &
+        pid=$!
         count=0
         while [ "$count" -lt 12 ]; do
           if curl --fail --silent --insecure https://0.0.0.0/health; then
             echo "Health check succeeded";
+            kill $pid
             exit 0;
           fi
           count=`expr $count + 1`
@@ -246,6 +263,7 @@ jobs:
           sleep 5;
         done
         echo "Health check failed after retries";
+        kill $pid
         exit 1
 
   deploy:
