@@ -108,7 +108,9 @@ jobs:
         cd services/god-manager
         GOPROXY=direct go install github.com/DataDog/orchestrion@latest
     - name: "Build Binary"
-      run: orchestrion go build -o build/god-manager -tags appsec services/god-manager/god-manager/...
+      run: |
+        cd services/god-manager
+        orchestrion go build -o build/god-manager -tags appsec god-manager/...
     - name: "Run God-Manager"
       run: |
         build/god-manager &
