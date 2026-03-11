@@ -247,7 +247,7 @@ jobs:
       run: |
         java -javaagent:dd-java-agent.jar \
           -Dlog4j2.configurationFile=services/vulcan/src/log4j2.xml \
-          -Dvulcan.session.key={{ secret.VULCAN_SESSION_KEY }} \
+          -Dvulcan.session.key=$VLCN_SESSION_KEY \
           -jar services/vulcan/target/vulcan.jar \
           --logging.config=services/vulcan/src/log4j2.xml &
         pid=$!
