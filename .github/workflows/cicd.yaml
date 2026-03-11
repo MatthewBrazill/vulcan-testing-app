@@ -269,9 +269,12 @@ jobs:
   deploy:
     name: "Deploy to Cluster"
     runs-on: pupmac-runner
-    container: ubuntu:noble
+    container: debian:slim
     needs: [ build-authenticator, build-delphi, build-god-manager, build-scribe, build-user-manager, build-vulcan ]
     steps:
+    - name: "Prep Container"
+      run: |
+        apt-get update && apt-get install -y curl
     - name: "Download kubectl"
       run: |
         curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
@@ -301,7 +304,7 @@ jobs:
   test:
     name: "Datadog End to End"
     runs-on: pupmac-runner
-    container: ubuntu:noble
+    container: debian:slim
     needs: deploy
     steps:
     - name: Upload coverage reports to Datadog
