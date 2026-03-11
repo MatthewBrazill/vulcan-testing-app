@@ -272,7 +272,13 @@ jobs:
     container: debian:bookworm-slim
     needs: [ build-authenticator, build-delphi, build-god-manager, build-scribe, build-user-manager, build-vulcan ]
     steps:
-    - name: "Prep Container"
+    - name: "Checkout Repo"
+      uses: actions/checkout@v6
+      with:
+        sparse-checkout: |
+          deployment.yaml
+          secrets.yaml
+    - name: "Update Packages"
       run: |
         apt-get update && apt-get install -y curl
     - name: "Download kubectl"
