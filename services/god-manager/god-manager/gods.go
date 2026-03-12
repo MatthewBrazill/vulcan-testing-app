@@ -69,7 +69,7 @@ func CreateGod(ctx *gin.Context) {
 
 	// Insert god
 	_, err = db.Database("vulcanGods").Collection("gods").InsertOne(ctx.Request.Context(), god)
-	db.Disconnect(ctx)
+	defer db.Disconnect(ctx)
 	if err != nil {
 		Log(ctx).WithError(err).Error(ctx.Error(err).Error())
 		ctx.JSON(http.StatusInternalServerError, err)
@@ -107,7 +107,7 @@ func GetGod(ctx *gin.Context) {
 	// Try to find god in database
 	var god bson.M
 	err = godDb.Database("vulcanGods").Collection("gods").FindOne(ctx.Request.Context(), bson.M{"godId": body["godId"]}).Decode(&god)
-	godDb.Disconnect(ctx)
+	defer godDb.Disconnect(ctx)
 	if err != nil {
 		if err.Error() == "mongo: no documents in result" {
 			Log(ctx).Debug(fmt.Sprintf("no god found for %s", body["godId"]))
@@ -131,7 +131,7 @@ func GetGod(ctx *gin.Context) {
 	// Collect description for god
 	var description bson.M
 	err = noteDb.Database("vulcanNotes").Collection("godNotes").FindOne(ctx.Request.Context(), bson.M{"godId": god["godId"]}).Decode(&description)
-	noteDb.Disconnect(ctx)
+	defer noteDb.Disconnect(ctx)
 	if err != nil {
 		if err.Error() == "mongo: no documents in result" {
 			Log(ctx).Debug(fmt.Sprintf("no description found for god %s", god["godId"]))
@@ -166,7 +166,7 @@ func SearchGod(ctx *gin.Context) {
 	// Try to search for gods in database
 	var result []bson.M
 	cursor, err := db.Database("vulcanGods").Collection("gods").Find(ctx.Request.Context(), bson.M{"name": bson.M{"$regex": primitive.Regex{Pattern: body["query"], Options: "i"}}})
-	db.Disconnect(ctx)
+	defer db.Disconnect(ctx)
 	if err != nil {
 		if err.Error() == "mongo: no documents in result" {
 			Log(ctx).Debug(fmt.Sprintf("no gods found for %s", body["query"]))
@@ -247,7 +247,7 @@ func UpdateGod(ctx *gin.Context) {
 
 	// Update god
 	result, err := db.Database("vulcanGods").Collection("gods").UpdateOne(ctx.Request.Context(), bson.M{"godId": body["godId"]}, bson.M{"$set": update})
-	db.Disconnect(ctx)
+	defer db.Disconnect(ctx)
 	if err != nil {
 		Log(ctx).WithError(err).Error(ctx.Error(err).Error())
 		ctx.JSON(http.StatusInternalServerError, err)
@@ -285,7 +285,7 @@ func DeleteGod(ctx *gin.Context) {
 
 	// Delete god
 	result, err := db.Database("vulcanGods").Collection("gods").DeleteOne(ctx.Request.Context(), bson.M{"godId": body["godId"]})
-	db.Disconnect(ctx)
+	defer db.Disconnect(ctx)
 	if err != nil {
 		Log(ctx).WithError(err).Error(ctx.Error(err).Error())
 		ctx.JSON(http.StatusInternalServerError, err)
