@@ -323,6 +323,7 @@ jobs:
       with:
         api-key: ${{ secrets.DD_API_KEY }}
         app-key: ${{ secrets.DD_APP_KEY }}
+        subdomain: brazill
         public-ids: |
           sad-68y-yra
           hyc-x5v-uwu
