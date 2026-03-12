@@ -313,11 +313,11 @@ jobs:
     container: debian:bookworm-slim
     needs: deploy
     steps:
-    - name: Upload coverage reports to Datadog
-      uses: DataDog/coverage-upload-github-action@v1
-      with:
-        api_key: ${{ secrets.DD_API_KEY }}
-        subdomain: brazill
+#    - name: Upload coverage reports to Datadog
+#      uses: DataDog/coverage-upload-github-action@v1
+#      with:
+#        api_key: ${{ secrets.DD_API_KEY }}
+#        subdomain: brazill
     - name: "Run Synthetic Tests"
       uses: DataDog/synthetics-ci-github-action@v3.8.2
       with:
