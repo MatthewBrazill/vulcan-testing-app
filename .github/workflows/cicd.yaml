@@ -305,6 +305,7 @@ jobs:
         kubectl apply -f secrets.yaml
     - name: "Deploy Application"
       run: |
+        kubectl rollout restart deployment -n vulcan-application
         kubectl apply -f deployment.yaml
 
   test:
@@ -333,5 +334,3 @@ jobs:
           vmq-p99-eu2
           tee-bny-7i6
           3ch-f2v-4iu
-
-    
