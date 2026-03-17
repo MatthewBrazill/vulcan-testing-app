@@ -680,7 +680,7 @@ spec:
           emptyDir: {}
       containers:
         - name: delphi
-          image: python:3.9
+          image: python:3.12
           command: ["/bin/bash"]
           args: ["-c", "wget -nv -O - https://raw.githubusercontent.com/MatthewBrazill/vulcan-testing-app/main/build-scripts/startup.sh | bash -s"]
           workingDir: /vulcan/services/delphi
