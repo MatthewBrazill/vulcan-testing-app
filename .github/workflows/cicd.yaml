@@ -307,7 +307,7 @@ jobs:
       run: |
         kubectl apply -f deployment.yaml
         kubectl rollout restart deployment -n vulcan-application
-        kubectl rollout status 
+        kubectl rollout status deployment -n vulcan-application
 
   test:
     name: "Datadog End to End"
