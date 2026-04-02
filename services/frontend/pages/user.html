@@ -14,27 +14,32 @@
 
     <div id="content">
         <div id="user-box">
+
             {{#user}}
             <div id="selected-user">
-                <!-- So, the reason is dumb, but the username value needs to be above the username label. This is so
-                    that when it gets floated to the end, the label can slide up into its place. Could probably fix it other was too, but this works and I don't want to figet around with it any more.-->
-                <p id="selected-user-name" style="float: inline-end;text-align: right;">{{username}}</p>
-                <p ><b>Username:</b></p>
+                <p id="selected-user-heading">Profile</p>
 
-                <p id="selected-user-permissions" style="float: inline-end;text-align: right;">{{permissions}}</p>
-                <p ><b>Permissions:</b></p>
+                <div class="user-detail-row">
+                    <span class="user-detail-label">Username</span>
+                    <span class="user-detail-value" id="selected-user-name">{{username}}</span>
+                </div>
 
-                <p id="no-user-notes" style="float: inline-end;text-align: right;margin-top: 14px;">None</p>
-                <p style="margin-top: 14px;"><b>Notes:</b></p>
-                <ul id="selected-user-notes">
-                </ul>
+                <div class="user-detail-row">
+                    <span class="user-detail-label">Permissions</span>
+                    <span class="user-detail-value" id="selected-user-permissions">{{permissions}}</span>
+                </div>
+
+                <div class="user-detail-row">
+                    <span class="user-detail-label">Notes</span>
+                    <span id="no-user-notes" class="user-detail-value">None</span>
+                </div>
+                <ul id="selected-user-notes"></ul>
             </div>
-            <br>
             {{/user}}
 
-            <div>
-                <h4>Full User List:</h4>
-                <div id="user-list" class="ui segemnt">
+            <div id="user-list-panel">
+                <p id="user-list-heading">All Users</p>
+                <div id="user-list">
                     <div id="user-list-loader" class="ui hidden centered inline text loader">Loading Users</div>
                     <div id="user-list-error" class="ui hidden error message">
                         <div id="user-list-error-head" class="header">Failed to retrieve list of users!</div>
@@ -42,6 +47,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 

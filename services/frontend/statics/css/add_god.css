@@ -1,7 +1,40 @@
-/* Login Page */
+/* Add God Page */
 #add-god-box {
-    width: 500px;
-    display: block;
-    margin: auto;
-    margin-top: 100px;
+    max-width: 520px;
+    width: 100%;
+    margin: 2.5rem auto;
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border-top: 4px solid var(--color-primary);
+    padding: 2rem 2rem 1.75rem;
+}
+
+#add-god-form .field {
+    margin-bottom: 1rem !important;
+}
+
+#add-god-form .field label {
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+/* Reserve space for error/loader row */
+#add-god-status-area {
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+
+#add-god-form .ui.error.message {
+    margin: 0 0 0.75rem 0 !important;
+}
+
+#add-god-submit {
+    margin-top: 0.25rem;
 }

@@ -1,80 +1,249 @@
-/* Nav Bar */
-nav {
-    border-bottom: 3px solid #722F37;
-    padding-top: 20px;
-    height: 70px;
+/* === CSS Custom Properties === */
+:root {
+    --color-primary:       #722F37;
+    --color-primary-dark:  #5A1F27;
+    --color-primary-light: #8B4049;
+    --color-primary-pale:  #FDF6F7;
+    --color-border:        #E8D5D7;
+    --color-text:          #2C1A1D;
+    --color-text-muted:    #7A5C60;
+    --color-bg:            #F5ECEE;
+    --color-surface:       #FFFFFF;
+    --shadow-sm:           0 1px 4px rgba(114, 47, 55, 0.10);
+    --shadow-md:           0 4px 18px rgba(114, 47, 55, 0.14);
+    --radius:              8px;
+    --radius-lg:           12px;
+    --nav-height:          64px;
+    --content-max:         1100px;
 }
 
-#nav-table {
-    width: 1300px;
-    margin: auto;
-    table-layout: fixed;
-}
-
-#nav-home {
-    width: 250px;
-}
-
-#nav-title {
-    text-align: center;
-}
-
-#nav-logout {
-    width: 250px;
-}
-
-#logout-button {
-    width: 100px;
-}
-
-
-
-/* Footer */
-footer {
-    background-color: #ff5555;
-    height: 120px;
-    margin-top: auto;
-    margin-bottom: 0px;
-    padding-top: 24px;
-    text-align: center;
-}
-
-#toc-pp {
-    margin-bottom: 50px;
+/* === Reset & Base === */
+*, *::before, *::after {
+    box-sizing: border-box;
 }
 
 body {
     min-height: 100vh;
-    margin: 0px;
+    margin: 0;
     display: flex;
     flex-direction: column;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
 }
 
+/* === Navigation === */
+nav {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: var(--color-surface);
+    border-bottom: 3px solid var(--color-primary);
+    box-shadow: var(--shadow-sm);
+    height: var(--nav-height);
+    /* Fixed height prevents any reflow — key CLS win */
+}
+
+#nav-inner {
+    max-width: var(--content-max);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+#nav-home-link {
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+#nav-brand {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+}
+
+#nav-title {
+    flex: 1;
+    text-align: center;
+    font-size: 1.1rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: var(--color-text) !important;
+    font-weight: 600 !important;
+    line-height: 1 !important;
+    /* Fixed text in a flex container — no reflow */
+}
+
+#nav-actions {
+    flex-shrink: 0;
+    min-width: 110px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* === Content Area === */
 #content {
-    margin: 66px 16px 30px 16px;
-    height: auto;
+    flex: 1;
+    padding: 2rem 1.5rem;
+    width: 100%;
 }
 
+/* === Footer === */
+footer {
+    background-color: var(--color-primary);
+    color: rgba(255, 255, 255, 0.85);
+    padding: 1.75rem 1.5rem;
+    text-align: center;
+    margin-top: auto;
+}
 
+footer h3 {
+    display: none;
+}
 
-/* Default Link Settings */
+#footer-content {
+    max-width: var(--content-max);
+    margin: 0 auto;
+}
+
+#footer-brand {
+    font-size: 1rem;
+    font-weight: 700;
+    color: white;
+    margin: 0 0 0.25rem 0;
+    letter-spacing: 0.04em;
+}
+
+#footer-tagline {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.65);
+    margin: 0 0 0.75rem 0;
+}
+
+#toc-pp {
+    font-size: 0.8rem;
+}
+
+#toc-pp a {
+    color: rgba(255, 255, 255, 0.75);
+    text-decoration: none;
+    margin: 0 0.5rem;
+    transition: color 0.15s;
+}
+
+#toc-pp a:hover {
+    color: white;
+}
+
+/* === Default Link Styles === */
 a {
     font-weight: normal;
     text-decoration: none;
-    color: #222222;
+    color: var(--color-primary);
 }
 
 a:hover {
-    color: #555555;
+    color: var(--color-primary-dark);
 }
 
-
-
-/* Default Image Formatting */
+/* === Images === */
 img {
     all: initial;
 }
 
 .image {
     width: 64px !important;
+}
+
+/* === Fomantic UI Overrides === */
+
+/* Positive buttons → maroon */
+.ui.positive.button,
+.ui.positive.buttons .button {
+    background-color: var(--color-primary) !important;
+    color: white !important;
+    transition: background-color 0.15s ease !important;
+    box-shadow: none !important;
+}
+
+.ui.positive.button:hover,
+.ui.positive.buttons .button:hover,
+.ui.positive.button:focus,
+.ui.positive.buttons .button:focus {
+    background-color: var(--color-primary-dark) !important;
+    color: white !important;
+}
+
+/* Form inputs — use maroon focus ring */
+.ui.form input[type="text"],
+.ui.form input[type="password"],
+.ui.form input[type="email"],
+.ui.form textarea,
+.ui.input > input {
+    border-color: var(--color-border) !important;
+    border-radius: var(--radius) !important;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+    background: var(--color-surface) !important;
+}
+
+.ui.form input:focus,
+.ui.form textarea:focus,
+.ui.input > input:focus {
+    border-color: var(--color-primary) !important;
+    box-shadow: 0 0 0 2px rgba(114, 47, 55, 0.15) !important;
+    outline: none !important;
+}
+
+/* Action inputs — make select border consistent */
+.ui.action.input > select,
+.ui.compact.selection.dropdown {
+    border-color: var(--color-border) !important;
+}
+
+/* Loader text color */
+.ui.text.loader {
+    color: var(--color-text-muted) !important;
+}
+
+/* Messages */
+.ui.message {
+    border-radius: var(--radius) !important;
+}
+
+/* === Responsive Breakpoints === */
+@media (max-width: 768px) {
+    #nav-title {
+        font-size: 0.9rem !important;
+    }
+
+    #nav-brand {
+        font-size: 0.9rem;
+    }
+
+    #content {
+        padding: 1.25rem 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    #nav-inner {
+        padding: 0 0.75rem;
+        gap: 0.5rem;
+    }
+
+    #nav-title {
+        /* Hide centre title on very small screens — brand + logout are enough */
+        display: none;
+    }
+
+    #nav-actions .ui.button {
+        padding: 0.6em 0.9em !important;
+        font-size: 0.8rem !important;
+    }
 }

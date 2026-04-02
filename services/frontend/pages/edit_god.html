@@ -29,18 +29,22 @@
                     <label>Domain</label>
                     <input id="edit-god-domain" class="ui input" type="text" placeholder="God Domain">
                 </div>
-                
+
                 <div class="field">
                     <label>Description</label>
+                    <!-- Pre-sized with min-height in CSS — prevents jump when text loads -->
                     <p id="god-description"></p>
                 </div>
 
-                <div id="god-load-loader" class="ui active centered inline text loader">Loading God</div>
-                <div id="god-update-loader" class="ui hidden centered inline text loader">Updating God</div>
-                <div id="god-delete-loader" class="ui hidden centered inline text loader">Deleting God</div>
                 <div class="ui error message">
                     <div id="edit-god-error-head" class="header">Failed to update/delete god!</div>
                     <p id="edit-god-error-message">There was an error.</p>
+                </div>
+
+                <div id="edit-god-status-area">
+                    <div id="god-load-loader" class="ui active centered inline text loader">Loading God</div>
+                    <div id="god-update-loader" class="ui hidden centered inline text loader">Updating God</div>
+                    <div id="god-delete-loader" class="ui hidden centered inline text loader">Deleting God</div>
                 </div>
 
                 <button id="edit-god-buttom" class="ui fluid positive button">Update God</button>

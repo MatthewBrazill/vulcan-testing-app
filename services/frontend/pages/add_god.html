@@ -16,15 +16,18 @@
         <div id="add-god-box">
             <form id="add-god-form" class="ui form">
                 <div class="field">
-                    <input id="add-god-pantheon" class="ui input" type="text" placeholder="God Pantheon">
+                    <label>Pantheon</label>
+                    <input id="add-god-pantheon" class="ui input" type="text" placeholder="e.g. Greek">
                 </div>
 
                 <div class="field">
-                    <input id="add-god-name" class="ui input" type="text" placeholder="God Name">
+                    <label>Name</label>
+                    <input id="add-god-name" class="ui input" type="text" placeholder="e.g. Athena">
                 </div>
 
                 <div class="field">
-                    <input id="add-god-domain" class="ui input" type="text" placeholder="God Domain">
+                    <label>Domain</label>
+                    <input id="add-god-domain" class="ui input" type="text" placeholder="e.g. Wisdom">
                 </div>
 
                 <div class="ui error message">
@@ -32,7 +35,9 @@
                     <p id="add-god-error-message">There was an error.</p>
                 </div>
 
-                <div id="add-god-loader" class="ui hidden centered inline text loader">Adding God</div>
+                <div id="add-god-status-area">
+                    <div id="add-god-loader" class="ui hidden centered inline text loader">Adding God</div>
+                </div>
 
                 <button id="add-god-submit" class="ui fluid positive button">Add God</button>
             </form>

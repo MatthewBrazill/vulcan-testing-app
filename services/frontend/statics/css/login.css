@@ -1,12 +1,38 @@
 /* Login Page */
 #login-box {
-    width: 300px;
-    display: block;
-    margin: auto;
-    margin-top: 100px;
-    text-align: center;
+    max-width: 400px;
+    width: 100%;
+    margin: 3rem auto;
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border-top: 4px solid var(--color-primary);
+    padding: 2rem 2rem 1.75rem;
+}
+
+#login-form .field {
+    margin-bottom: 1rem !important;
+}
+
+/* Reserve a fixed block for the status/error messages so buttons
+   don't shift when they appear or disappear (main CLS fix). */
+#login-message-area {
+    min-height: 64px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+}
+
+#login-wait,
+#login-form .ui.error.message {
+    margin: 0 !important;
 }
 
 #login-submit {
-    margin-bottom: 14px;
+    margin-bottom: 0.75rem !important;
+}
+
+#login-form .ui.fluid.blue.button {
+    margin-top: 0 !important;
 }

@@ -1,36 +1,169 @@
-/* Storage Page */
+/* Storage / Dashboard Page */
+
+/* Two-column layout: sidebar tools on left, god search on right */
 #storage-box {
-    width: 800px;
-    display: block;
-    margin: auto;
-    margin-top: 20px;
+    max-width: var(--content-max);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 1.5rem;
+    align-items: start;
 }
 
+#storage-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
 
+/* Section card shared style */
+#testing-section,
+#divination-section,
+#god-search-section {
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    border-top: 3px solid var(--color-primary);
+    padding: 1.25rem 1.5rem;
+}
 
+/* Section headings */
+#testing-section h5,
+#divination-section h5,
+#god-search-section h5 {
+    color: var(--color-primary);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0 0 1rem 0;
+}
+
+/* ---- Testing Tools ---- */
+#testing-section .ui.input {
+    margin-bottom: 0.875rem;
+}
+
+#testing-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+#testing-buttons .ui.button {
+    flex: 1 1 auto;
+    font-size: 0.82rem;
+    padding: 0.6em 0.8em;
+}
+
+#testing-buttons .ui.blue.button {
+    margin-left: auto;
+    flex: 0 0 auto;
+}
+
+/* ---- Divination Tools ---- */
+#divination-section .ui.input {
+    margin-bottom: 0.875rem;
+}
+
+/* Pre-size the oracle output to prevent CLS when text loads in */
+#divination-output {
+    min-height: 80px;
+    background: var(--color-primary-pale);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 0.875rem 1rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#divination-output-loader {
+    position: absolute;
+}
+
+#divination-output-text {
+    line-height: 1.6;
+    color: var(--color-text);
+    font-style: italic;
+    font-size: 0.9rem;
+    width: 100%;
+}
+
+/* ---- God Search ---- */
+#god-search-section {
+    /* Stays as a standalone full-height card */
+}
+
+/* Pre-size the god list to prevent CLS while results load */
+#god-list {
+    margin-top: 1rem;
+    min-height: 320px;
+    position: relative;
+}
+
+#god-list-loader {
+    position: absolute;
+    top: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.god-item {
+    padding: 0.8rem 1rem;
+    margin-bottom: 0.625rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-left: 4px solid var(--color-primary);
+    border-radius: var(--radius);
+    transition: box-shadow 0.15s ease, border-left-color 0.15s ease, transform 0.1s ease;
+    cursor: pointer;
+}
+
+.god-item:hover {
+    box-shadow: var(--shadow-sm);
+    border-left-color: var(--color-primary-dark);
+    transform: translateX(2px);
+}
+
+.god-header {
+    font-weight: 700;
+    margin: 0 0 0.2rem 0;
+    color: var(--color-text);
+    font-size: 1rem;
+}
+
+.god-meta {
+    color: var(--color-text-muted);
+    font-size: 0.82rem;
+    margin: 0;
+}
+
+/* Add god button inherits positive override from desktop.css */
+#god-add-button {
+    white-space: nowrap;
+}
+
+/* Dropdown select alignment fix */
 select {
     padding-top: 9.5px !important;
     padding-bottom: 8px !important;
 }
 
+/* ---- Responsive ---- */
+@media (max-width: 900px) {
+    #storage-box {
+        grid-template-columns: 1fr;
+    }
 
+    /* On mobile put god search first since it's the primary feature */
+    #storage-sidebar {
+        order: 2;
+    }
 
-#god-list {
-    margin-top: 20px;
-}
-
-.god-item {
-    padding: 10px 20px;
-    margin-bottom: 10px;
-    border: 1px solid #000000;
-    border-radius: 5px;
-}
-
-.god-header {
-    font-weight: bold;
-    margin: 0px;
-}
-
-.god-meta {
-    color: #222222;
+    #god-search-section {
+        order: 1;
+    }
 }
