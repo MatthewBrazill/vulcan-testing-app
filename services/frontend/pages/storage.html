@@ -20,18 +20,18 @@
 
                 <div id="testing-section">
                     <h5>Testing Tools</h5>
-                    <div class="ui fluid right action input">
+                    <div class="input-action">
                         <input id="testing-log-input" placeholder="Log text..." type="text">
-                        <select id="testing-log-dropdown" class="ui compact selection dropdown">
+                        <select id="testing-log-dropdown" class="select-native">
                             <option value="console">Console</option>
                             <option value="datadog">Datadog SDK</option>
                         </select>
                     </div>
                     <div id="testing-buttons">
-                        <button id="testing-error-button" class="ui button">Trigger UI Error</button>
-                        <button id="testing-custom-event-button" class="ui button">Custom RUM Event</button>
-                        <button id="clear-cookie-button" class="ui button">Clear Cookies</button>
-                        <a href="/user/{{username}}" class="ui blue button">View Users</a>
+                        <button id="testing-error-button" class="btn btn-ghost">Trigger UI Error</button>
+                        <button id="testing-custom-event-button" class="btn btn-ghost">Custom RUM Event</button>
+                        <button id="clear-cookie-button" class="btn btn-ghost">Clear Cookies</button>
+                        <a href="/user/{{username}}" class="btn btn-secondary">View Users</a>
                     </div>
                 </div>
 
@@ -39,15 +39,15 @@
                     <h5>Divination Tools</h5>
                     <textarea id="divination-input" placeholder="What might the future hold?" rows="3"></textarea>
                     <div id="divination-controls">
-                        <select id="divination-dropdown" class="ui compact selection dropdown">
+                        <select id="divination-dropdown" class="select-native">
                             <option value="delphi">Delphi</option>
                             <option value="didyma">Didyma</option>
                             <option value="cumae">Cumae</option>
                         </select>
-                        <button id="divination-submit" class="ui positive button">Ask</button>
+                        <button id="divination-submit" class="btn btn-primary">Ask</button>
                     </div>
                     <div id="divination-output">
-                        <div id="divination-output-loader" class="ui hidden centered inline text loader">Petitioning the Oracle...</div>
+                        <div id="divination-output-loader" class="loader">Petitioning the Oracle...</div>
                         <p id="divination-output-text"></p>
                     </div>
                 </div>
@@ -57,19 +57,22 @@
             <!-- Main: god search (primary feature) -->
             <div id="god-search-section">
                 <h5>God Search</h5>
-                <div class="ui fluid left icon action input">
-                    <i class="ui search icon"></i>
+                <div class="input-icon-action">
+                    <svg class="input-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
                     <input id="god-search-bar" placeholder="Search gods..." type="text">
-                    <a id="god-add-button" href="/add" class="ui positive vertical animated button">
-                        <div class="visible content">Add God</div>
-                        <div class="hidden content"><i class="plus icon"></i></div>
+                    <a id="god-add-button" href="/add" class="btn btn-primary btn-animated">
+                        <span class="btn-label">Add God</span>
+                        <span class="btn-icon-hover">+</span>
                     </a>
                 </div>
 
                 <div id="god-list">
-                    <div id="god-list-loader" class="ui hidden centered inline text loader">Loading Gods</div>
-                    <div id="god-list-error" class="ui hidden error message">
-                        <div id="god-list-error-head" class="header">Failed to retrieve list of gods!</div>
+                    <div id="god-list-loader" class="loader">Loading Gods</div>
+                    <div id="god-list-error" class="msg msg-hidden msg-error">
+                        <div id="god-list-error-head" class="msg-header">Failed to retrieve list of gods!</div>
                         <p id="god-list-error-message">There was an issue getting to the server.</p>
                     </div>
                 </div>

@@ -10,10 +10,6 @@
     padding: 2rem 2rem 1.75rem;
 }
 
-#sign-up-form .field {
-    margin-bottom: 1rem !important;
-}
-
 /* Reserve space for the three possible message states so the buttons
    never shift position (main CLS fix). */
 #sign-up-message-area {
@@ -25,11 +21,11 @@
 }
 
 #sign-up-wait,
-#sign-up-form .ui.error.message,
-#sign-up-form .ui.success.message {
-    margin: 0 !important;
+#sign-up-form .msg-error,
+#sign-up-form .msg-success {
+    margin: 0;
 }
 
 #sign-up-submit {
-    margin-bottom: 0.75rem !important;
+    margin-bottom: 0.75rem;
 }

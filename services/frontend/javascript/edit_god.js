@@ -10,13 +10,13 @@ $(document).ready(() => {
             $("#edit-god-name").val(res.name)
             $("#edit-god-domain").val(res.domain)
             $("#god-description").text(res.description)
-            $("#god-load-loader").attr("class", "ui hidden centered inline text loader")
+            $("#god-load-loader").attr("class", "loader")
             console.log(`god collection succeeded: status ${res.status}`)
         },
         error: (res) => {
-            $("#edit-god-form").attr("class", "ui error form")
+            $("#edit-god-form").attr("class", "form form-error")
             $("#edit-god-error-message").text("Failed to get a god for this ID.")
-            $("#god-load-loader").attr("class", "ui hidden centered inline text loader")
+            $("#god-load-loader").attr("class", "loader")
             console.error(`god collection failed: ${res.status} - ${res.message}`)
         }
     })
@@ -33,15 +33,15 @@ $(document).ready(() => {
                 name: $("#edit-god-name").val(),
                 domain: $("#edit-god-domain").val()
             },
-            beforeSend: () => $("#god-update-loader").attr("class", "ui active centered inline text loader"),
+            beforeSend: () => $("#god-update-loader").attr("class", "loader loader-active"),
             success: (res) => {
                 window.location = "/storage"
                 console.log(`god edit succeeded: status ${res.status}`)
             },
             error: (res) => {
-                $("#edit-god-form").attr("class", "ui error form")
+                $("#edit-god-form").attr("class", "form form-error")
                 $("#edit-god-error-message").text(res.message)
-                $("#god-update-loader").attr("class", "ui hidden centered inline text loader")
+                $("#god-update-loader").attr("class", "loader")
                 console.error(`god edit failed: ${res.status} - ${res.message}`)
             }
         })
@@ -53,15 +53,15 @@ $(document).ready(() => {
             url: "/gods/delete",
             method: "POST",
             data: { godId: url.searchParams.get("godId") },
-            beforeSend: () => $("#god-delete-loader").attr("class", "ui active centered inline text loader"),
+            beforeSend: () => $("#god-delete-loader").attr("class", "loader loader-active"),
             success: (res) => {
                 window.location = "/storage"
                 console.log(`god deletion succeeded: status ${res.status}`)
             },
             error: (res) => {
-                $("#edit-god-form").attr("class", "ui error form")
+                $("#edit-god-form").attr("class", "form form-error")
                 $("#edit-god-error-message").text(res.message)
-                $("#god-delete-loader").attr("class", "ui hidden centered inline text loader")
+                $("#god-delete-loader").attr("class", "loader")
                 console.error(`god deletion failed: ${res.status} - ${res.message}`)
             }
         })

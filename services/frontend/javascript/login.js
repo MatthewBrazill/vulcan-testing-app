@@ -10,7 +10,7 @@ $(document).ready(() => {
                 password: $("#login-password").val()
             },
             beforeSend: () => {
-                $("#login-wait").attr('class', 'ui message')
+                $("#login-wait").attr('class', 'msg')
             },
             success: (res) => {
                 window.DD_RUM && window.DD_RUM.setUser({
@@ -20,8 +20,8 @@ $(document).ready(() => {
                 window.location = "/storage"
             },
             error: (res) => {
-                $("#login-wait").attr('class', 'ui hidden message')
-                $("#login-form").attr('class', 'ui error form')
+                $("#login-wait").attr('class', 'msg msg-hidden')
+                $("#login-form").attr('class', 'form form-error')
                 $("#login-error-message").text(res.message)
                 console.error(`login failed: status ${res.status} - ${res.message}`)
             }

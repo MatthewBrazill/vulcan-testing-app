@@ -10,10 +10,6 @@
     padding: 2rem 2rem 1.75rem;
 }
 
-#login-form .field {
-    margin-bottom: 1rem !important;
-}
-
 /* Reserve a fixed block for the status/error messages so buttons
    don't shift when they appear or disappear (main CLS fix). */
 #login-message-area {
@@ -25,14 +21,10 @@
 }
 
 #login-wait,
-#login-form .ui.error.message {
-    margin: 0 !important;
+#login-form .msg-error {
+    margin: 0;
 }
 
 #login-submit {
-    margin-bottom: 0.75rem !important;
-}
-
-#login-form .ui.fluid.blue.button {
-    margin-top: 0 !important;
+    margin-bottom: 0.75rem;
 }

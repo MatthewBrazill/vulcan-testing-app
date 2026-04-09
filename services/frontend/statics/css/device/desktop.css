@@ -161,61 +161,6 @@ img {
     width: 64px !important;
 }
 
-/* === Fomantic UI Overrides === */
-
-/* Positive buttons → maroon */
-.ui.positive.button,
-.ui.positive.buttons .button {
-    background-color: var(--color-primary) !important;
-    color: white !important;
-    transition: background-color 0.15s ease !important;
-    box-shadow: none !important;
-}
-
-.ui.positive.button:hover,
-.ui.positive.buttons .button:hover,
-.ui.positive.button:focus,
-.ui.positive.buttons .button:focus {
-    background-color: var(--color-primary-dark) !important;
-    color: white !important;
-}
-
-/* Form inputs — use maroon focus ring */
-.ui.form input[type="text"],
-.ui.form input[type="password"],
-.ui.form input[type="email"],
-.ui.form textarea,
-.ui.input > input {
-    border-color: var(--color-border) !important;
-    border-radius: var(--radius) !important;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
-    background: var(--color-surface) !important;
-}
-
-.ui.form input:focus,
-.ui.form textarea:focus,
-.ui.input > input:focus {
-    border-color: var(--color-primary) !important;
-    box-shadow: 0 0 0 2px rgba(114, 47, 55, 0.15) !important;
-    outline: none !important;
-}
-
-/* Action inputs — make select border consistent */
-.ui.action.input > select,
-.ui.compact.selection.dropdown {
-    border-color: var(--color-border) !important;
-}
-
-/* Loader text color */
-.ui.text.loader {
-    color: var(--color-text-muted) !important;
-}
-
-/* Messages */
-.ui.message {
-    border-radius: var(--radius) !important;
-}
-
 /* === Responsive Breakpoints === */
 @media (max-width: 768px) {
     #nav-title {
@@ -242,9 +187,9 @@ img {
         display: none;
     }
 
-    #nav-actions .ui.button {
-        padding: 0.6em 0.9em !important;
-        font-size: 0.8rem !important;
+    #nav-actions .btn {
+        padding: 0.6em 0.9em;
+        font-size: 0.8rem;
     }
 }
 

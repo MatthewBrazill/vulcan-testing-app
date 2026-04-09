@@ -10,11 +10,7 @@
     padding: 2rem 2rem 1.75rem;
 }
 
-#add-god-form .field {
-    margin-bottom: 1rem !important;
-}
-
-#add-god-form .field label {
+#add-god-form .form-field label {
     color: var(--color-text-muted);
     font-size: 0.8rem;
     font-weight: 700;
@@ -31,8 +27,8 @@
     margin-bottom: 0.5rem;
 }
 
-#add-god-form .ui.error.message {
-    margin: 0 0 0.75rem 0 !important;
+#add-god-form .msg-error {
+    margin: 0 0 0.75rem 0;
 }
 
 #add-god-submit {

@@ -14,31 +14,31 @@
 
     <div id="content">
         <div id="login-box">
-            <form id="login-form" class="ui form">
-                <div class="field">
-                    <input id="login-username" class="ui input" type="text" autocomplete="username" placeholder="Username">
+            <form id="login-form" class="form">
+                <div class="form-field">
+                    <input id="login-username" type="text" autocomplete="username" placeholder="Username">
                 </div>
 
-                <div class="field">
-                    <input id="login-password" class="ui input" type="password" autocomplete="current-password" placeholder="Password">
+                <div class="form-field">
+                    <input id="login-password" type="password" autocomplete="current-password" placeholder="Password">
                 </div>
 
                 <!-- Reserved-height wrapper prevents the buttons from shifting
                      when the wait or error message appears (CLS fix) -->
                 <div id="login-message-area">
-                    <div id="login-wait" class="ui hidden message">
-                        <div id="login-wait-head" class="header" style="margin-bottom: 12px;">Logging In...</div>
-                        <div id="login-wait-message" class="ui inline active loader"></div>
+                    <div id="login-wait" class="msg msg-hidden">
+                        <div id="login-wait-head" class="msg-header" style="margin-bottom: 12px;">Logging In...</div>
+                        <div id="login-wait-message" class="loader loader-active"></div>
                     </div>
 
-                    <div class="ui error message">
-                        <div id="login-error-head" class="header">Login Failed!</div>
+                    <div class="msg msg-error">
+                        <div id="login-error-head" class="msg-header">Login Failed!</div>
                         <p id="login-error-message">There was an error.</p>
                     </div>
                 </div>
 
-                <button id="login-submit" class="ui fluid positive button">Login</button>
-                <a href="/user/join" class="ui fluid blue button">Sign Up</a>
+                <button id="login-submit" class="btn btn-primary btn-fluid">Login</button>
+                <a href="/user/join" class="btn btn-secondary btn-fluid">Sign Up</a>
             </form>
         </div>
     </div>

@@ -29,8 +29,8 @@ function loadUsers() {
 
             // Make style adjustments
             $("#user-list").attr("class", "")
-            $("#user-list-loader").attr("class", "ui active centered inline text loader")
-            $("#user-list-error").attr('class', 'ui hidden error message')
+            $("#user-list-loader").attr("class", "loader loader-active")
+            $("#user-list-error").attr('class', 'msg msg-hidden msg-error')
         },
         success: (res) => {
             // Update content
@@ -40,7 +40,7 @@ function loadUsers() {
                     <div class="user-item" data-username="${user.username}">
                         <h3 class="user-header">
                             <div>${user.username}</div>
-                            <button class="ui small red icon delete-user button" data-username="${user.username}"><i class="ui trash icon"></i></button>
+                            <button class="btn btn-danger btn-sm btn-icon delete-user" data-username="${user.username}"><span aria-hidden="true">✕</span></button>
                         </h3>
                     </div>`
                     $("#user-list").append(item)
@@ -77,8 +77,8 @@ function loadUsers() {
 
             // Make style adjustments
             $("#user-list").attr("class", "")
-            $("#user-list-loader").attr("class", "ui hidden centered inline text loader")
-            $("#user-list-error").attr('class', 'ui hidden error message')
+            $("#user-list-loader").attr("class", "loader")
+            $("#user-list-error").attr('class', 'msg msg-hidden msg-error')
             console.log(`getting users succeeded: ${res.status}`)
         },
         error: (res) => {
@@ -87,8 +87,8 @@ function loadUsers() {
 
             // Make style adjustments
             $("#user-list").attr("class", "")
-            $("#user-list-loader").attr("class", "ui hidden centered inline text loader")
-            $("#user-list-error").attr('class', 'ui error message')
+            $("#user-list-loader").attr("class", "loader")
+            $("#user-list-error").attr('class', 'msg msg-error')
             console.error(`getting users failed: ${res.status} - ${res.message}`)
         }
     })

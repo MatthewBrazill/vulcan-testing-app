@@ -40,7 +40,7 @@
 }
 
 /* ---- Testing Tools ---- */
-#testing-section .ui.input {
+#testing-section .input-action {
     margin-bottom: 0.875rem;
 }
 
@@ -50,7 +50,7 @@
     gap: 0.5rem;
 }
 
-#testing-buttons .ui.button {
+#testing-buttons .btn {
     font-size: 0.82rem;
     padding: 0.6em 0.8em;
     margin: 0;
@@ -170,12 +170,6 @@
     white-space: nowrap;
 }
 
-/* Dropdown select alignment fix */
-select {
-    padding-top: 9.5px !important;
-    padding-bottom: 8px !important;
-}
-
 /* ---- Responsive ---- */
 @media (max-width: 900px) {
     #storage-box {
@@ -210,7 +204,7 @@ select {
         font-size: 0.85rem;
     }
 
-    .ui.fluid.right.action.input input {
+    .input-action input {
         height: 2.75rem;
     }
 
@@ -244,7 +238,7 @@ select {
         padding: 1.75rem 2rem;
     }
 
-    .ui.fluid.right.action.input input {
+    .input-action input {
         height: 3rem;
     }
 

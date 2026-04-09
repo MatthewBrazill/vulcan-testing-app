@@ -60,20 +60,20 @@ $(document).ready(() => {
             },
             beforeSend: () => {
                 $("#divination-output").attr("class", "")
-                $("#divination-output-loader").attr("class", "ui active centered inline text loader")
-                $("#divination-output-text").attr("class", "ui hidden")
+                $("#divination-output-loader").attr("class", "loader loader-active")
+                $("#divination-output-text").attr("class", "msg-hidden")
             },
             success: (res) => {
                 $("#divination-output").attr("class", "")
-                $("#divination-output-loader").attr("class", "ui hidden centered inline text loader")
+                $("#divination-output-loader").attr("class", "loader")
                 $("#divination-output-text").text(res.prediction)
-                $("#divination-output-text").attr("class", "ui active")
+                $("#divination-output-text").attr("class", "")
             },
             error: (res) => {
                 $("#divination-output").attr("class", "")
-                $("#divination-output-loader").attr("class", "ui hidden centered inline text loader")
+                $("#divination-output-loader").attr("class", "loader")
                 $("#divination-output-text").text(res.prediction)
-                $("#divination-output-text").attr("class", "ui active")
+                $("#divination-output-text").attr("class", "")
             }
         })
     }
@@ -144,8 +144,8 @@ function searchWait(req) {
 
     // Make style adjustments
     $("#god-list").attr("class", "")
-    $("#god-list-loader").attr("class", "ui active centered inline text loader")
-    $("#god-list-error").attr('class', 'ui hidden error message')
+    $("#god-list-loader").attr("class", "loader loader-active")
+    $("#god-list-error").attr('class', 'msg msg-hidden msg-error')
 }
 
 
@@ -171,8 +171,8 @@ function searchSuccess(res) {
 
     // Make style adjustments
     $("#god-list").attr("class", "")
-    $("#god-list-loader").attr("class", "ui hidden centered inline text loader")
-    $("#god-list-error").attr('class', 'ui hidden error message')
+    $("#god-list-loader").attr("class", "loader")
+    $("#god-list-error").attr('class', 'msg msg-hidden msg-error')
     console.log(`search succeeded: ${res.status}`)
 }
 
@@ -183,7 +183,7 @@ function searchError(res) {
 
     // Make style adjustments
     $("#god-list").attr("class", "")
-    $("#god-list-loader").attr("class", "ui hidden centered inline text loader")
-    $("#god-list-error").attr('class', 'ui error message')
+    $("#god-list-loader").attr("class", "loader")
+    $("#god-list-error").attr('class', 'msg msg-error')
     console.error(`search failed: ${res.status} - ${res.message}`)
 }
