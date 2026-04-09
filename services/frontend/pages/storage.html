@@ -37,13 +37,14 @@
 
                 <div id="divination-section">
                     <h5>Divination Tools</h5>
-                    <div class="ui fluid right action input">
-                        <input id="divination-input" placeholder="What might the future hold?" type="text">
+                    <textarea id="divination-input" placeholder="What might the future hold?" rows="3"></textarea>
+                    <div id="divination-controls">
                         <select id="divination-dropdown" class="ui compact selection dropdown">
                             <option value="delphi">Delphi</option>
                             <option value="didyma">Didyma</option>
                             <option value="cumae">Cumae</option>
                         </select>
+                        <button id="divination-submit" class="ui positive button">Ask</button>
                     </div>
                     <div id="divination-output">
                         <div id="divination-output-loader" class="ui hidden centered inline text loader">Petitioning the Oracle...</div>

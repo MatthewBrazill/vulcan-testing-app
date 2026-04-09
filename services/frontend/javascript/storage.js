@@ -49,35 +49,43 @@ $(document).ready(() => {
 
 
 
-    $("#divination-input").keypress((e) => {
-        if (e.which == '13') {
-            console.log(`asking for a prediction for: ${$("#divination-input").val()}`)
+    function submitDivination() {
+        console.log(`asking for a prediction for: ${$("#divination-input").val()}`)
+        $.ajax({
+            url: "/oracle/predict",
+            method: "POST",
+            data: {
+                question: $("#divination-input").val(),
+                oracle: $("#divination-dropdown").val(),
+            },
+            beforeSend: () => {
+                $("#divination-output").attr("class", "")
+                $("#divination-output-loader").attr("class", "ui active centered inline text loader")
+                $("#divination-output-text").attr("class", "ui hidden")
+            },
+            success: (res) => {
+                $("#divination-output").attr("class", "")
+                $("#divination-output-loader").attr("class", "ui hidden centered inline text loader")
+                $("#divination-output-text").text(res.prediction)
+                $("#divination-output-text").attr("class", "ui active")
+            },
+            error: (res) => {
+                $("#divination-output").attr("class", "")
+                $("#divination-output-loader").attr("class", "ui hidden centered inline text loader")
+                $("#divination-output-text").text(res.prediction)
+                $("#divination-output-text").attr("class", "ui active")
+            }
+        })
+    }
+
+    $("#divination-submit").click(() => {
+        submitDivination()
+    });
+
+    $("#divination-input").keydown((e) => {
+        if (e.which == '13' && e.ctrlKey) {
             e.preventDefault()
-            $.ajax({
-                url: "/oracle/predict",
-                method: "POST",
-                data: {
-                    question: $("#divination-input").val(),
-                    oracle: $("#divination-dropdown").val(),
-                },
-                beforeSend: () => {
-                    $("#divination-output").attr("class", "")
-                    $("#divination-output-loader").attr("class", "ui active centered inline text loader")
-                    $("#divination-output-text").attr("class", "ui hidden")
-                },
-                success: (res) => {
-                    $("#divination-output").attr("class", "")
-                    $("#divination-output-loader").attr("class", "ui hidden centered inline text loader")
-                    $("#divination-output-text").text(res.prediction)
-                    $("#divination-output-text").attr("class", "ui active")
-                },
-                error: (res) => {
-                    $("#divination-output").attr("class", "")
-                    $("#divination-output-loader").attr("class", "ui hidden centered inline text loader")
-                    $("#divination-output-text").text(res.prediction)
-                    $("#divination-output-text").attr("class", "ui active")
-                }
-            })
+            submitDivination()
         }
     });
 

@@ -247,3 +247,41 @@ img {
         font-size: 0.8rem !important;
     }
 }
+
+@media (min-width: 1440px) {
+    :root {
+        --content-max: 1360px;
+        --nav-height: 72px;
+    }
+
+    #content {
+        padding: 2.5rem 2rem;
+    }
+
+    #nav-brand {
+        font-size: 1.15rem;
+    }
+
+    #nav-title {
+        font-size: 1.2rem !important;
+    }
+}
+
+@media (min-width: 1920px) {
+    :root {
+        --content-max: 1700px;
+        --nav-height: 76px;
+    }
+
+    #content {
+        padding: 3rem 2.5rem;
+    }
+
+    #nav-brand {
+        font-size: 1.2rem;
+    }
+
+    #nav-title {
+        font-size: 1.3rem !important;
+    }
+}

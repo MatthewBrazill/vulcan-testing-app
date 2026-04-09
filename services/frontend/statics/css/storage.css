@@ -45,31 +45,55 @@
 }
 
 #testing-buttons {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 0.5rem;
-    align-items: center;
 }
 
 #testing-buttons .ui.button {
-    flex: 1 1 auto;
     font-size: 0.82rem;
     padding: 0.6em 0.8em;
-}
-
-#testing-buttons .ui.blue.button {
-    margin-left: auto;
-    flex: 0 0 auto;
+    margin: 0;
 }
 
 /* ---- Divination Tools ---- */
-#divination-section .ui.input {
+#divination-input {
+    width: 100%;
+    min-height: 80px;
+    resize: vertical;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-family: inherit;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    box-sizing: border-box;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+#divination-input:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(114, 47, 55, 0.15);
+    outline: none;
+}
+
+#divination-controls {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
     margin-bottom: 0.875rem;
+    align-items: center;
+}
+
+#divination-controls select {
+    flex: 1;
 }
 
 /* Pre-size the oracle output to prevent CLS when text loads in */
 #divination-output {
-    min-height: 80px;
+    min-height: 120px;
     background: var(--color-primary-pale);
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
@@ -165,5 +189,74 @@ select {
 
     #god-search-section {
         order: 1;
+    }
+}
+
+@media (min-width: 1440px) {
+    #storage-box {
+        grid-template-columns: 380px 1fr;
+        gap: 2rem;
+    }
+
+    #testing-section,
+    #divination-section,
+    #god-search-section {
+        padding: 1.5rem 1.75rem;
+    }
+
+    #testing-section h5,
+    #divination-section h5,
+    #god-search-section h5 {
+        font-size: 0.85rem;
+    }
+
+    .ui.fluid.right.action.input input {
+        height: 2.75rem;
+    }
+
+    #divination-input {
+        min-height: 120px;
+    }
+
+    #divination-output {
+        min-height: 160px;
+        padding: 1.25rem;
+    }
+
+    #divination-output-text {
+        font-size: 1rem;
+    }
+
+    #god-list {
+        min-height: 420px;
+    }
+}
+
+@media (min-width: 1920px) {
+    #storage-box {
+        grid-template-columns: 460px 1fr;
+        gap: 2.5rem;
+    }
+
+    #testing-section,
+    #divination-section,
+    #god-search-section {
+        padding: 1.75rem 2rem;
+    }
+
+    .ui.fluid.right.action.input input {
+        height: 3rem;
+    }
+
+    #divination-input {
+        min-height: 160px;
+    }
+
+    #divination-output {
+        min-height: 200px;
+    }
+
+    #god-list {
+        min-height: 500px;
     }
 }
