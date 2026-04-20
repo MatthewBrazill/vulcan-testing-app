@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {{> head}}
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+
+<body>
+    <nav>
+        {{> nav}}
+    </nav>
+
+    <div id="content">
+        <div id="dashboard-box">
+            <iframe
+                src="https://p.datadoghq.com/sb/embed/566b59cc-e7da-11ec-b24f-da7ad0900002-ddc0bc847583669c24c6437d1f9b924e"
+                title="Dashboard Name"
+                id="dashboard-frame"
+                allowfullscreen>
+            </iframe>
+        </div>
+    </div>
+
+    <footer>
+        {{> footer}}
+    </footer>
+</body>
+
+</html>
